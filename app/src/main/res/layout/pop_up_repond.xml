@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:layout_margin="10dp"
+    android:background="@android:drawable/dialog_holo_light_frame">
+
+    <LinearLayout
+        android:id="@+id/linLayPopUpRespondHeading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/txtvPopUpRespondName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="10"
+            android:gravity="center"
+            android:textColor="@color/HintGrey"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Weylin Renison"/>
+
+        <ImageView
+            android:id="@+id/imgvPopUpRespondClose"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:src="@drawable/ic_close"
+            android:clickable="true"/>
+
+    </LinearLayout>
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/FlatLightBlue"/>
+
+    <TextView
+        android:id="@+id/txtvPopUpRespondCellNumberDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/Blue"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Number:"/>
+
+    <TextView
+        android:id="@+id/txtvPopUpRespondCellNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:textColor="@color/HintGrey"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="0810213160"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/LightHintGrey"/>
+
+    <TextView
+        android:id="@+id/txtvPopUpRespondDetailsDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/Blue"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Details:"/>
+
+    <TextView
+        android:id="@+id/txtvPopUpRespondDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:textColor="@color/HintGrey"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="No details provided"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/LightHintGrey"/>
+
+    <ProgressBar
+        android:id="@+id/progbPopUpRespondLoadingAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtvGroupsDesc"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/txtvPopUpRespondAddressDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:textColor="@color/Blue"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Address:"/>
+
+    <TextView
+        android:id="@+id/txtvPopUpRespondAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:textColor="@color/HintGrey"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="13 veda street \nOak Glen\nCape Town\n8001"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/LightHintGrey"/>
+
+    <LinearLayout
+        android:id="@+id/linLayPopUpRespondActionbuttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnPopUpRespondCall"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp"
+            android:drawableLeft="@drawable/ic_call"
+            android:background="@null"
+            android:textColor="@color/HintGrey"
+            android:text="Call"/>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/LightHintGrey"/>
+
+        <Button
+            android:id="@+id/btnPopUpRespondRespond"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingLeft="25dp"
+            android:paddingRight="25dp"
+            android:background="@null"
+            android:drawableLeft="@drawable/ic_btn_respond"
+            android:textColor="@color/HintGrey"
+            android:text="Respond"/>
+
+    </LinearLayout>
+
+</LinearLayout>

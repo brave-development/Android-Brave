@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relLayPanicRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
+    android:focusable="true"
+    android:tag="fragPanic">
+
+    <EditText
+        android:id="@+id/etxtPanicDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:singleLine="true"
+        android:hint="A brief description of the situation. (optional)"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:visibility="invisible"/>
+
+    <ImageButton
+        android:id="@+id/ibtnPanic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/transition_panic_button"/>
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabNeedleDrop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/ibtnPanic"
+        android:onClick="onClickNeedleDrop"
+        android:src="@drawable/ic_syringe2"
+        fab:fab_colorNormal="@color/Jade"
+        fab:fab_colorPressed="@color/SeaGreen"
+        fab:fab_colorRipple="@color/SeaGreen"
+        fab:fab_size="normal"/>
+
+    <LinearLayout
+        android:id="@+id/linLayResponders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:id="@+id/txtvNoOfRespondersValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/White"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="0"/>
+
+        <TextView
+            android:id="@+id/txtvNoOfRespondersDesc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/White"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Responders"/>
+
+        </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/main_bg"
+    tools:context="za.co.oneohtwofour.brave.ManageGroupsActivity">
+
+    <za.co.toasteacomputing.brave.SlidingTabLayout
+        android:id="@+id/stLayManageGroups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="2dp"/>
+
+    <android.widget.SearchView
+        android:id="@+id/svGroups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    
+    <android.support.v4.view.ViewPager
+        android:id="@+id/vpGroupsContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        android:layout_weight="1"/>
+
+</LinearLayout>

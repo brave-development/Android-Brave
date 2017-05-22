@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="16dp">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srLayGroupsPrivate"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></View>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ImageButton
+        android:id="@+id/ibtnGroupPrivateJoin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="97.5dp"
+        android:src="@drawable/selector_btn_join"
+        android:background="@null"/>
+
+</LinearLayout>

@@ -1,0 +1,94 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context="za.co.oneohtwofour.brave.FragmentGroupsOld">
+
+    <TextView
+        android:id="@+id/txtvGroupsDesc"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="List of groups you are subscribed to."
+        android:textColor="@color/White"
+        android:layout_alignParentTop="true" />
+
+    <ProgressBar
+        android:id="@+id/progbGroupsSubbed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtvGroupsDesc"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srLayGroups"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtvGroupsDesc"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <ListView
+            android:id="@+id/lstvGroups"
+            android:divider="@null"
+            android:dividerHeight="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </ListView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <RelativeLayout
+        android:id="@+id/relLayGroupsRemaining"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="5dp">
+
+        <TextView
+            android:id="@+id/txtvGroupsRemaining"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@color/White"
+            android:text="Group Slots Remaining: "/>
+
+        <TextView
+            android:id="@+id/txtvGroupsRemainingValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/txtvGroupsRemaining"
+            android:layout_centerVertical="true"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@color/White"
+            android:text="-"/>
+
+        </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/ibtnManageGroups"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="30dp"
+        android:src="@drawable/selector_add_group"
+        android:background="@null"
+        android:onClick="onClickManageGroups"
+        android:scaleType="centerInside"
+        android:visibility="visible"/>
+
+</RelativeLayout>

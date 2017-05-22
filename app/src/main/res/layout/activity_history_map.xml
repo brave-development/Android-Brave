@@ -1,0 +1,134 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="za.co.oneohtwofour.brave.HistoryMapActivity">
+
+    <LinearLayout
+        android:id="@+id/linLayHistoryMapDetails"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/White">
+
+        <LinearLayout
+            android:id="@+id/linLayHistoryMapName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtvHistoryMapName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Weylin Renison"/>
+
+            <TextView
+                android:id="@+id/txtvHistoryMapNameDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/HintGrey"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Name"/>
+
+            </LinearLayout>
+
+        <View
+            android:id="@+id/vHistoryMapDivName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:background="@color/background_material_light"/>
+
+        <LinearLayout
+            android:id="@+id/linLayHistoryMapDate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtvHistoryMapDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="15 June 2015"/>
+
+            <TextView
+                android:id="@+id/txtvHistoryMapDateDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/HintGrey"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Date"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/vHistoryMapDivDate"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:background="@color/background_material_light"/>
+
+        <LinearLayout
+            android:id="@+id/linLayHistoryMapNumber"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtvHistoryMapNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="0810213160"/>
+
+            <TextView
+                android:id="@+id/txtvHistoryMapNumberDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/HintGrey"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Number"/>
+
+        </LinearLayout>
+
+
+        </LinearLayout>
+
+    <com.google.android.gms.maps.MapView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/mvHistoryMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/linLayHistoryMapDetails"/>
+
+</RelativeLayout>

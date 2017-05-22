@@ -1,0 +1,138 @@
+package za.co.oneohtwofour.brave;
+
+/**
+ * Created by wprenison on 2017/05/17.
+ */
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.parse.GetDataCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ProgressCallback;
+import com.squareup.picasso.Picasso;
+import com.yayandroid.parallaxrecyclerview.ParallaxViewHolder;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by yahyabayramoglu on 14/04/15.
+ */
+public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder>
+{
+
+    private Context context;
+    private LayoutInflater inflater;
+
+    /*
+    private int[] imageIds = new int[]{R.mipmap.test_image_1,
+            R.mipmap.test_image_2, R.mipmap.test_image_3,
+            R.mipmap.test_image_4, R.mipmap.test_image_5};
+    */
+
+    private String[] imageUrls = new String[]{
+            "http://yayandroid.com/data/github_library/parallax_listview/test_image_1.jpg",
+            "http://yayandroid.com/data/github_library/parallax_listview/test_image_2.jpg",
+            "http://yayandroid.com/data/github_library/parallax_listview/test_image_3.png",
+            "http://yayandroid.com/data/github_library/parallax_listview/test_image_4.jpg",
+            "http://yayandroid.com/data/github_library/parallax_listview/test_image_5.png",
+    };
+
+    private List<ParseObject> lstGroups = new ArrayList<ParseObject>();
+
+    public AdapterGroups(Context context, List<ParseObject> lstGroups)
+    {
+        this.context = context;
+        this.inflater = LayoutInflater.from(context);
+        this.lstGroups = lstGroups;
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position)
+    {
+        return new ViewHolder(inflater.inflate(R.layout.list_item_group, viewGroup, false));
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder viewHolder, int position)
+    {
+        ParseObject currGroup = lstGroups.get(position);
+
+//        currGroup.getParseFile("imageFile").getDataInBackground(new GetDataCallback()
+//        {
+//            @Override
+//            public void done(byte[] data, ParseException e)
+//            {
+//                if(e == null)
+//                {
+//                    viewHolder.getBackgroundImage().setImageBitmap(BitmapFactory.decodeByteArray(data, 0, data.length));
+//                } else
+//                {
+//                    viewHolder.getBackgroundImage().setImageResource(R.drawable.bg_group_row);
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new ProgressCallback()
+//        {
+//            @Override
+//            public void done(Integer percentDone)
+//            {
+//                //TODO: show progress
+//            }
+//        });
+
+
+        Picasso.with(context).load(currGroup.getParseFile("imageFile").getUrl()).resize(600, 800).onlyScaleDown().centerCrop().into(viewHolder.getBackgroundImage());
+        viewHolder.getTextView().setText(currGroup.getString("name"));
+
+        // # CAUTION:
+        // Important to call this method
+        viewHolder.getBackgroundImage().reuse();
+    }
+
+    @Override
+    public int getItemCount()
+    {
+        return lstGroups.size();
+    }
+
+    /**
+     * # CAUTION:
+     * ViewHolder must extend from ParallaxViewHolder
+     */
+    public static class ViewHolder extends ParallaxViewHolder
+    {
+
+        private final TextView textView;
+
+        public ViewHolder(View v)
+        {
+            super(v);
+
+            textView = (TextView) v.findViewById(R.id.label);
+        }
+
+        @Override
+        public int getParallaxImageId()
+        {
+            return R.id.backgroundImage;
+        }
+
+        public TextView getTextView()
+        {
+            return textView;
+        }
+    }
+
+
+}

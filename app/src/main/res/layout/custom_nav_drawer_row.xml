@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp"
+    android:weightSum="1">
+
+
+    <ImageView
+        android:id="@+id/imgvIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/home"/>
+    <!-- marginStart used to support right to left-->
+    <!--marginLeft Added for compat with earlier ver of android-->
+
+    <TextView
+        android:id="@+id/txtvEntry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:gravity="left"
+        android:text="Home"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_toRightOf="@+id/imgvIcon"
+        android:layout_toEndOf="@+id/imgvIcon"
+        android:layout_centerVertical="true"/>
+
+</RelativeLayout>

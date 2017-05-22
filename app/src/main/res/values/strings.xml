@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Brave</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Strings for Login Activity -->
+    <string name="etxtLoginUsernameHint">Username</string>
+    <string name="etxtLoginPasswordHint">Password</string>
+    <string name="btnLoginLogin">Login</string>
+    <string name="btnLoginRegister">Register</string>
+
+    <!-- Strings for Register Activity -->
+    <string name="title_activity_register">Register</string>
+    <string name="registerHeading">Welcome</string>
+    <string name="etxtRegisterNameAndSurnameHint">Name and Surname</string>
+    <string name="etxtRegisterUsernameHint">Username</string>
+    <string name="etxtRegisterCellNumberHint">Contact Number</string>
+    <string name="etxtRegisterEmailHint">Email</string>
+    <string name="etxtRegisterPasswordHint">Password</string>
+    <string name="etxtRegisterRetypePasswordHint">Retype Password</string>
+    <string name="btnRegisterSubmit">Submit</string>
+    <string name="btnRegisterCancel">Cancel</string>
+    <string name="btnRegisterChooseCountry">Choose Country</string>
+    <string name="txtvTermsAndConditionsLink"> <u>Terms and Conditions</u></string>
+
+    <!-- Strings for Home activity -->
+    <string name="title_activity_home_panic">Home</string>
+
+    <!-- Nav Menu Drawer entries -->
+    <string-array name="navEntries">
+        <item>Home</item>
+        <item>Groups</item>
+        <item>History</item>
+        <item>Settings</item>
+    </string-array>
+    <string-array name="navIcons">
+        <item>@drawable/home</item>
+        <item>@drawable/groups</item>
+        <item>@drawable/history</item>
+        <item>@drawable/settings</item>
+    </string-array>
+
+    <string name="navDrawerOpen">Open Navigation Drawer</string>
+    <string name="navDrawerClosed">Close Navigation Drawer</string>
+
+    <!-- Strings for Home Panic Activity -->
+    <string name="btnNavPanic">Panic</string>
+    <string name="btnNavMap">Map</string>
+
+    <!-- Strings for History Activity -->
+    <string name="title_activity_history">History</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_manage_groups">ManageGroupsActivity</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_history_map">History</string>
+
+    <!--Strings for error messages-->
+    <string name="error_100_no_internet">Please check your internet connection and try again.</string>
+
+    <!--List of countries supported-->
+    <string-array name="arrayCountries">
+        <item>Afghanistan</item>
+        <item>Albania</item>
+        <item>Algeria</item>
+        <item>American Samoa</item>
+        <item>Andorra</item>
+        <item>Angola</item>
+        <item>Anguilla</item>
+        <item>Antigua and Barbuda</item>
+        <item>Argentina</item>
+        <item>Armenia</item>
+        <item>Aruba</item>
+        <item>Australia</item>
+        <item>Austria</item>
+        <item>Azerbaijan</item>
+        <item>Bahamas, The</item>
+        <item> Bahrain</item>
+        <item>Bangladesh</item>
+        <item>Barbados</item>
+        <item>Belarus</item>
+        <item>Belgium</item>
+        <item>Belize</item>
+        <item>Benin</item>
+        <item>Bermuda</item>
+        <item>Bhutan</item>
+        <item>Bolivia</item>
+        <item>Bosnia</item>
+        <item>Botswana</item>
+        <item>Bougainville</item>
+        <item>Brazil</item>
+        <item>British Indian Ocean</item>
+        <item>British Virgin Islands</item>
+        <item>Brunei</item>
+        <item>Bulgaria</item>
+        <item>Burkina Faso</item>
+        <item>Burundi</item>
+        <item>Cambodia</item>
+        <item>Cameroon</item>
+        <item>Canada</item>
+        <item>Cape Verde Islands</item>
+        <item>Cayman Islands</item>
+        <item>Central African Republic</item>
+        <item>Chad</item>
+        <item>Chile</item>
+        <item>China, Hong Kong</item>
+        <item>China, Macau</item>
+        <item>China, People’s Republic</item>
+        <item>China, Taiwan</item>
+        <item>Colombia</item>
+        <item>Comoros</item>
+        <item>Congo, Democratic Republic of</item>
+        <item>Congo, Republic of</item>
+        <item>Cook Islands</item>
+        <item>Costa Rica</item>
+        <item>Cote d’Ivoire</item>
+        <item>Croatia</item>
+        <item>Cuba</item>
+        <item>Cyprus	Czech Republic</item>
+        <item>Denmark</item>
+        <item>Djibouti</item>
+        <item>Dominica</item>
+        <item>Dominican Republic</item>
+        <item>Ecuador</item>
+        <item>Egypt</item>
+        <item>El Salvador</item>
+        <item>Equatorial Guinea</item>
+        <item>Eritrea</item>
+        <item>Estonia</item>
+        <item>Ethiopia</item>
+        <item>Faeroe Islands</item>
+        <item>Falkland Islands</item>
+        <item>Federated States of Micronesia</item>
+        <item>Fiji</item>
+        <item>Finland</item>
+        <item>France</item>
+        <item>French Guiana</item>
+        <item>French Polynesia</item>
+        <item>Gabon</item>
+        <item>Gambia, The</item>
+        <item>Georgia</item>
+        <item>Germany</item>
+        <item>Ghana</item>
+        <item>Gibraltar</item>
+        <item>Greece</item>
+        <item>Greenland</item>
+        <item>Grenada</item>
+        <item>Guadeloupe</item>
+        <item>Guam</item>
+        <item>Guatemala</item>
+        <item>Guinea</item>
+        <item>Guinea-Bissau</item>
+        <item>Guyana</item>
+        <item>Haiti</item>
+        <item>Holy See (Vatican City State)</item>
+        <item>Honduras</item>
+        <item>Hungary</item>
+        <item>Iceland</item>
+        <item>India</item>
+        <item>Indonesia</item>
+        <item>Iran</item>
+        <item>Iraq</item>
+        <item>Ireland</item>
+        <item>Israel</item>
+        <item>Italy</item>
+        <item>Jamaica</item>
+        <item>Japan</item>
+        <item>Jordan</item>
+        <item>Kazakhstan</item>
+        <item>Kenya</item>
+        <item>Kiribati</item>
+        <item>Korea, Democratic People’s Rep</item>
+        <item>Korea, Republic of</item>
+        <item>Kosovo</item>
+        <item>Kuwait	Kyrgyzstan</item>
+        <item>Laos</item>
+        <item>Latvia</item>
+        <item>Lebanon</item>
+        <item>Lesotho</item>
+        <item>Liberia</item>
+        <item>Libya</item>
+        <item>Liechtenstein</item>
+        <item>Lithuania</item>
+        <item>Luxembourg</item>
+        <item>Macedonia</item>
+        <item>Madagascar</item>
+        <item>Malawi</item>
+        <item>Malaysia</item>
+        <item>Maldives</item>
+        <item>Mali</item>
+        <item>Malta</item>
+        <item>Martinique</item>
+        <item>Mauritania</item>
+        <item>Mauritius</item>
+        <item>Mayotte</item>
+        <item>Mexico</item>
+        <item>Moldova</item>
+        <item>Monaco</item>
+        <item>Mongolia</item>
+        <item>Montenegro</item>
+        <item>Montserrat</item>
+        <item>Morocco Mozambiqu</item>e
+        <item>Myanmar</item>
+        <item>Namibia</item>
+        <item>Nauru</item>
+        <item>Nepal</item>
+        <item>Netherlands</item>
+        <item>Netherlands Antilles</item>
+        <item>New Caledonia</item>
+        <item>New Zealand</item>
+        <item>Nicaragua</item>
+        <item>Niger</item>
+        <item>Nigeria</item>
+        <item>Norway</item>
+        <item>Oman</item>
+        <item>Pakistan</item>
+        <item>Palestine</item>
+        <item>Panama</item>
+        <item>Papua New Guinea</item>
+        <item>Paraguay</item>
+        <item>Peru</item>
+        <item>Philippines</item>
+        <item>Poland</item>
+        <item>Portugal</item>
+        <item>Puerto Rico</item>
+        <item>Qatar</item>
+        <item>Réunion</item>
+        <item>Romania</item>
+        <item>Russia</item>
+        <item>Rwanda Saint Barthelemy</item>
+        <item>Saint Helena</item>
+        <item>Saint Kitts &amp; Nevis</item>
+        <item>Saint Lucia</item>
+        <item>Saint Martin</item>
+        <item>Saint Pierre &amp; Miquelon</item>
+        <item>Saint Vincent</item>
+        <item>Samoa</item>
+        <item>San Marino</item>
+        <item>Sao Tomé &amp; Principe</item>
+        <item>Saudi Arabia</item>
+        <item>Senegal</item>
+        <item>Serbia</item>
+        <item>Seychelles</item>
+        <item>Sierra Leone</item>
+        <item>Singapore</item>
+        <item>Slovakia</item>
+        <item>Slovenia</item>
+        <item>Solomon Islands</item>
+        <item>Somalia</item>
+        <item>South Africa</item>
+        <item>Spain</item>
+        <item>Sri Lanka</item>
+        <item>Sudan</item>
+        <item>Suriname</item>
+        <item>Swaziland</item>
+        <item>Sweden</item>
+        <item>Switzerland</item>
+        <item>Syria</item>
+        <item>Tajikistan</item>
+        <item>Tanzania</item>
+        <item>Thailand</item>
+        <item>Timor Leste</item>
+        <item>Togo</item>
+        <item>Tokelau Islands</item>
+        <item>Tonga</item>
+        <item>Trinidad &amp; Tobago</item>
+        <item>Tunisia</item>
+        <item>Turkey</item>
+        <item>Turkmenistan</item>
+        <item>Turks &amp; Caicos Islands</item>
+        <item>Tuvalu</item>
+        <item>Uganda</item>
+        <item>Ukraine</item>
+        <item>United Arab Emirates</item>
+        <item>United Kingdom</item>
+        <item>United States</item>
+        <item>Uruguay</item>
+        <item>US Virgin Islands</item>
+        <item>Uzbekistan</item>
+        <item>Vanuatu</item>
+        <item>Venezuela</item>
+        <item>Vietnam</item>
+        <item>Wallis &amp; Futuna Islands</item>
+        <item>Yemen</item>
+        <item>Zambia</item>
+        <item>Zimbabwe</item>
+    </string-array>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="SelectedWhite">#ffffff</color>
+    <color name="White">#ffffff</color>
+    <color name="HintWhite">#BFffffff</color>
+    <color name="FlatLightBlue">#00bbff</color>
+    <color name="FlatLightBluePressed">#54d1fe</color>
+    <color name="WetAsphalt">#34495e</color>
+    <color name="HintGrey">#808080</color>
+    <color name="LightHintGrey">#d9d8d8</color>
+    <color name="Translucent">#00ffffff</color>
+    <color name="OverlayTranslucentBlack">#BF0c0c0c</color>
+    <color name="OverlayMoreTranslucentBlack">#730c0c0c</color>
+    <color name="Orange">#f39c12</color>
+    <color name="Blue">#3498db</color>
+    <color name="BluePressed">#4fa2da</color>
+    <color name="Red">#fe4542</color>
+    <color name="RedPressed">#fc5c5d</color>
+    <color name="StandardHoloDark">#222222</color>
+    <color name="SeaGreen">#16a085</color>
+    <color name="Jade">#00C169</color>
+    <color name="CircleProgLoadingColor">#3e3e3e</color>
+
+</resources>

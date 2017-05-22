@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:background="@drawable/bg_group_row">
+
+    <View
+        android:id="@+id/vStatus"
+        android:layout_width="4dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginLeft="10dp"
+        android:background="@color/Blue"/>
+
+    <TextView
+        android:id="@+id/txtvListItemGroupName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/vStatus"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:textAppearance="?android:textAppearanceLarge"
+        android:text="Private Group"
+        android:textColor="@color/White"/>
+
+    <TextView
+        android:id="@+id/txtvListItemCountry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtvListItemGroupName"
+        android:layout_toRightOf="@id/vStatus"
+        android:layout_marginLeft="15dp"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="South Africa"/>
+
+    <TextView
+        android:id="@+id/txtvNoOfUsersValue"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:layout_marginRight="20dp"
+        android:textColor="@color/White"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="19"/>
+
+</RelativeLayout>

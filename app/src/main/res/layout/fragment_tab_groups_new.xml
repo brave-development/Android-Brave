@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="16dp">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srLayGroupsNew"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></View>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <LinearLayout
+        android:id="@+id/linLayNewGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+            <Switch
+                android:id="@+id/sDiscoverableGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOff="Public"
+                android:textOn="Private"
+                android:thumb="@drawable/apptheme_switch_inner_holo_light"
+                android:track="@drawable/apptheme_switch_track_holo_light"
+                />
+
+            <ImageButton
+                android:id="@+id/ibtnHelpDiscoverableGroup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:src="@drawable/btn_info_active"
+                android:background="@null"/>
+
+        </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtvDiscoverableStateDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/White"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:gravity="left"
+        android:visibility="invisible"
+        android:background="@color/OverlayMoreTranslucentBlack"
+        android:text="Setting the group to private will hide it from public searches and require you to enter the name into the 'Private' tab to join."/>
+
+
+    <ImageButton
+        android:id="@+id/ibtnCreateGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/selector_btn_create"
+        android:background="@null"/>
+
+</LinearLayout>

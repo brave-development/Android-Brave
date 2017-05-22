@@ -1,0 +1,301 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linLayRegisterRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="-2dp"
+    tools:context="za.co.oneohtwofour.brave.RegisterActivity"
+    android:background="@drawable/main_bg2"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <ScrollView
+        android:id="@+id/scrvRegisterDetails"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2.2"
+        android:layout_marginTop="30dp">
+
+        <RelativeLayout
+            android:id="@+id/relLayRegisterScrollDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/txtvRegisterHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/registerHeading"
+                android:textSize="40sp"
+                android:textColor="@color/White"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"/>
+
+            <FrameLayout
+                android:id="@+id/fLayRegisterNameAndSurname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/txtvRegisterHeading"
+                android:background="@color/OverlayMoreTranslucentBlack">
+
+                <EditText
+                    android:id="@+id/etxtRegisterNameAndSurname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:textSize="18sp"
+                    android:textColor="@color/White"
+                    android:textColorHint="@color/HintWhite"
+                    android:hint="@string/etxtRegisterNameAndSurnameHint"
+                    android:gravity="center"
+                    android:inputType="textPersonName"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fLayRegisterUsername"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/fLayRegisterNameAndSurname"
+                android:background="@color/OverlayMoreTranslucentBlack">
+
+                <EditText
+                    android:id="@+id/etxtRegisterUsername"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:singleLine="true"
+                    android:maxLines="1"
+                    android:textSize="18sp"
+                    android:textColor="@color/White"
+                    android:textColorHint="@color/HintWhite"
+                    android:hint="@string/etxtRegisterUsernameHint"
+                    android:gravity="center"
+                    android:inputType="text"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fLayRegisterCellNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/fLayRegisterUsername"
+                android:background="@color/OverlayMoreTranslucentBlack">
+
+                <EditText
+                    android:id="@+id/etxtRegisterCellNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:lines="1"
+                    android:textSize="18sp"
+                    android:textColor="@color/White"
+                    android:textColorHint="@color/HintWhite"
+                    android:hint="@string/etxtRegisterCellNumberHint"
+                    android:gravity="center"
+                    android:inputType="number"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fLayRegisterEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/fLayRegisterCellNumber"
+                android:background="@color/OverlayMoreTranslucentBlack">
+
+                <EditText
+                    android:id="@+id/etxtRegisterEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:lines="1"
+                    android:textSize="18sp"
+                    android:textColor="@color/White"
+                    android:textColorHint="@color/HintWhite"
+                    android:hint="@string/etxtRegisterEmailHint"
+                    android:gravity="center"
+                    android:layout_centerHorizontal="true"
+                    android:inputType="textEmailAddress"
+                    android:layout_below="@id/fLayRegisterCellNumber"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fLayChooseCountry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/fLayRegisterEmail"
+                android:background="@color/OverlayMoreTranslucentBlack">
+
+                <Button
+                    android:id="@+id/btnChooseCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btnRegisterChooseCountry"
+                    android:textColor="@color/HintWhite"
+                    android:background="@drawable/abc_edit_text_material"
+                    android:onClick="onClickChooseCountry"/>
+
+                <Spinner
+                    android:id="@+id/spnrRegisterCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:gravity="center"
+                    android:entries="@array/arrayCountries"
+                    android:spinnerMode="dialog"
+                    android:prompt="@string/btnRegisterChooseCountry"
+                    android:visibility="visible"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fLayRegisterPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/fLayChooseCountry"
+                android:background="@color/OverlayMoreTranslucentBlack">
+
+                <EditText
+                    android:id="@+id/etxtRegisterPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:lines="1"
+                    android:textSize="18sp"
+                    android:textColor="@color/White"
+                    android:textColorHint="@color/HintWhite"
+                    android:hint="@string/etxtRegisterPasswordHint"
+                    android:gravity="center"
+                    android:inputType="textPassword"/>
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fLayRegisterRetypePassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/fLayRegisterPassword"
+                android:background="@color/OverlayMoreTranslucentBlack">
+
+                <EditText
+                    android:id="@+id/etxtRegisterRetypePassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="15dp"
+                    android:lines="1"
+                    android:textSize="18sp"
+                    android:textColor="@color/White"
+                    android:textColorHint="@color/HintWhite"
+                    android:hint="@string/etxtRegisterRetypePasswordHint"
+                    android:gravity="center"
+                    android:inputType="textPassword"/>
+
+            </FrameLayout>
+
+            <View
+                android:id="@+id/vTermsAnchor"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/fLayRegisterRetypePassword"/>
+
+            <CheckBox
+                android:id="@+id/cbTermsAndConditions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fLayRegisterRetypePassword"
+                android:layout_toLeftOf="@id/vTermsAnchor"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="23.3dp"
+                android:textColor="@color/White"
+                android:text="I agree to "
+                android:background="@color/OverlayMoreTranslucentBlack"/>
+
+            <TextView
+                android:id="@+id/txtvTermsAndConditionsLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="6dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="-23.5dp"
+                android:layout_below="@id/fLayRegisterRetypePassword"
+                android:layout_toRightOf="@id/vTermsAnchor"
+                android:background="@color/OverlayMoreTranslucentBlack"
+                android:textColor="@color/Blue"
+                android:text="@string/txtvTermsAndConditionsLink"
+                android:clickable="true"
+                android:onClick="onClickTermsAndConditionsLink"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.6"
+        android:gravity="center_horizontal"
+        android:background="@drawable/bottom_gradual_fade"
+        android:orientation="vertical">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/srLayRegister"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></View>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/btnRegisterSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/btnRegisterSubmit"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/White"
+            android:clickable="true"
+            android:onClick="onClickSubmit" />
+
+    </LinearLayout>
+
+</LinearLayout>

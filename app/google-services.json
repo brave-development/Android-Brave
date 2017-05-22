@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "589454325712",
+    "firebase_url": "https://brave-9176f.firebaseio.com",
+    "project_id": "brave-9176f",
+    "storage_bucket": "brave-9176f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589454325712:android:105977f77c8d1052",
+        "android_client_info": {
+          "package_name": "za.co.oneohtwofour.brave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589454325712-v6kgkl727lhj37lqb6cbakp8j276565q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "za.co.oneohtwofour.brave",
+            "certificate_hash": "a2e0345defe38fa94230df14bd858e17c971a474"
+          }
+        },
+        {
+          "client_id": "589454325712-99k6u6a0snq6o433b1kuq822fvu7nbg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDobKjxUZM7i5FS8zlZQpz3uCJ6Wjnxaq4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589454325712-99k6u6a0snq6o433b1kuq822fvu7nbg6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

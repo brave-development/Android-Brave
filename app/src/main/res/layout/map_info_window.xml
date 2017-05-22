@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content">
+
+    <!--<LinearLayout
+        android:id="@+id/linLayMapInfoWindowBtnRespond"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerVertical="true">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="9dp"
+            android:id="@+id/ivMapInfoWindowBtnRespond"
+            android:src="@drawable/ic_respond2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="Respond"
+            android:id="@+id/txtvMapInfoWindowRespondDesc"/>
+
+    </LinearLayout>-->
+
+    <!--<View
+        android:id="@+id/vMapInfoWindowDivider"
+        android:layout_width="0.5dp"
+        android:layout_height="70dp"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/linLayMapInfoWindowBtnRespond"
+        android:background="@color/HintGrey"/>-->
+    <!--android:layout_toRightOf="@id/vMapInfoWindowDivider"-->
+    <LinearLayout
+        android:id="@+id/linLayMapInfoWindowSnippet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Weylin Renison"
+            android:id="@+id/txtvMapInfoWindowName"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:maxWidth="150dp"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="5dp"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="0810213160"
+            android:id="@+id/txtvMapInfoWindowCellNumber"
+            android:visibility="gone"/>
+
+        <View
+            android:id="@+id/vMapInfoWindowDivider"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/HintGrey"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:paddingLeft="5dp"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:maxWidth="130dp"
+            android:text="No details provided"
+            android:id="@+id/txtvMapInfoWindowDesc"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text="Click to respond"
+            android:textColor="@color/Blue"
+            android:id="@+id/txtvClickToRespond"/>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/vMapInfoWindowDivider2"
+        android:layout_width="0.5dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@id/linLayMapInfoWindowSnippet"
+        android:background="@color/HintGrey"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/vMapInfoWindowDivider2"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_right_arrow"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="2dp"/>
+
+</RelativeLayout>

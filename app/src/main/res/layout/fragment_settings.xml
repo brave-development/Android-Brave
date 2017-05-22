@@ -1,0 +1,293 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_material_light"
+    tools:context="za.co.oneohtwofour.brave.FragmentSettings"
+    android:focusableInTouchMode="true">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:stretchColumns="2"
+                android:background="@color/White">
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/txtvSettingsNameDesc"
+                        android:gravity="left"
+                        android:padding="15dp"
+                        android:textColor="@color/abc_primary_text_disable_only_material_light"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Name"/>
+
+                    <EditText
+                        android:id="@+id/etxtSettingsName"
+                        android:layout_column="2"
+                        android:gravity="right"
+                        android:padding="15dp"
+                        android:background="@null"
+                        android:textColor="@color/HintGrey"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:inputType="textPersonName"
+                        android:imeOptions="actionDone"/>
+
+                </TableRow>
+
+                <View
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@android:drawable/divider_horizontal_textfield"/>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/txtvSettingsCellNumberDesc"
+                        android:gravity="left"
+                        android:padding="15dp"
+                        android:textColor="@color/abc_primary_text_disable_only_material_light"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Cell Number"/>
+
+                    <EditText
+                        android:id="@+id/etxtSettingsCellNumber"
+                        android:layout_column="2"
+                        android:gravity="right"
+                        android:padding="15dp"
+                        android:background="@null"
+                        android:textColor="@color/HintGrey"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:inputType="number"
+                        android:imeOptions="actionDone"/>
+
+                </TableRow>
+
+                <View
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@android:drawable/divider_horizontal_textfield"/>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/txtvSettingsEmailDesc"
+                        android:gravity="left"
+                        android:padding="15dp"
+                        android:textColor="@color/abc_primary_text_disable_only_material_light"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Email"/>
+
+                    <EditText
+                        android:id="@+id/etxtSettingsEmail"
+                        android:layout_column="2"
+                        android:gravity="right"
+                        android:padding="15dp"
+                        android:background="@null"
+                        android:textColor="@color/HintGrey"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:inputType="textEmailAddress"
+                        android:imeOptions="actionDone"/>
+
+                </TableRow>
+
+                <View
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@android:drawable/divider_horizontal_textfield"/>
+
+                <TableRow>
+
+                    <TextView
+                        android:id="@+id/txtvSettingsCountryDesc"
+                        android:gravity="left"
+                        android:padding="15dp"
+                        android:textColor="@color/abc_primary_text_disable_only_material_light"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Country"/>
+
+                    <TextView
+                        android:id="@+id/txtvSettingsChooseCountry"
+                        android:layout_column="2"
+                        android:padding="15dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Choose Country"
+                        android:textColor="@color/FlatLightBlue"
+                        android:gravity="right"/>
+                </TableRow>
+
+            </TableLayout>
+
+            <LinearLayout
+                android:id="@+id/linLaySettingsOptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/linLaySettingsPanicConfirmation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:orientation="horizontal"
+                    android:background="@color/White">
+
+                    <TextView
+                        android:id="@+id/txtvSettingsOanicConfimationHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="15dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/abc_primary_text_disable_only_material_light"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Panic Confirmation"/>
+
+                    <ImageButton
+                        android:id="@+id/ibtnSettingsHelpPanicConfirmation"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.3"
+                        android:paddingLeft="20dp"
+                        android:paddingRight="20dp"
+                        android:src="@drawable/btn_info_active"
+                        android:background="@null"/>
+
+                    <Switch
+                        android:id="@+id/sSettingsPanicConfirmation"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:textOff="Off"
+                        android:textOn="On"
+                        android:thumb="@drawable/apptheme_switch_inner_holo_light"
+                        android:track="@drawable/apptheme_switch_track_holo_light"
+                        />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TableLayout
+                android:id="@+id/tLaySettingsActions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@color/White"
+                android:stretchColumns="*">
+
+                <View
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@android:drawable/divider_horizontal_textfield"/>
+
+                <TableRow
+                    android:id="@+id/trSettingsTutorial"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/txtvSettingsTutorial"
+                        android:padding="15dp"
+                        android:gravity="center"
+                        android:textColor="@color/FlatLightBlue"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Tutorial"/>
+
+                </TableRow>
+
+                <View
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@android:drawable/divider_horizontal_textfield"/>
+
+                <TableRow
+                    android:id="@+id/trSettingsReportBug"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/txtvSettingsReportBug"
+                        android:padding="15dp"
+                        android:gravity="center"
+                        android:textColor="@color/FlatLightBlue"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Report a bug"/>
+
+                </TableRow>
+
+                <View
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@android:drawable/divider_horizontal_textfield"/>
+
+                <TableRow
+                    android:id="@+id/trSettingsReportUser"
+                    android:clickable="true">
+
+                    <TextView
+                        android:id="@+id/txtvSettingsReportUser"
+                        android:padding="15dp"
+                        android:gravity="center"
+                        android:textColor="@color/FlatLightBlue"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Report a user"/>
+
+                </TableRow>
+
+            </TableLayout>
+
+            <Button
+                android:id="@+id/btnSettingsLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:background="@color/Blue"
+                android:textColor="@color/White"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Logout"/>
+
+            <TextView
+                android:id="@+id/txtvSettingsCautionDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Caution"/>
+
+            <Button
+                android:id="@+id/btnSettingsDeleteAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/Red"
+                android:textColor="@color/White"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Delete Account"/>
+
+            <Spinner
+                android:id="@+id/spnrSettingsCountry"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog"
+                android:prompt="@string/btnRegisterChooseCountry"
+                android:entries="@array/arrayCountries"
+                android:visibility="invisible"/>
+
+        </LinearLayout>
+
+
+
+    </ScrollView>
+
+</RelativeLayout>

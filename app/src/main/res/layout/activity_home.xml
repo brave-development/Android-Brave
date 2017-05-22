@@ -1,0 +1,118 @@
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawLayNav"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/main_bg2">
+
+        <LinearLayout
+            android:id="@+id/HomeContentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fragmentBottomActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom">
+
+        </FrameLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="@color/OverlayTranslucentBlack">
+
+        <TextView
+            android:id="@+id/txtvProfileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:text="Byron Coetsee"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="@color/White"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/imgvProfilePic"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="70dp"
+            android:src="@drawable/panic_profile_pic"
+            app:border_color="@color/White"
+            app:border_width="0dp"/>
+        />
+
+        <ListView
+            android:id="@+id/lstvNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/imgvProfilePic"
+            android:layout_marginTop="40dp"
+            android:divider="@null">
+        </ListView>
+
+        <ImageView
+            android:id="@+id/imgvNavDrwawerActionBarDivider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/linLayNavDrawerActionBar"
+            android:src="@drawable/divider"
+            android:visibility="gone"/>
+
+        <LinearLayout
+            android:id="@+id/linLayNavDrawerActionBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/imgvPublicHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/Translucent"
+                android:onClick="onClickPublicHistory"
+                android:src="@drawable/public_history"/>
+
+            <ImageButton
+                android:id="@+id/imgvTelephone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/Translucent"
+                android:onClick="onClickTelephone"
+                android:src="@drawable/telephone"
+                android:visibility="gone"/>
+
+            <ImageButton
+                android:id="@+id/imgvLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/Translucent"
+                android:onClick="onClickLogout"
+                android:src="@drawable/logout"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</android.support.v4.widget.DrawerLayout>
