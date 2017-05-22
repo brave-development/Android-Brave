@@ -38,6 +38,7 @@ dependencies {
     compile 'com.parse:parse-android:1.15.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
+    compile 'com.yalantis:contextmenu:1.0.7'
     compile 'de.hdodenhof:circleimageview:1.2.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.yayandroid:ParallaxRecyclerView:1.1'

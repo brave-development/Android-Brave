@@ -19,6 +19,9 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ProgressCallback;
 import com.squareup.picasso.Picasso;
+import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
+import com.yalantis.contextmenu.lib.MenuObject;
+import com.yalantis.contextmenu.lib.MenuParams;
 import com.yayandroid.parallaxrecyclerview.ParallaxViewHolder;
 
 import java.io.File;
@@ -49,12 +52,36 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
     };
 
     private List<ParseObject> lstGroups = new ArrayList<ParseObject>();
+    private List<MenuObject> lstMenuObjs = new ArrayList<MenuObject>();
 
     public AdapterGroups(Context context, List<ParseObject> lstGroups)
     {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.lstGroups = lstGroups;
+
+        //Create context menu objects ect here not in view holder for performance
+        MenuObject mnuoClose = new MenuObject();
+        mnuoClose.setResource(R.drawable.ic_close);
+
+        MenuObject mnuoReport = new MenuObject();
+        mnuoReport.setResource(R.drawable.ic_close);
+        mnuoReport.setTitle("Report"); //TODO: use string resource
+
+        MenuObject mnuoLeave = new MenuObject();
+        mnuoLeave.setResource(R.drawable.ic_close);
+        mnuoLeave.setTitle("Leave"); //TODO: use string resource
+
+        lstMenuObjs.add(mnuoClose);
+        lstMenuObjs.add(mnuoReport);
+        lstMenuObjs.add(mnuoLeave);
+
+        MenuParams menuParams = new MenuParams();
+        menuParams.setMenuObjects(lstMenuObjs);
+        menuParams.setClosableOutside(true);
+        // set other settings to meet your needs
+        ContextMenuDialogFragment mMenuDialogFragment = ContextMenuDialogFragment.newInstance(menuParams);
+
     }
 
     @Override
@@ -93,7 +120,10 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
 
 
         Picasso.with(context).load(currGroup.getParseFile("imageFile").getUrl()).resize(600, 800).onlyScaleDown().centerCrop().into(viewHolder.getBackgroundImage());
-        viewHolder.getTextView().setText(currGroup.getString("name"));
+        viewHolder.setGroupName(currGroup.getString("name"));
+        viewHolder.setGroupRegion(currGroup.getString("country"));
+        viewHolder.setGroupSize(currGroup.getInt("subscribers"));
+
 
         // # CAUTION:
         // Important to call this method
@@ -113,13 +143,15 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
     public static class ViewHolder extends ParallaxViewHolder
     {
 
-        private final TextView textView;
+        private final TextView txtvGroupName, txtvGroupRegion, txtvGroupSize;
 
-        public ViewHolder(View v)
+        public ViewHolder(View holderView)
         {
-            super(v);
+            super(holderView);
 
-            textView = (TextView) v.findViewById(R.id.label);
+            txtvGroupName = (TextView) holderView.findViewById(R.id.txtvGroupName);
+            txtvGroupRegion = (TextView) holderView.findViewById(R.id.txtvGroupRegion);
+            txtvGroupSize = (TextView) holderView.findViewById(R.id.txtvGroupSize);
         }
 
         @Override
@@ -128,9 +160,19 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
             return R.id.backgroundImage;
         }
 
-        public TextView getTextView()
+        public void setGroupName(String groupName)
         {
-            return textView;
+            txtvGroupName.setText(groupName);
+        }
+
+        public void setGroupRegion(String groupRegion)
+        {
+            txtvGroupRegion.setText(groupRegion);
+        }
+
+        public void setGroupSize(int groupSize)
+        {
+            txtvGroupSize.setText(groupSize + " Members"); //TODO: use string resource
         }
     }
 
