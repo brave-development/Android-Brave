@@ -4,15 +4,20 @@ package za.co.oneohtwofour.brave;
  * Created by wprenison on 2017/05/17.
  */
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.parse.GetDataCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
@@ -22,6 +27,7 @@ import com.squareup.picasso.Picasso;
 import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
 import com.yalantis.contextmenu.lib.MenuObject;
 import com.yalantis.contextmenu.lib.MenuParams;
+import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import com.yayandroid.parallaxrecyclerview.ParallaxViewHolder;
 
 import java.io.File;
@@ -36,6 +42,8 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
 
     private Context context;
     private LayoutInflater inflater;
+    private ContextMenuDialogFragment fragContextMnu;
+    private View.OnClickListener ctxMnuClickListener;
 
     /*
     private int[] imageIds = new int[]{R.mipmap.test_image_1,
@@ -54,7 +62,7 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
     private List<ParseObject> lstGroups = new ArrayList<ParseObject>();
     private List<MenuObject> lstMenuObjs = new ArrayList<MenuObject>();
 
-    public AdapterGroups(Context context, List<ParseObject> lstGroups)
+    public AdapterGroups(Context context, List<ParseObject> lstGroups, final android.support.v4.app.FragmentManager fragMang)
     {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
@@ -63,24 +71,54 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
         //Create context menu objects ect here not in view holder for performance
         MenuObject mnuoClose = new MenuObject();
         mnuoClose.setResource(R.drawable.ic_close);
+        mnuoClose.setBgColor(R.color.SeaGreen);
+        mnuoClose.setScaleType(ImageView.ScaleType.CENTER);
 
         MenuObject mnuoReport = new MenuObject();
         mnuoReport.setResource(R.drawable.ic_close);
         mnuoReport.setTitle("Report"); //TODO: use string resource
+        mnuoReport.setBgColor(R.color.SeaGreen);
+        mnuoReport.setScaleType(ImageView.ScaleType.CENTER);
 
         MenuObject mnuoLeave = new MenuObject();
         mnuoLeave.setResource(R.drawable.ic_close);
         mnuoLeave.setTitle("Leave"); //TODO: use string resource
+        mnuoLeave.setBgColor(R.color.SeaGreen);
+        mnuoLeave.setScaleType(ImageView.ScaleType.CENTER);
 
         lstMenuObjs.add(mnuoClose);
         lstMenuObjs.add(mnuoReport);
         lstMenuObjs.add(mnuoLeave);
 
-        MenuParams menuParams = new MenuParams();
+        final MenuParams menuParams = new MenuParams();
         menuParams.setMenuObjects(lstMenuObjs);
         menuParams.setClosableOutside(true);
-        // set other settings to meet your needs
-        ContextMenuDialogFragment mMenuDialogFragment = ContextMenuDialogFragment.newInstance(menuParams);
+
+        final OnMenuItemClickListener mnuItemClickListener = new OnMenuItemClickListener()
+        {
+            @Override
+            public void onMenuItemClick(View clickedView, int position)
+            {
+                Snackbar.make(clickedView, "Eh an item was clicked on the ctx menu yay!", BaseTransientBottomBar.LENGTH_LONG).show();
+            }
+        };
+
+        ctxMnuClickListener = new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                //Calculate where to locate menu from top
+                int [] locInWindow = new int[2];
+                view.getLocationInWindow(locInWindow);
+                menuParams.setActionBarSize(locInWindow[1]);
+
+                // set other settings to meet your needs
+                fragContextMnu = ContextMenuDialogFragment.newInstance(menuParams);
+                fragContextMnu.setItemClickListener(mnuItemClickListener);
+                fragContextMnu.show(fragMang, "ctxMnuGroup");
+            }
+        };
 
     }
 
@@ -123,7 +161,8 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
         viewHolder.setGroupName(currGroup.getString("name"));
         viewHolder.setGroupRegion(currGroup.getString("country"));
         viewHolder.setGroupSize(currGroup.getInt("subscribers"));
-
+        viewHolder.setGroupObjectId(currGroup.getObjectId());
+        viewHolder.initOptions(ctxMnuClickListener);
 
         // # CAUTION:
         // Important to call this method
@@ -142,13 +181,15 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
      */
     public static class ViewHolder extends ParallaxViewHolder
     {
-
+        private String groupDbId;
         private final TextView txtvGroupName, txtvGroupRegion, txtvGroupSize;
+        private final FloatingActionButton fabOptions;
 
         public ViewHolder(View holderView)
         {
             super(holderView);
 
+            fabOptions = (FloatingActionButton) holderView.findViewById(R.id.fabGroupOptions);
             txtvGroupName = (TextView) holderView.findViewById(R.id.txtvGroupName);
             txtvGroupRegion = (TextView) holderView.findViewById(R.id.txtvGroupRegion);
             txtvGroupSize = (TextView) holderView.findViewById(R.id.txtvGroupSize);
@@ -174,6 +215,17 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
         {
             txtvGroupSize.setText(groupSize + " Members"); //TODO: use string resource
         }
+
+        public void setGroupObjectId(String objectId) //DB object id
+        {
+            groupDbId = objectId;
+        }
+
+        private void initOptions(View.OnClickListener clickListener)
+        {
+            fabOptions.setOnClickListener(clickListener);
+        }
+
     }
 
 

@@ -1,9 +1,9 @@
 package za.co.oneohtwofour.brave;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +15,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,7 +60,7 @@ public class FragmentGroups extends Fragment
             {
                 if(e == null)
                 {
-                    pararvGroups.setAdapter(new AdapterGroups(context, objects));
+                    pararvGroups.setAdapter(new AdapterGroups(context, objects, getFragmentManager()));
                 }
                 else
                 {

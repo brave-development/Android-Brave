@@ -1,8 +1,6 @@
 package za.co.oneohtwofour.brave;
 
 import android.app.AlertDialog;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,16 +9,15 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
-import android.location.Location;
 import android.net.Uri;
 import android.os.SystemClock;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,16 +36,14 @@ import android.widget.Toast;
 import com.github.clans.fab.FloatingActionButton;
 import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
 import java.util.List;
 
 
-public class HomeActivity extends ActionBarActivity implements AdapterView.OnItemClickListener
+public class HomeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener
 {
     private final String LOG_TAG = "HomeActivity";
     private DrawerLayout drawLayNav;
@@ -65,7 +60,7 @@ public class HomeActivity extends ActionBarActivity implements AdapterView.OnIte
     public  FragmentHistory fragHistory = null;
     public  FragmentBottomActionBar fragBottomActionBar = null;
     public  static FragmentManager fragManager;
-    public  FragmentTransaction fragTransaction;
+    public FragmentTransaction fragTransaction;
     public  FragmentManageGroups fragMangGroups;
 
     //Fragment tags
@@ -180,7 +175,7 @@ public class HomeActivity extends ActionBarActivity implements AdapterView.OnIte
 
         //Add fragPanic and all other frags on start up
 
-        fragManager = getFragmentManager();
+        fragManager = getSupportFragmentManager();
         fragTransaction = fragManager.beginTransaction();
         fragTransaction.add(R.id.fragmentBottomActionBar, fragBottomActionBar, TAG_FRAG_BOTTOM_ACTION_BAR);
         fragTransaction.add(R.id.HomeContentLayout, fragPanic, TAG_FRAG_PANIC);

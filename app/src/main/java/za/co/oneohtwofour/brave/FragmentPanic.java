@@ -1,7 +1,6 @@
 package za.co.oneohtwofour.brave;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,6 +15,7 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -205,10 +205,8 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
                     //animate exit here
                     final Animation slideDown = (Animation) AnimationUtils.loadAnimation(context, R.anim.abc_slide_out_bottom);
                     activity.fLayBottomActionBar.startAnimation(slideDown);
-                    activity.fabNeedleDrop.startAnimation(slideDown);
 
                     activity.fLayBottomActionBar.setVisibility(View.GONE);
-                    activity.fabNeedleDrop.setVisibility(View.GONE);
 
                            /* HomeActivity.fragManager.beginTransaction()
                     .setCustomAnimations(R.animator.animator_slide_down, 0, R.animator.animator_slide_up, 0)
@@ -281,9 +279,7 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
                 //Show bottom action bar
                 final Animation slideUp = (Animation) AnimationUtils.loadAnimation(context, R.anim.abc_slide_in_bottom);
                 activity.fLayBottomActionBar.startAnimation(slideUp);
-                activity.fabNeedleDrop.startAnimation(slideUp);
 
-                activity.fabNeedleDrop.setVisibility(View.VISIBLE);
                 activity.fLayBottomActionBar.setVisibility(View.VISIBLE);
 
                 //Animate and change image btn

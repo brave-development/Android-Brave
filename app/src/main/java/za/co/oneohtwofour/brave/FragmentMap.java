@@ -1,6 +1,5 @@
 package za.co.oneohtwofour.brave;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Point;
 import android.location.Address;
@@ -11,6 +10,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Display;
