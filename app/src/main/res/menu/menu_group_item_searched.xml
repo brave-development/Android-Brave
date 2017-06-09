@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mnuiJoin"
+        android:icon="@drawable/ic_enter"
+        android:title="@string/groupJoin" />
+
+    <item
+        android:id="@+id/mnuiViewLocation"
+        android:icon="@drawable/ic_loc_pin"
+        android:title="@string/groupViewLocation" />
+
+    <item
+        android:id="@+id/mnuiReport"
+        android:icon="@drawable/ic_megaphone"
+        android:title="@string/groupReport" />
+
+</menu>

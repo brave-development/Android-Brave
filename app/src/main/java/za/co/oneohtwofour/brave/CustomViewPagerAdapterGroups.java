@@ -28,7 +28,7 @@ public class CustomViewPagerAdapterGroups extends FragmentStatePagerAdapter
         switch (position)
         {
             case 0:
-                FragmentGroupsPublic fragGroupPublic = new FragmentGroupsPublic();
+                FragmentGroupsPublicOld fragGroupPublic = new FragmentGroupsPublicOld();
                 return fragGroupPublic;
 
             case 1:
@@ -36,11 +36,11 @@ public class CustomViewPagerAdapterGroups extends FragmentStatePagerAdapter
                 return fragGroupPrivate;
 
             case 2:
-                FragmentGroupsNew fragGroupNew = new FragmentGroupsNew();
+                FragmentGroupsNewOld fragGroupNew = new FragmentGroupsNewOld();
                 return fragGroupNew;
 
             default:
-                FragmentGroupsPublic fragGroupPublicDefault = new FragmentGroupsPublic();
+                FragmentGroupsPublicOld fragGroupPublicDefault = new FragmentGroupsPublicOld();
                 return fragGroupPublicDefault;
         }
     }

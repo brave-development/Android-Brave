@@ -4,57 +4,92 @@
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="230dp"
-    android:paddingBottom="5dp">
+    android:paddingBottom="5dp"
+    android:background="@color/androidGrey800">
+
+    <ImageView
+        android:id="@+id/imgvDownloadIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_download"/>
 
     <com.yayandroid.parallaxrecyclerview.ParallaxImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/bg_group_row"/>
+        android:layout_height="match_parent"/>
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabGroupsIsPrivate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_lock_closed"
+        fab:fab_colorNormal="@color/SeaGreen"
+        fab:fab_size="mini"/>
 
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/fabGroupOptions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_more"
-        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_menu"
         android:layout_margin="8dp"
-        fab:fab_colorNormal="@color/Jade"
-        fab:fab_colorPressed="@color/SeaGreen"
-        fab:fab_colorRipple="@color/SeaGreen"
+        fab:fab_colorNormal="@color/SeaGreen"
+        fab:fab_colorPressed="@color/Jade"
+        fab:fab_colorRipple="@color/Jade"
         fab:fab_size="mini"/>
 
-    <TextView
-        android:id="@+id/txtvGroupRegion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        android:text="South Africa"/>
+        android:background="@color/black_35">
 
-    <TextView
-        android:id="@+id/txtvGroupName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_above="@id/txtvGroupRegion"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:text="Hiking"/>
+        <TextView
+            android:id="@+id/txtvGroupRegion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:text="South Africa"/>
 
-    <TextView
-        android:id="@+id/txtvGroupSize"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/White"
-        android:textSize="14sp"
-        android:text="Members"/>
+        <TextView
+            android:id="@+id/txtvGroupName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_above="@id/txtvGroupRegion"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:text="Hiking"/>
+
+        <TextView
+            android:id="@+id/txtvGroupSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/White"
+            android:textSize="14sp"
+            android:text="Members"/>
+
+        <Button
+            android:id="@+id/btnGroupJoin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="10dp"
+            android:background="@null"
+            android:text="JOIN"
+            android:textColor="@color/White"
+            android:layout_alignParentRight="true"
+            android:visibility="invisible"/>
+    </RelativeLayout>
 
 </RelativeLayout>

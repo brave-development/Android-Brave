@@ -7,4 +7,20 @@
 
     <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
     </style>
-    </resources>
+
+    <style name="MyBottomSheetStyle" parent="@style/BottomSheet">
+        <item name="bottom_sheet_bg_color">@color/androidGrey800</item>
+        <item name="bottom_sheet_title_text_appearance">@style/TitleAppearance</item>
+        <item name="bottom_sheet_list_text_appearance">@style/ListAppearance</item>
+    </style>
+
+    <style name="TitleAppearance" parent="BottomSheet.Title.TextAppearance">
+        <item name="android:textColor">@color/SeaGreen</item>
+    </style>
+
+    <style name="ListAppearance" parent="BottomSheet.ListItem.TextAppearance">
+        <item name="android:textColor">@color/White</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+</resources>

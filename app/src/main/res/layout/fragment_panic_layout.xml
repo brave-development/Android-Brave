@@ -44,6 +44,21 @@
         fab:fab_colorRipple="@color/SeaGreen"
         fab:fab_size="normal"/>
 
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabTestPush"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/ibtnPanic"
+        android:layout_toRightOf="@id/fabNeedleDrop"
+        android:src="@android:drawable/ic_menu_send"
+        fab:fab_colorNormal="@color/Jade"
+        fab:fab_colorPressed="@color/SeaGreen"
+        fab:fab_colorRipple="@color/SeaGreen"
+        fab:fab_size="normal"/>
+
     <LinearLayout
         android:id="@+id/linLayResponders"
         android:layout_width="match_parent"

@@ -1,161 +1,207 @@
 package za.co.oneohtwofour.brave;
 
 import android.content.Context;
-import android.graphics.Point;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.Display;
+import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
 
 import java.util.List;
 
 /**
- * Created by IC on 5/24/2015.
+ * Created by wprenison on 2017/06/02.
  */
-public class FragmentGroupsPublic extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener
+
+public class FragmentGroupsPublic extends Fragment
 {
-    private static ListView lstvSearchPublicGroupsResult;
-//    private static ProgressBar progbGroupsPublic;
-    private static TextView txtvSearchPublicDesc;
-    private static CustomListAdapterGroups lstAdapter;
-    public static SwipeRefreshLayout srLaySearchPublicGroups;
+
+    private SearchView svGroupsPublic;
+    private ParallaxRecyclerView paravGroupsPublic;
+    private SwipeRefreshLayout srLayGroupsPublic;
+    private TextView txtvSearchPublicDesc;
+
     private Context context;
+    private List<ParseObject> publicSearchResults;
+    private String cached3CharSearchString = null;
+    private AdapterGroups lstAdapter;
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_tab_groups_public, container, false);
+        View constructedView = inflater.inflate(R.layout.fragment_groups_public, container, false);
 
-//        progbGroupsPublic = (ProgressBar) view.findViewById(R.id.progbGroupsPublic);
-        srLaySearchPublicGroups = (SwipeRefreshLayout) view.findViewById(R.id.srLaySearchPublicGroups);
-        initSwipeRefresh();
-        txtvSearchPublicDesc  = (TextView) view.findViewById(R.id.txtvSearchPublicDesc);
-        lstvSearchPublicGroupsResult = (ListView) view.findViewById(R.id.lstvSearchPublicGroupsResults);
-        lstvSearchPublicGroupsResult.setOnItemClickListener(this);
+        //Get handle on views
+        svGroupsPublic = (SearchView) constructedView.findViewById(R.id.svGroupsPublic);
+        paravGroupsPublic = (ParallaxRecyclerView) constructedView.findViewById(R.id.recvGroupsPublic);
+        srLayGroupsPublic = (SwipeRefreshLayout) constructedView.findViewById(R.id.srLayGroupsPublic);
+        txtvSearchPublicDesc = (TextView) constructedView.findViewById(R.id.txtvSearchPublicDesc);
 
-        return view;
-    }
-
-    @Override
-    public void onRefresh()
-    {
-//        FragmentManageGroups.onRefresh();
-    }
-
-    private void initSwipeRefresh()
-    {
-        srLaySearchPublicGroups.setEnabled(false);
-        srLaySearchPublicGroups.setOnRefreshListener(this);
-        srLaySearchPublicGroups.setColorSchemeColors(getResources().getColor(R.color.FlatLightBlue), getResources().getColor(R.color.Red), getResources().getColor(R.color.SeaGreen));
-        srLaySearchPublicGroups.setProgressBackgroundColor(R.color.CircleProgLoadingColor);
-        setRefreshCircleYOffset();
-    }
-
-    private void setRefreshCircleYOffset()
-    {
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int height = size.y;
-        srLaySearchPublicGroups.setProgressViewOffset(true, 0, height / 30);
+        return constructedView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
+
         context = getActivity();
+
+        //init list
+        paravGroupsPublic.setLayoutManager(new LinearLayoutManager(getActivity()));
+        paravGroupsPublic.setHasFixedSize(true);
+
+        svGroupsPublic.setOnQueryTextListener(new SearchView.OnQueryTextListener()
+        {
+            @Override
+            public boolean onQueryTextSubmit(String query)
+            {
+                svGroupsPublic.clearFocus();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText)
+            {
+                //Check for searching
+                if (newText.length() == 3)
+                {
+                    searchPublicGroup(newText);
+                }
+                else if (newText.length() > 3)
+                {
+                    Log.i("Filtering groups", "filter word: %" + newText + "%");
+                    filterResultList(newText);
+                }
+                else
+                {
+                    //Reset filter
+                    filterResultList("");
+                    txtvSearchPublicDesc.setText("Type at least 3 \ncharacters to search");
+                }
+                return false;
+            }
+        });
+
+        initSwipeRefresh();
     }
 
-    public static void loadingAnimate()
+    private void initSwipeRefresh()
     {
-        txtvSearchPublicDesc.setVisibility(View.GONE);
-        lstvSearchPublicGroupsResult.setVisibility(View.GONE);
-//        progbGroupsPublic.setVisibility(View.VISIBLE);
+        srLayGroupsPublic.setEnabled(false);
+        srLayGroupsPublic.setColorSchemeColors(getResources().getColor(R.color.FlatLightBlue), getResources().getColor(R.color.Red), getResources().getColor(R.color.SeaGreen));
+        srLayGroupsPublic.setProgressBackgroundColor(R.color.CircleProgLoadingColor);
     }
 
-    public static void populateResultList(Context context, List<ParseObject> results)
+    public void searchPublicGroup(String searchString)
     {
-        lstAdapter = new CustomListAdapterGroups(context, R.layout.list_item_group_old, results);
-        lstvSearchPublicGroupsResult.setAdapter(lstAdapter);
-//        progbGroupsPublic.setVisibility(View.GONE);
-        lstvSearchPublicGroupsResult.setVisibility(View.VISIBLE);
+        //Clean up searchString
+        searchString = searchString.trim().replaceAll("\\s+", "").trim().toLowerCase().toString();
+
+        Log.i("Searching public group", "cached: %" + cached3CharSearchString + "% searchString: %" + searchString + "%");
+        if(cached3CharSearchString == null || !cached3CharSearchString.equalsIgnoreCase(searchString))  //only searches for new results set online when doesnt match previous search or is first search
+        {
+            srLayGroupsPublic.setRefreshing(true);
+            txtvSearchPublicDesc.setVisibility(View.INVISIBLE);
+            Log.i("Searching public group", "searching online db");
+            cached3CharSearchString = searchString; //set new cached search string
+            final Snackbar msg = Snackbar.make(paravGroupsPublic, "", Snackbar.LENGTH_LONG);
+
+            ParseQuery<ParseObject> querySearch = ParseQuery.getQuery("Groups");
+            querySearch.whereStartsWith("flatValue", searchString).addAscendingOrder("flatValue").whereEqualTo("public", true).whereNotEqualTo("subscriberObjects", HomeActivity.currentUser.getObjectId());
+
+            querySearch.findInBackground(new FindCallback<ParseObject>()
+            {
+                @Override
+                public void done(List<ParseObject> parseObjects, ParseException e)
+                {
+                    if (e == null)
+                    {
+                        publicSearchResults = parseObjects;
+
+                        Log.d("searchDebug", "No of items found: " + parseObjects.size());
+
+                        if(publicSearchResults != null && publicSearchResults.size() > 0)
+                        {
+                            populateResultList(context, publicSearchResults);
+                            txtvSearchPublicDesc.setText(publicSearchResults.size() + " Results Found");
+                        }
+                        else
+                            txtvSearchPublicDesc.setText("No Results");
+
+                        srLayGroupsPublic.setRefreshing(false);
+                        txtvSearchPublicDesc.setVisibility(View.VISIBLE);
+                    }
+                    else
+                    {
+                        srLayGroupsPublic.setRefreshing(false);
+                        txtvSearchPublicDesc.setVisibility(View.VISIBLE);
+                        if (e.getCode() == 100)
+                            msg.setText(R.string.error_100_no_internet);   //check internet conn
+                        else
+                            msg.setText("Unsuccessful while searching public groups: " + e.getMessage() + " code: " + e.getCode()); //display msg
+
+                        msg.show();
+                    }
+                }
+            });
+        }
+        else
+            filterResultList("");      //resets data to have no filter
     }
 
-    public static void filterResultList(CharSequence filterTerm)
+    public void populateResultList(Context context, List<ParseObject> results)
+    {
+        Log.d("searchDebug", "pupulating list with results");
+        lstAdapter = new AdapterGroups(context, null, this, results, getFragmentManager());
+        paravGroupsPublic.setAdapter(lstAdapter);
+    }
+
+    public void filterResultList(CharSequence filterTerm)
     {
         if(lstAdapter != null)
             lstAdapter.getFilter().filter(filterTerm);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+    public void subscribeUserToGroup(ParseObject group)
     {
-        //Get selected group
-        ParseObject selectedGroup = lstAdapter.items.get(position);
-
-        //Check if user is already subbed
-        boolean isSubscribed = false;
-
-        List<String> subbedGroups = HomeActivity.currentUser.getList("groups");
-
-        if(subbedGroups != null)
-        {
-            for (int i = 0; i < subbedGroups.size(); i++)
-                if (subbedGroups.get(i).equals(selectedGroup.getString("name")))
-                    isSubscribed = true;
-        }
-
-        if(!isSubscribed)
-        {
-            //Subscribe user to group
-            subscribeUserToGroup(selectedGroup);
-        }
-        else
-            Toast.makeText(context, "User already subscribed to this group", Toast.LENGTH_LONG).show();
-    }
-
-    private void subscribeUserToGroup(ParseObject group)
-    {
+        srLayGroupsPublic.setRefreshing(true);
         final String groupName = group.getString("name");
 
         //sub to group
         group.addUnique("subscriberObjects", HomeActivity.currentUser.getObjectId());
-        group.increment("subscribers");
-        final Toast msg = Toast.makeText(context, "", Toast.LENGTH_SHORT);
+        group.increment("subscribers", 1);
+        final Snackbar msg = Snackbar.make(paravGroupsPublic, "", Snackbar.LENGTH_SHORT);
 
-        lstvSearchPublicGroupsResult.setVisibility(View.GONE);
-//        progbGroupsPublic.setVisibility(View.VISIBLE);
-        srLaySearchPublicGroups.setRefreshing(true);
+//        progbGroupsPrivate.setVisibility(View.VISIBLE);
         group.saveInBackground(new SaveCallback()
         {
             @Override
             public void done(ParseException e)
             {
-                if(e == null)
+                if (e == null)
                 {
-
                 }
                 else
                 {
-//                    progbGroupsPublic.setVisibility(View.GONE);
-                    srLaySearchPublicGroups.setRefreshing(false);
-                    lstvSearchPublicGroupsResult.setVisibility(View.VISIBLE);
-
+                    srLayGroupsPublic.setRefreshing(false);
+                    srLayGroupsPublic.setRefreshing(false);
                     msg.setText("Unsuccessful subscribing user to group :" + e.getMessage() + " Code: " + e.getCode());
                     msg.show();
                 }
@@ -169,19 +215,17 @@ public class FragmentGroupsPublic extends Fragment implements AdapterView.OnItem
             @Override
             public void done(ParseException e)
             {
-                if(e == null)
+//                progbGroupsPrivate.setVisibility(View.INVISIBLE);
+                srLayGroupsPublic.setRefreshing(false);
+                if (e == null)
                 {
-//                    progbGroupsPublic.setVisibility(View.GONE);
-                    srLaySearchPublicGroups.setRefreshing(false);
-                    lstvSearchPublicGroupsResult.setVisibility(View.VISIBLE);
-
+                    srLayGroupsPublic.setRefreshing(false);
                     msg.setText("Successfully subscribed to " + groupName);
                     HomeActivity.fragManager.popBackStack();
                 }
                 else
                 {
-                    srLaySearchPublicGroups.setRefreshing(false);
-                    lstvSearchPublicGroupsResult.setVisibility(View.VISIBLE);
+                    srLayGroupsPublic.setRefreshing(false);
                     msg.setText("Unsuccessful subscribing group to user :" + e.getMessage() + " Code: " + e.getCode());
                 }
 
@@ -215,5 +259,4 @@ public class FragmentGroupsPublic extends Fragment implements AdapterView.OnItem
 
         ParsePush.subscribeInBackground(channelName);
     }
-
 }

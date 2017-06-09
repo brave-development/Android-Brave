@@ -99,7 +99,7 @@ public class FragmentManageGroups extends Fragment implements ViewPager.OnPageCh
         Log.i("Searching public group", "cached: %" + cached3CharSearchString + "% searchString: %" + searchString + "%");
         if(cached3CharSearchString == null || !cached3CharSearchString.equalsIgnoreCase(searchString))  //only searches for new results set online when doesnt match previous search or is first search
         {
-            FragmentGroupsPublic.srLaySearchPublicGroups.setRefreshing(true);
+            FragmentGroupsPublicOld.srLaySearchPublicGroups.setRefreshing(true);
             Log.i("Searching public group", "searching online db");
             cached3CharSearchString = searchString; //set new cached search string
             final Toast msg = Toast.makeText(activContext, "", Toast.LENGTH_LONG);
@@ -107,7 +107,7 @@ public class FragmentManageGroups extends Fragment implements ViewPager.OnPageCh
             ParseQuery<ParseObject> querySearch = ParseQuery.getQuery("Groups");
             querySearch.whereStartsWith("flatValue", searchString).addAscendingOrder("flatValue").whereEqualTo("public", true);
 
-            FragmentGroupsPublic.loadingAnimate();
+            FragmentGroupsPublicOld.loadingAnimate();
             querySearch.findInBackground(new FindCallback<ParseObject>()
             {
                 @Override
@@ -118,13 +118,13 @@ public class FragmentManageGroups extends Fragment implements ViewPager.OnPageCh
                         publicSearchResults = parseObjects;
 
                         if(publicSearchResults != null)
-                            FragmentGroupsPublic.populateResultList(activContext, publicSearchResults);
+                            FragmentGroupsPublicOld.populateResultList(activContext, publicSearchResults);
 
-                        FragmentGroupsPublic.srLaySearchPublicGroups.setRefreshing(false);
+                        FragmentGroupsPublicOld.srLaySearchPublicGroups.setRefreshing(false);
                     }
                     else
                     {
-                        FragmentGroupsPublic.srLaySearchPublicGroups.setRefreshing(false);
+                        FragmentGroupsPublicOld.srLaySearchPublicGroups.setRefreshing(false);
                         if (e.getCode() == 100)
                             msg.setText(R.string.error_100_no_internet);   //check internet conn
                         else
@@ -136,7 +136,7 @@ public class FragmentManageGroups extends Fragment implements ViewPager.OnPageCh
             });
         }
         else
-            FragmentGroupsPublic.filterResultList("");      //resets data to have no filter
+            FragmentGroupsPublicOld.filterResultList("");      //resets data to have no filter
     }
 
     @Override
@@ -209,12 +209,12 @@ public class FragmentManageGroups extends Fragment implements ViewPager.OnPageCh
             else if (newText.length() > 3)
             {
                 Log.i("Filtering groups", "filter word: %" + newText + "%");
-                FragmentGroupsPublic.filterResultList(newText);
+                FragmentGroupsPublicOld.filterResultList(newText);
             }
             else
             {
                 //Reset filter
-                FragmentGroupsPublic.filterResultList("");
+                FragmentGroupsPublicOld.filterResultList("");
             }
         }
 

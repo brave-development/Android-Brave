@@ -37,6 +37,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -48,8 +49,9 @@ import java.util.concurrent.TimeUnit;
 public class FragmentPanic extends Fragment implements View.OnClickListener, View.OnFocusChangeListener, TextView.OnEditorActionListener
 {
     private Context context;
-    private ImageButton ibtnPanic;
+    private static ImageButton ibtnPanic;
     private FloatingActionButton fabNeedleDrop;
+    private FloatingActionButton fabTestPush;
     private EditText etxtPanicDesc;
     private LinearLayout linLayRespondes;
     private RelativeLayout relLayPanicRoot;
@@ -112,6 +114,17 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
 
         fabNeedleDrop = (FloatingActionButton) view.findViewById(R.id.fabNeedleDrop);
         fabNeedleDrop.setOnClickListener(this);
+
+        fabTestPush = (FloatingActionButton) view.findViewById(R.id.fabTestPush);
+        fabTestPush.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+//                gpsService.sendTestFbPush();
+                ibtnPanic.performClick();
+            }
+        });
 
         etxtPanicDesc = (EditText) view.findViewById(R.id.etxtPanicDesc);
         etxtPanicDesc.setOnFocusChangeListener(this);
@@ -423,6 +436,11 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
     public static void onUpdateResponder(int noOfResponders)
     {
         txtvNoOfResponders.setText(noOfResponders + "");
+    }
+
+    public static void performPanicBtnClick()
+    {
+        ibtnPanic.performClick();
     }
 
     public boolean isPanicing(){return panicing;}

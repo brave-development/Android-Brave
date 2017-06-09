@@ -34,17 +34,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.List;
 
 
 public class HomeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener
 {
+    public static final String PARSE_APP_ID = "PANICING-TURTLE";
+    public static final String PARSE_API_KEY = "PANICINGTURTLE3847TR386TB281XN1NY7YNXM";
     private final String LOG_TAG = "HomeActivity";
     private DrawerLayout drawLayNav;
     private ListView lstvNav;
@@ -197,6 +201,25 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 
         fragTransaction.commit();
 
+        initFbPush();
+    }
+
+    private void initFbPush()
+    {
+        //Save firebase token to parse server if doesn't exist
+        ParseInstallation instObj = ParseInstallation.getCurrentInstallation();
+        if(instObj.getString("firebaseID") == null || instObj.getString("firebaseID").isEmpty())
+        {
+            instObj.put("firebaseID", FirebaseInstanceId.getInstance().getToken());
+            instObj.saveInBackground(new SaveCallback()
+            {
+                @Override
+                public void done(ParseException e)
+                {
+                    Log.d("fbPushDebug", "Parse FB Push Token Refreshed: " + FirebaseInstanceId.getInstance().getToken());
+                }
+            });
+        }
     }
 
     @Override

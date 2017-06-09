@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -15,8 +16,10 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.parse.FunctionCallback;
 import com.parse.GetCallback;
 import com.parse.ParseACL;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseInstallation;
@@ -30,14 +33,31 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by IC on 6/3/2015.
  */
 public class ServiceGps extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
 {
+    //Vars to handel panic without tracking as a one time event variables
+    private final boolean OTE_PANIC = true; //One Time Event
+    private final int OTE_MIN_ACCURACY = 20; //accuracy in meters before disabling tracking
+    private final long OTE_MAX_WAITING_TIME = 120000; //Max time to wait for min accuracy in millisec
+    private long OTE_INIT_TIME;   //The epooch time when the panic was first triggred as a one time event
+
     private final IBinder GpsBinder = new GpsLocalBinder();
     private LocationManager locMang;
     private LocationListener panicLocListner;
@@ -116,7 +136,7 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
                         //Send push notifications if they havent been sent before
                         if (!pushNotificationsSent)
                         {
-                            sendPanicPushNotification(location);
+                            sendFirePanicPushNotification(panicUpdate.getObjectId());
                         }
 
                         //Add location
@@ -159,6 +179,29 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
                         });
 
                         prevLocation = location;
+
+                        //Check if panic is to be used as a one time event
+                        if(OTE_PANIC)
+                        {
+                            //Set init time if it hasn't been set yet
+                            if(OTE_INIT_TIME == 0)
+                            {
+                                Log.d(TAG, "OTE panic init time set: " + System.currentTimeMillis());
+                                OTE_INIT_TIME = System.currentTimeMillis();
+                            }
+
+                            //Check if max time has been reached yet
+                            if(System.currentTimeMillis() - OTE_INIT_TIME > OTE_MAX_WAITING_TIME)
+                            {
+                                Log.d(TAG, "OTE panic turned off max time reached");
+                                FragmentPanic.performPanicBtnClick();
+                            }
+                            else if(location.getAccuracy() <= OTE_MIN_ACCURACY)   //Check for min accuracy
+                            {
+                                Log.d(TAG, "OTE panic turned off min accuracy reached");
+                                FragmentPanic.performPanicBtnClick();
+                            }
+                        }
                     }
                     else
                     {
@@ -252,7 +295,42 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
         super.onLowMemory();
     }
 
-    public void sendPanicPushNotification(Location location)
+    public void sendFirePanicPushNotification(final String panicObjectId)
+    {
+        final OkHttpClient client = new OkHttpClient();
+        Headers reqHeaders = new Headers.Builder()
+                .add("cache-control", "no-cache")
+                .add("content-type", "application/x-www-form-urlencoded")
+                .add("x-parse-application-id", HomeActivity.PARSE_APP_ID)
+                .add("x-parse-rest-api-key", HomeActivity.PARSE_API_KEY)
+                .build();
+
+        RequestBody formBody = new FormBody.Builder().add("objectId", panicObjectId).build();
+
+        Request request = new Request.Builder().url("http://panicing-turtle.herokuapp.com/parse/functions/pushFromCloud")
+                .headers(reqHeaders)
+                .post(formBody).build();
+
+        Log.d(TAG, "Making post call for panic: " + panicObjectId);
+        client.newCall(request).enqueue(new Callback()
+        {
+            @Override
+            public void onFailure(Call call, IOException e)
+            {
+                Log.e(TAG, "Failed to send push post request for panic: " + panicObjectId + "\n" + e.getMessage());
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException
+            {
+                pushNotificationsSent = true;
+                Log.i(TAG, "Push Notif Post Sent for panic: " + panicObjectId);
+            }
+        });
+    }
+
+    public void sendParsePanicPushNotification(Location location)
     {
         Log.d("Push", "Getting channels");
         List<String> channels = ParseInstallation.getCurrentInstallation().getList("channels");
@@ -302,6 +380,69 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
                     Log.e("Push", "Couldn't send push notification because: " + e.getMessage());
             }
         });
+    }
+
+    public void sendTestFbPush()
+    {
+//        HashMap<String, Object> params = new HashMap<String, Object>();
+//        params.put("channel", "test");
+//        params.put("username", "wprenison");
+//        params.put("contactNumber", "0725619247");
+//        ParseCloud.callFunctionInBackground("pushFromCloud", params, new FunctionCallback<Object>()
+//        {
+//
+//            @Override
+//            public void done(Object object, ParseException e)
+//            {
+//                if(e == null)
+//                    Log.d("fbPushDebug", "Push from cloud executed without parse exceptions");
+//                else
+//                    Log.d("fbPushDebug", "Push from cloud executed with parse exceptions Error Code: " + e.getCode() + "\nError Message: " + e.getMessage());
+//            }
+//        });
+
+        final List<String> lstChannels = ParseInstallation.getCurrentInstallation().getList("channels");
+        for(int i = 0; i < lstChannels.size(); i++)
+        {
+            //Skip broadcast channel if it exists
+            if(!lstChannels.get(i).isEmpty())
+            {
+                final String currChannel = lstChannels.get(i);
+                final OkHttpClient client = new OkHttpClient();
+                Headers reqHeaders = new Headers.Builder()
+                        .add("cache-control", "no-cache")
+                        .add("content-type", "application/x-www-form-urlencoded")
+                        .add("x-parse-application-id", HomeActivity.PARSE_APP_ID)
+                        .add("x-parse-rest-api-key", HomeActivity.PARSE_API_KEY)
+                        .build();
+
+                RequestBody formBody = new FormBody.Builder()
+                        .add("channel", currChannel)
+                        .add("username", HomeActivity.currentUser.getUsername())
+                        .add("contactNumber", HomeActivity.currentUser.getString("cellNumber")).build();
+
+                Request request = new Request.Builder().url("http://panicing-turtle.herokuapp.com/parse/functions/pushFromCloud")
+                        .headers(reqHeaders)
+                        .post(formBody).build();
+
+                Log.d(TAG, "Making post call for channel: " + currChannel);
+                client.newCall(request).enqueue(new Callback()
+                {
+                    @Override
+                    public void onFailure(Call call, IOException e)
+                    {
+                        Log.e(TAG, "Failed to send push post request for channel: " + currChannel + "\n" + e.getMessage());
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException
+                    {
+                        Log.i(TAG, "Push Notif Post Sent for channel: " + currChannel);
+                    }
+                });
+            }
+        }
     }
 
     public void slowTrack(boolean enabled, int minTime, int minDistance)

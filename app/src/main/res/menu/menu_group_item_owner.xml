@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mnuiShare"
+        android:icon="@drawable/abc_ic_menu_share_mtrl_alpha"
+        android:title="@string/groupBtnShare"/>
+
+    <item
+        android:id="@+id/mnuiEdit"
+        android:icon="@drawable/ic_pencil"
+        android:title="@string/groupEdit"/>
+
+    <item
+        android:id="@+id/mnuiLeave"
+        android:icon="@drawable/ic_leaf"
+        android:title="@string/groupLeave" />
+
+    <item
+        android:id="@+id/mnuiViewLocation"
+        android:icon="@drawable/ic_loc_pin"
+        android:title="@string/groupViewLocation" />
+
+    <item
+        android:id="@+id/mnuiReport"
+        android:icon="@drawable/ic_megaphone"
+        android:title="@string/groupReport" />
+
+</menu>

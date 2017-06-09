@@ -21,5 +21,6 @@
     <color name="SeaGreen">#16a085</color>
     <color name="Jade">#00C169</color>
     <color name="CircleProgLoadingColor">#3e3e3e</color>
+    <color name="androidGrey800">#424242</color>
 
 </resources>

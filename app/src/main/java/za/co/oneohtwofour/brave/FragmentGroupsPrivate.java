@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -120,7 +121,7 @@ public class FragmentGroupsPrivate extends Fragment implements View.OnClickListe
 
         //sub to group
         group.addUnique("subscriberObjects", HomeActivity.currentUser.getObjectId());
-        group.increment("subscriber");
+        group.increment("subscribers", 1);
         final Toast msg = Toast.makeText(context, "", Toast.LENGTH_SHORT);
 
 //        progbGroupsPrivate.setVisibility(View.VISIBLE);

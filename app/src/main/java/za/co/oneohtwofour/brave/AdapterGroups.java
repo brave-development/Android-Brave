@@ -4,46 +4,45 @@ package za.co.oneohtwofour.brave;
  * Created by wprenison on 2017/05/17.
  */
 
-import android.app.FragmentManager;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.design.widget.BaseTransientBottomBar;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.parse.GetDataCallback;
-import com.parse.Parse;
-import com.parse.ParseException;
+import com.kennyc.bottomsheet.BottomSheet;
+import com.kennyc.bottomsheet.BottomSheetListener;
 import com.parse.ParseObject;
-import com.parse.ProgressCallback;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.yalantis.contextmenu.lib.ContextMenuDialogFragment;
-import com.yalantis.contextmenu.lib.MenuObject;
-import com.yalantis.contextmenu.lib.MenuParams;
-import com.yalantis.contextmenu.lib.interfaces.OnMenuItemClickListener;
 import com.yayandroid.parallaxrecyclerview.ParallaxViewHolder;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by yahyabayramoglu on 14/04/15.
  */
-public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder>
+public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder> implements Filterable
 {
 
     private Context context;
+    private FragmentGroups fragGroups;
+    private FragmentGroupsPublic fragGroupsPublic;
     private LayoutInflater inflater;
-    private ContextMenuDialogFragment fragContextMnu;
-    private View.OnClickListener ctxMnuClickListener;
 
     /*
     private int[] imageIds = new int[]{R.mipmap.test_image_1,
@@ -60,66 +59,16 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
     };
 
     private List<ParseObject> lstGroups = new ArrayList<ParseObject>();
-    private List<MenuObject> lstMenuObjs = new ArrayList<MenuObject>();
+    private List<ParseObject> storedItems;
 
-    public AdapterGroups(Context context, List<ParseObject> lstGroups, final android.support.v4.app.FragmentManager fragMang)
+    public AdapterGroups(Context context, FragmentGroups fragGroups, FragmentGroupsPublic fragGroupsPublic, List<ParseObject> lstGroups, final android.support.v4.app.FragmentManager fragMang)
     {
         this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.lstGroups = lstGroups;
-
-        //Create context menu objects ect here not in view holder for performance
-        MenuObject mnuoClose = new MenuObject();
-        mnuoClose.setResource(R.drawable.ic_close);
-        mnuoClose.setBgColor(R.color.SeaGreen);
-        mnuoClose.setScaleType(ImageView.ScaleType.CENTER);
-
-        MenuObject mnuoReport = new MenuObject();
-        mnuoReport.setResource(R.drawable.ic_close);
-        mnuoReport.setTitle("Report"); //TODO: use string resource
-        mnuoReport.setBgColor(R.color.SeaGreen);
-        mnuoReport.setScaleType(ImageView.ScaleType.CENTER);
-
-        MenuObject mnuoLeave = new MenuObject();
-        mnuoLeave.setResource(R.drawable.ic_close);
-        mnuoLeave.setTitle("Leave"); //TODO: use string resource
-        mnuoLeave.setBgColor(R.color.SeaGreen);
-        mnuoLeave.setScaleType(ImageView.ScaleType.CENTER);
-
-        lstMenuObjs.add(mnuoClose);
-        lstMenuObjs.add(mnuoReport);
-        lstMenuObjs.add(mnuoLeave);
-
-        final MenuParams menuParams = new MenuParams();
-        menuParams.setMenuObjects(lstMenuObjs);
-        menuParams.setClosableOutside(true);
-
-        final OnMenuItemClickListener mnuItemClickListener = new OnMenuItemClickListener()
-        {
-            @Override
-            public void onMenuItemClick(View clickedView, int position)
-            {
-                Snackbar.make(clickedView, "Eh an item was clicked on the ctx menu yay!", BaseTransientBottomBar.LENGTH_LONG).show();
-            }
-        };
-
-        ctxMnuClickListener = new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                //Calculate where to locate menu from top
-                int [] locInWindow = new int[2];
-                view.getLocationInWindow(locInWindow);
-                menuParams.setActionBarSize(locInWindow[1]);
-
-                // set other settings to meet your needs
-                fragContextMnu = ContextMenuDialogFragment.newInstance(menuParams);
-                fragContextMnu.setItemClickListener(mnuItemClickListener);
-                fragContextMnu.show(fragMang, "ctxMnuGroup");
-            }
-        };
-
+        this.storedItems = lstGroups;
+        this.fragGroups = fragGroups;
+        this.fragGroupsPublic = fragGroupsPublic;
     }
 
     @Override
@@ -128,10 +77,15 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
         return new ViewHolder(inflater.inflate(R.layout.list_item_group, viewGroup, false));
     }
 
-    @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, int position)
+    public ParseObject getGroupData(int groupIndex)
     {
-        ParseObject currGroup = lstGroups.get(position);
+        return lstGroups.get(groupIndex);
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder viewHolder, final int position)
+    {
+        final ParseObject currGroup = lstGroups.get(position);
 
 //        currGroup.getParseFile("imageFile").getDataInBackground(new GetDataCallback()
 //        {
@@ -156,13 +110,141 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
 //            }
 //        });
 
+        if(currGroup.has("imageFile"))
+        {
+            Picasso.with(context).load(currGroup.getParseFile("imageFile").getUrl()).resize(600, 800).onlyScaleDown().centerCrop().into(viewHolder.getBackgroundImage(), new Callback()
+            {
+                @Override
+                public void onSuccess()
+                {
+                    viewHolder.bgDownloadResult(true, null);
+                }
 
-        Picasso.with(context).load(currGroup.getParseFile("imageFile").getUrl()).resize(600, 800).onlyScaleDown().centerCrop().into(viewHolder.getBackgroundImage());
-        viewHolder.setGroupName(currGroup.getString("name"));
-        viewHolder.setGroupRegion(currGroup.getString("country"));
-        viewHolder.setGroupSize(currGroup.getInt("subscribers"));
-        viewHolder.setGroupObjectId(currGroup.getObjectId());
-        viewHolder.initOptions(ctxMnuClickListener);
+                @Override
+                public void onError()
+                {
+                    viewHolder.bgDownloadResult(false, "Failed to load Image");
+                }
+            });
+        }
+
+        viewHolder.setData(currGroup);
+
+        if(fragGroups == null)
+        {
+            viewHolder.setCanJoin(true, new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    fragGroupsPublic.subscribeUserToGroup(currGroup);
+                }
+            });
+        } else
+        {
+            viewHolder.setCanJoin(false, null);
+
+            viewHolder.setHolderClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    fragGroups.famGroups.close(true);
+                }
+            });
+        }
+
+        viewHolder.initOptions(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(final View view)
+            {
+                BottomSheet.Builder sheetBuilder = new BottomSheet.Builder(context)
+                    .dark()
+                    .setStyle(R.style.MyBottomSheetStyle)
+                    .setTitle(currGroup.getString("name"))
+                    .setListener(new BottomSheetListener()
+                    {
+                        @Override
+                        public void onSheetShown(@NonNull BottomSheet bottomSheet)
+                        {
+
+                        }
+
+                        @Override
+                        public void onSheetItemSelected(@NonNull BottomSheet bottomSheet, MenuItem menuItem)
+                        {
+                            bottomSheet.dismiss();
+                            int mnuiId = menuItem.getItemId();
+
+                            switch(mnuiId)
+                            {
+                                case R.id.mnuiShare:
+                                    Intent intentShare = new Intent();
+                                    intentShare.setAction(Intent.ACTION_SEND);
+
+                                    if(currGroup.getBoolean("public"))
+                                        intentShare.putExtra(Intent.EXTRA_TEXT, "Hey come join my group *" + currGroup.getString("name") + "*\n\n" +
+                                                "Get Brave for\nAndroid: " + context.getString(R.string.appUrlANDROID) + "\niOS: " + context.getString(R.string.appUrlIOS));
+                                    else
+                                        intentShare.putExtra(Intent.EXTRA_TEXT, "Hey come join my private group using this code: *" + currGroup.getObjectId() + "*\n\n" +
+                                                "Get Brave for\nAndroid: " + context.getString(R.string.appUrlANDROID) + "\niOS: " + context.getString(R.string.appUrlIOS));
+
+                                    intentShare.setType("text/plain");
+                                    context.startActivity(intentShare);
+                                    break;
+
+                                case R.id.mnuiJoin:
+                                    fragGroupsPublic.subscribeUserToGroup(currGroup);
+                                    break;
+
+                                case R.id.mnuiEdit:
+                                    fragGroups.showEditGroup(position);
+                                    break;
+
+                                case R.id.mnuiReport:
+                                    Snackbar.make(view, currGroup.getString("name")  + " Reported", Snackbar.LENGTH_LONG).show();
+                                    break;
+
+                                case R.id.mnuiLeave:
+                                    lstGroups.remove(currGroup);
+                                    notifyDataSetChanged();
+                                    fragGroups.unSubUserFromGroup(currGroup);
+                                    break;
+
+                                case R.id.mnuiViewLocation:
+                                    Snackbar.make(view, "Coming Soon", Snackbar.LENGTH_LONG).show();
+                                    break;
+                            }
+                        }
+
+                        @Override
+                        public void onSheetDismissed(@NonNull BottomSheet bottomSheet, @DismissEvent int i)
+                        {
+
+                        }
+                    });
+
+                //Modify menu visible items as needed
+
+                if(fragGroups == null)
+                {
+                    sheetBuilder.setSheet(R.menu.menu_group_item_searched);
+                }
+                else
+                {
+                    fragGroups.famGroups.close(true);
+
+                    if(HomeActivity.currentUser.getObjectId().equals(currGroup.getParseObject("admin").getObjectId()))
+                        sheetBuilder.setSheet(R.menu.menu_group_item_owner);
+                    else
+                        sheetBuilder.setSheet(R.menu.menu_group_item_member);
+                }
+
+                BottomSheet sheetOptions = sheetBuilder.create();
+                sheetOptions.show();
+            }
+        });
 
         // # CAUTION:
         // Important to call this method
@@ -175,30 +257,108 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
         return lstGroups.size();
     }
 
+    @Override
+    public Filter getFilter()
+    {
+        Filter filter = new Filter()
+        {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint)
+            {
+                FilterResults filterResults = new FilterResults();
+                List<ParseObject> filteredItems = new ArrayList<ParseObject>();
+
+
+                //Clean search term
+                constraint = constraint.toString().trim().toLowerCase().replaceAll("\\s+", "");
+
+                Log.i("New Filter", "constraint: %" + constraint + "%");
+
+                if(constraint == null || constraint.length() == 0)
+                {
+                    //Return entire list
+                    filterResults.count = storedItems.size();
+                    filterResults.values = storedItems;
+                }
+                else
+                {
+                    //Perform search
+                    for (int i = 0; i < storedItems.size(); i++)
+                    {
+                        if (storedItems.get(i).getString("flatValue").startsWith(constraint.toString()))
+                            filteredItems.add(storedItems.get(i));
+                    }
+
+                    filterResults.count = filteredItems.size();
+                    filterResults.values = filteredItems;
+                }
+
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results)
+            {
+                lstGroups = (List<ParseObject>) results.values;
+                notifyDataSetChanged();
+            }
+        };
+
+        return filter;
+    }
+
     /**
      * # CAUTION:
      * ViewHolder must extend from ParallaxViewHolder
      */
     public static class ViewHolder extends ParallaxViewHolder
     {
-        private String groupDbId;
+        private final int animationRes = R.anim.anim_float;
+        private final Animation animShake;
+        private final ImageView imgvDownloadIndicator;
+        private final View holderView;
         private final TextView txtvGroupName, txtvGroupRegion, txtvGroupSize;
         private final FloatingActionButton fabOptions;
+        private final FloatingActionButton fabIsPrivate;
+        private final Button btnJoin;
 
         public ViewHolder(View holderView)
         {
             super(holderView);
 
+            this.holderView = holderView;
             fabOptions = (FloatingActionButton) holderView.findViewById(R.id.fabGroupOptions);
             txtvGroupName = (TextView) holderView.findViewById(R.id.txtvGroupName);
             txtvGroupRegion = (TextView) holderView.findViewById(R.id.txtvGroupRegion);
             txtvGroupSize = (TextView) holderView.findViewById(R.id.txtvGroupSize);
+            fabIsPrivate = (FloatingActionButton) holderView.findViewById(R.id.fabGroupsIsPrivate);
+            btnJoin = (Button) holderView.findViewById(R.id.btnGroupJoin);
+            imgvDownloadIndicator = (ImageView) holderView.findViewById(R.id.imgvDownloadIndicator);
+            fabIsPrivate.setEnabled(false);
+
+            animShake = AnimationUtils.loadAnimation(holderView.getContext(), animationRes);
         }
 
         @Override
         public int getParallaxImageId()
         {
             return R.id.backgroundImage;
+        }
+
+        public void setData(ParseObject groupData)
+        {
+            //Set view data
+            setGroupName(groupData.getString("name"));
+            setGroupRegion(groupData.getString("country"));
+            setGroupSize(groupData.getInt("subscribers"));
+            setIsPrivate(!groupData.getBoolean("public"));
+
+            imgvDownloadIndicator.startAnimation(animShake);
+        }
+
+        public void setHolderClickListener(View.OnClickListener clickListener)
+        {
+            holderView.setOnClickListener(clickListener);
         }
 
         public void setGroupName(String groupName)
@@ -216,16 +376,42 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
             txtvGroupSize.setText(groupSize + " Members"); //TODO: use string resource
         }
 
-        public void setGroupObjectId(String objectId) //DB object id
-        {
-            groupDbId = objectId;
-        }
-
         private void initOptions(View.OnClickListener clickListener)
         {
             fabOptions.setOnClickListener(clickListener);
         }
 
+        private void setIsPrivate(boolean isPrivate)
+        {
+            if(isPrivate)
+                fabIsPrivate.setVisibility(View.VISIBLE);
+            else
+                fabIsPrivate.setVisibility(View.INVISIBLE);
+        }
+
+        private void setCanJoin(boolean canJoin, View.OnClickListener joinGroupListner)
+        {
+            if(canJoin)
+            {
+                btnJoin.setVisibility(View.VISIBLE);
+                btnJoin.setOnClickListener(joinGroupListner);
+            }
+            else
+            {
+                btnJoin.setVisibility(View.INVISIBLE);
+                btnJoin.setOnClickListener(joinGroupListner);
+            }
+        }
+
+        private void bgDownloadResult(boolean success, String errorMsg)
+        {
+            imgvDownloadIndicator.clearAnimation();
+            if(!success)
+            {
+                imgvDownloadIndicator.setImageResource(R.drawable.ic_download_failed);
+                Snackbar.make(holderView, errorMsg, Snackbar.LENGTH_LONG).show();
+            }
+        }
     }
 
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="5dp">
+
+    <android.widget.SearchView
+        android:id="@+id/svGroupsPublic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search group name"
+        android:imeOptions="actionSearch"
+        android:iconifiedByDefault="false"/>
+
+    <TextView
+        android:id="@+id/txtvSearchPublicDesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/svGroupsPublic"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@color/White"
+        android:text="Type at least 3 \ncharacters to search"/>
+
+    <com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView
+        android:id="@+id/recvGroupsPublic"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/txtvSearchPublicDesc"/>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srLayGroupsPublic"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/svGroupsPublic">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></View>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</RelativeLayout>

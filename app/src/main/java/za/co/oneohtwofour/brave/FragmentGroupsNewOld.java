@@ -30,7 +30,7 @@ import com.parse.SaveCallback;
 /**
  * Created by IC on 5/24/2015.
  */
-public class FragmentGroupsNew extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener
+public class FragmentGroupsNewOld extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener
 {
     private Activity activity;
     private Context context;

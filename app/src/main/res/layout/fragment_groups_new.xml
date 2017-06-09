@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/relLayNewGroupSettings"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="-8.5dp"
+        android:background="@android:drawable/dialog_holo_light_frame"
+        android:backgroundTint="@color/androidGrey800">
+
+        <ImageView
+            android:id="@+id/imgvGroupBgPreview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_image"/>
+
+        <ImageView
+            android:id="@+id/imgvGroupBg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"/>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/srLayNewGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"></View>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabGroupBg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:src="@drawable/ic_camera"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="@color/SeaGreen"
+            fab:fab_colorPressed="@color/Jade"
+            fab:fab_colorRipple="@color/Jade"/>
+
+        <EditText
+            android:id="@+id/etxtGroupShowBgError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_alignTop="@id/fabGroupBg"
+            android:visibility="invisible"/>
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fabGroupPrivate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_lock_open"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="@color/SeaGreen"
+            fab:fab_colorPressed="@color/Jade"
+            fab:fab_colorRipple="@color/Jade"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relLayNewGroupDetails"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:padding="8dp"
+        android:background="@color/black_35">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tiLayGroupName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/groupNameHint"
+            android:textColorHint="@color/SeaGreen">
+
+            <EditText
+                android:id="@+id/etxtGroupName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:textColor="@color/White"
+                android:imeOptions="actionNext"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/tiLayGroupDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tiLayGroupName"
+            android:hint="@string/groupDescriptionHint"
+            android:textColorHint="@color/SeaGreen">
+
+            <EditText
+                android:id="@+id/etxtGroupDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="3"
+                android:textColor="@color/White"
+                android:imeOptions="actionDone"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/btnNewGroupCancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@null"
+            android:text="@string/groupBtnCancel"
+            android:textColor="@color/White"/>
+
+        <Button
+            android:id="@+id/btnNewGroupFinish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@null"
+            android:text="@string/groupbtnFinish"
+            android:textColor="@color/White"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
