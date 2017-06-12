@@ -124,6 +124,11 @@
             android:onClick="onClickResetPassword"
             android:id="@+id/btnResetPassword"/>
 
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/btnLoginFb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 </RelativeLayout>

@@ -4,9 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/main_bg"
-    tools:context="za.co.oneohtwofour.brave.ManageGroupsActivity">
+    tools:context=".ManageGroupsActivity">
 
-    <za.co.toasteacomputing.brave.SlidingTabLayout
+    <io.co.toasteacomputing.brave.SlidingTabLayout
         android:id="@+id/stLayManageGroups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

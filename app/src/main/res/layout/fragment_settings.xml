@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_material_light"
-    tools:context="za.co.oneohtwofour.brave.FragmentSettings"
+    tools:context=".FragmentSettings"
     android:focusableInTouchMode="true">
 
     <ScrollView
@@ -137,6 +137,34 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/linLaySettingsNotifications"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:orientation="horizontal"
+                    android:background="@color/White">
+
+                    <TextView
+                        android:id="@+id/txtvSettingsNotificationsHeading"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="15dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/abc_primary_text_disable_only_material_light"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Mute Notifications"/>
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/sSettingsNotifications"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:layout_marginRight="16dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/linLaySettingsPanicConfirmation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -165,20 +193,18 @@
                         android:src="@drawable/btn_info_active"
                         android:background="@null"/>
 
-                    <Switch
+                    <android.support.v7.widget.SwitchCompat
                         android:id="@+id/sSettingsPanicConfirmation"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="0.5"
-                        android:textOff="Off"
-                        android:textOn="On"
-                        android:thumb="@drawable/apptheme_switch_inner_holo_light"
-                        android:track="@drawable/apptheme_switch_track_holo_light"
-                        />
+                        android:layout_marginRight="16dp"/>
 
                 </LinearLayout>
 
             </LinearLayout>
+
+
 
             <TableLayout
                 android:id="@+id/tLaySettingsActions"

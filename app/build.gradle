@@ -12,7 +12,7 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
-        applicationId "za.co.oneohtwofour.brave"
+        applicationId "io.flyingmongoose.brave"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 2
@@ -36,6 +36,8 @@ dependencies {
 //    compile fileTree(dir: 'libs', include: 'bolts-android-*.jar')
 //    compile fileTree(dir: 'libs', include: 'Parse-*.jar')
     compile 'com.parse:parse-android:1.15.1'
+    compile 'com.parse:parsefacebookutils-v4-android:1.10.4@aar'
+    compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.theartofdev.edmodo:android-image-cropper:2.4.6'

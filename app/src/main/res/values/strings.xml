@@ -6,6 +6,9 @@
     <string name="appUrlANDROID">https://Brave.io/Android</string>
     <string name="appUrlIOS">https://Brave.io/Ios</string>
 
+    <string name="facebook_app_id">1613107172034757</string>
+    <string name="fb_login_protocol_scheme">fb1613107172034757</string>
+
     <!-- Strings for Login Activity -->
     <string name="etxtLoginUsernameHint">Username</string>
     <string name="etxtLoginPasswordHint">Password</string>

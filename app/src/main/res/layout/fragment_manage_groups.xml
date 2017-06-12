@@ -3,9 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="za.co.oneohtwofour.brave.FragmentManageGroups">
+    tools:context=".FragmentManageGroups">
 
-    <za.co.oneohtwofour.brave.SlidingTabLayout
+    <io.flyingmongoose.brave.SlidingTabLayout
         android:id="@+id/stLayManageGroups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

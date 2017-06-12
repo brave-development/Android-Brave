@@ -6,7 +6,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "za.co.toasteacomputing.brave.LoginActivity"/>
+        className = "io.co.toasteacomputing.brave.LoginActivity"/>
       <point      
         x = "192"      
         y = "56"/>
@@ -14,7 +14,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "za.co.toasteacomputing.brave.RegisterActivity"/>
+        className = "io.co.toasteacomputing.brave.RegisterActivity"/>
       <point      
         x = "1108"      
         y = "80"/>
@@ -22,7 +22,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "za.co.toasteacomputing.brave.HomeActivity"/>
+        className = "io.co.toasteacomputing.brave.HomeActivity"/>
       <point      
         x = "2028"      
         y = "72"/>
@@ -30,7 +30,7 @@
     <statePointEntry>
       <state      
         class = "com.android.tools.idea.editors.navigation.model.ActivityState"      
-        className = "za.co.toasteacomputing.brave.HistoryMapActivity"/>
+        className = "io.co.toasteacomputing.brave.HistoryMapActivity"/>
       <point      
         x = "2912"      
         y = "72"/>
