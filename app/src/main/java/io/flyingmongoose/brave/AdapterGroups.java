@@ -211,10 +211,6 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
                                     notifyDataSetChanged();
                                     fragGroups.unSubUserFromGroup(currGroup);
                                     break;
-
-                                case R.id.mnuiViewLocation:
-                                    Snackbar.make(view, "Coming Soon", Snackbar.LENGTH_LONG).show();
-                                    break;
                             }
                         }
 

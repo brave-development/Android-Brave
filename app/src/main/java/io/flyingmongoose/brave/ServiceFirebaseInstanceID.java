@@ -31,7 +31,14 @@ public class ServiceFirebaseInstanceID extends FirebaseInstanceIdService
             @Override
             public void done(ParseException e)
             {
-                Log.d("fbPushDebug", "Parse FB Push Token Refreshed: " + refreshedToken);
+                if(e == null)
+                {
+                    Log.d("fbPushDebug", "Parse FB Push Token Refreshed: " + refreshedToken);
+                }
+                else
+                {
+                    Log.d("fbPushDebug", "Parse FB Push Token Refresh FAILED: " + e.getCode() + " Messages: " + e.getMessage());
+                }
             }
         });
 

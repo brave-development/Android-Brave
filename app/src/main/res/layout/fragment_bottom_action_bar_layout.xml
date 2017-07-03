@@ -14,7 +14,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:background="@null"
-        android:text="@string/btnNavPanic"
+        android:text="@string/btnNavHome"
         android:textColor="@color/SelectedWhite"
         android:id="@+id/btnNavPanic"
         android:layout_centerVertical="true"

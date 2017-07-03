@@ -9,8 +9,8 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,9 +49,12 @@ import okhttp3.Response;
 public class ServiceGps extends Service implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener
 {
     //Vars to handel panic without tracking as a one time event variables
-    private final boolean OTE_PANIC = true; //One Time Event
-    private final int OTE_MIN_ACCURACY = 20; //accuracy in meters before disabling tracking
-    private final long OTE_MAX_WAITING_TIME = 120000; //Max time to wait for min accuracy in millisec
+    private OtePanicListener otePanicListener;
+    private OnResponderListener responderListener;
+    private OnPanicCreatedListener panicCreatedListener;
+    private boolean OTE_PANIC = false; //One Time Event
+    private final int OTE_MIN_ACCURACY = 30; //accuracy in meters before disabling tracking
+    private final long OTE_MAX_WAITING_TIME = 60000; //Max time to wait for min accuracy in millisec
     private long OTE_INIT_TIME;   //The epooch time when the panic was first triggred as a one time event
 
     private final IBinder GpsBinder = new GpsLocalBinder();
@@ -116,7 +119,7 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
         locMang = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         //Setup location listener
-         panicLocListner = new LocationListener()
+        panicLocListner = new LocationListener()
         {
             @Override
             public void onLocationChanged(final Location location)
@@ -169,7 +172,7 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
 
                                     if (respondersList != null)
                                         if (respondersList.size() > 0)
-                                            FragmentPanic.onUpdateResponder(respondersList.size());//Update responders in panic activity
+                                            responderListener.onResponderUpdate(respondersList.size());//Update responders in panic activity
                                 }
                             }
                         });
@@ -190,18 +193,20 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
                             if(System.currentTimeMillis() - OTE_INIT_TIME > OTE_MAX_WAITING_TIME)
                             {
                                 Log.d(TAG, "OTE panic turned off max time reached");
-                                FragmentPanic.performPanicBtnClick();
+                                otePanicListener.onDisableOtePanic();
+                                OTE_INIT_TIME = 0;
                             }
                             else if(location.getAccuracy() <= OTE_MIN_ACCURACY)   //Check for min accuracy
                             {
                                 Log.d(TAG, "OTE panic turned off min accuracy reached");
-                                FragmentPanic.performPanicBtnClick();
+                                otePanicListener.onDisableOtePanic();
+                                OTE_INIT_TIME = 0;
                             }
                         }
                     }
                     else
                     {
-                        Log.i(TAG, "Last known location was null, so waited to use a gps location update before creating psnic");
+                        Log.i(TAG, "Last known location was null, so waited to use a gps location update before creating panic");
                         createPanic(location);
                         prevLocation = location;
                     }
@@ -303,7 +308,7 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
 
         RequestBody formBody = new FormBody.Builder().add("objectId", panicObjectId).build();
 
-        Request request = new Request.Builder().url("http://panicing-turtle.herokuapp.com/parse/functions/pushFromCloud")
+        Request request = new Request.Builder().url("http://panicing-turtle.herokuapp.com/parse/functions/pushFromId")
                 .headers(reqHeaders)
                 .post(formBody).build();
 
@@ -320,10 +325,12 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
             @Override
             public void onResponse(Call call, Response response) throws IOException
             {
-                pushNotificationsSent = true;
                 Log.i(TAG, "Push Notif Post Sent for panic: " + panicObjectId);
+                Log.d(TAG, "Response from cloud code: " + response.code());
             }
         });
+
+        pushNotificationsSent = true;
     }
 
     public void sendParsePanicPushNotification(Location location)
@@ -457,7 +464,7 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
             callback.onLocationUpdate(prevLocation);
     }
 
-    public void onPanic(final boolean panic)
+    public void onPanic(final boolean panic, OnPanicCreatedListener panicCreatedListener ,OnResponderListener responderListener, OtePanicListener otePanicListener)
     {
         if(panic)
         {
@@ -521,6 +528,24 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
                 this.sendBroadcast(poke);*/
             }
 
+            //Check for panic created listener
+            if(panicCreatedListener != null)
+                this.panicCreatedListener = panicCreatedListener;
+
+            //Check if panic is an ote event
+            if(otePanicListener != null)
+            {
+                OTE_PANIC = true;
+                Log.i(TAG, "Panic set as OTE");
+                this.otePanicListener = otePanicListener;
+            }
+            else
+                Log.i(TAG, "Panic left as normal non OTE");
+
+            //Check if listening for responders
+            if(responderListener != null)
+                this.responderListener = responderListener;
+
             //Check if last know location is available
             if(lastKnownLocation != null)
             {
@@ -535,13 +560,10 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
         }
         else
         {
-            //Stop pannicing
-
-            locMang.removeUpdates(panicLocListner);
-//            Toast.makeText(getApplicationContext(), "Location updates removed", Toast.LENGTH_LONG).show();
-
-
             pushNotificationsSent = false;
+
+            //Stop pannicing
+            locMang.removeUpdates(panicLocListner);
 
             noLongerPanicking();
 
@@ -578,6 +600,8 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
         List<String> initRespondersColumn = new ArrayList<String>();
         panicUpdate.addAllUnique("responders", initRespondersColumn);
 
+        final OnPanicCreatedListener finalOnPanicCreatedListener = panicCreatedListener;
+
         panicUpdate.saveInBackground(new SaveCallback()
         {
             @Override
@@ -586,12 +610,16 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
                 if(e == null)
                 {
                     panicCanBeUpdated = true;
+
+                    if(finalOnPanicCreatedListener != null)
+                        finalOnPanicCreatedListener.onPanicCreated(panicUpdate);
+
                     Log.i(TAG, "Panic created");
                 }
                 else
                 {
                     if(e.getCode() == 100)
-                        Toast.makeText(getApplicationContext(), R.string.error_100_no_internet, Toast.LENGTH_LONG).show();
+                        Snackbar.make(HomeActivity.txtvProfileName, R.string.error_100_no_internet, Snackbar.LENGTH_LONG).show();
 
                     Log.i("Error:", "Unsuccessful panic update: " + e.getMessage() + " Code: " + e.getCode());
                 }

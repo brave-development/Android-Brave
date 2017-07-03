@@ -13,7 +13,7 @@
         android:gravity="center"
         android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Last 50 Panics by others"/>
+        android:text="@string/fragHistOthersDesc"/>
 
     <ProgressBar
         android:id="@+id/progbHistoryOthers"

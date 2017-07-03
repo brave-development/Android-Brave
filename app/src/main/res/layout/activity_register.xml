@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:paddingBottom="-2dp"
     tools:context=".RegisterActivity"
-    android:background="@drawable/main_bg2"
+    android:background="@drawable/main_bg7"
     android:orientation="vertical"
     android:gravity="center_horizontal"
     android:focusable="true"
@@ -137,9 +137,7 @@
                     android:textColorHint="@color/HintWhite"
                     android:hint="@string/etxtRegisterEmailHint"
                     android:gravity="center"
-                    android:layout_centerHorizontal="true"
-                    android:inputType="textEmailAddress"
-                    android:layout_below="@id/fLayRegisterCellNumber"/>
+                    android:inputType="textEmailAddress"/>
 
             </FrameLayout>
 
@@ -244,7 +242,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="23.3dp"
                 android:textColor="@color/White"
-                android:text="I agree to "
+                android:text="@string/txtvAgreeTAndC"
                 android:background="@color/OverlayMoreTranslucentBlack"/>
 
             <TextView

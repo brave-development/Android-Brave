@@ -8,21 +8,22 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.vision.text.Line;
 import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -36,7 +37,6 @@ import com.parse.RequestPasswordResetCallback;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 
@@ -52,8 +52,11 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
     private boolean openedVaiPush = false;
     private String jsonStringData;
 
+    private LinearLayout linLayUsername;
     private EditText etxtUsername;
+    private LinearLayout linLayPassword;
     private EditText etxtPassword;
+    private LinearLayout linLayActionButtons;
     private TextView btnLogin;
     private LoginButton btnLoginFb;
 
@@ -78,20 +81,28 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
             Log.d("Login", jsonStringData);
         }
 
+        linLayActionButtons = (LinearLayout) findViewById(R.id.linLayLoginActionButtons);
+        btnLogin = (TextView) findViewById(R.id.btnLogin);
+        btnLoginFb = (LoginButton) findViewById(R.id.btnLoginFb);
+        linLayUsername = (LinearLayout) findViewById(R.id.linLayUsername);
+        etxtUsername = (EditText) findViewById(R.id.etxtUsername);
+        linLayPassword = (LinearLayout) findViewById(R.id.linLayPassword);
+        etxtPassword = (EditText) findViewById(R.id.etxtPassword);
+        etxtPassword.setOnEditorActionListener(this);   //Listen for done clicked to start login
+        srLayLogin = (SwipeRefreshLayout) findViewById(R.id.srLayLogin);
+
         //check for already logged in user that is rembered
         ParseUser rememberedUser = ParseUser.getCurrentUser();
 
         if(rememberedUser != null)
-            login();
+        {
+            //Check for incomplete fb login / register
+            if(rememberedUser.has("authData") && !rememberedUser.has("facebookId"))
+                regWithFacebook(rememberedUser);
+            else
+                login();
+        }
 
-        btnLogin = (TextView) findViewById(R.id.btnLogin);
-        btnLoginFb = (LoginButton) findViewById(R.id.btnLoginFb);
-        etxtUsername = (EditText) findViewById(R.id.etxtUsername);
-        etxtPassword = (EditText) findViewById(R.id.etxtPassword);
-        etxtPassword.setOnEditorActionListener(this);   //Listen for done clicked to start login
-
-//       progbLogin = (ProgressBar) findViewById(R.id.progbLogin);
-        srLayLogin = (SwipeRefreshLayout) findViewById(R.id.srLayLogin);
         initSwipeRefresh();
         initFbLogin();
     }
@@ -115,6 +126,51 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
         srLayLogin.setProgressViewOffset(true, 0, 8);
     }
 
+    @Override
+    public void onRefresh()
+    {
+        //Does nothing because srLay is not used as a swipe to refresh view only as a loading view
+    }
+
+    private void loading(boolean visible)
+    {
+        if(visible)
+        {
+            //Shows loading animation whilst animating other views to hide
+            //Do needed animations
+            Animation anim = AnimationUtils.loadAnimation(this, R.anim.bottom_sheet_hide);
+            linLayUsername.startAnimation(anim);
+            linLayPassword.startAnimation(anim);
+            linLayActionButtons.startAnimation(anim);
+
+            //Hide actual views
+            linLayUsername.setVisibility(View.INVISIBLE);
+            linLayPassword.setVisibility(View.INVISIBLE);
+            linLayActionButtons.setVisibility(View.INVISIBLE);
+
+            //Make loading animation visible
+            srLayLogin.setRefreshing(true);
+        }
+        else
+        {
+            //Hide loading animation
+            srLayLogin.setRefreshing(false);
+
+            //Animate other views to visible
+            Animation anim = AnimationUtils.loadAnimation(this, R.anim.bottom_sheet_show);
+            linLayUsername.startAnimation(anim);
+            linLayPassword.startAnimation(anim);
+            linLayActionButtons.startAnimation(anim);
+
+            //Make other views visible
+            linLayUsername.setVisibility(View.VISIBLE);
+            linLayPassword.setVisibility(View.VISIBLE);
+            linLayActionButtons.setVisibility(View.VISIBLE);
+        }
+
+
+    }
+
     private void initFbLogin()
     {
         btnLoginFb.setReadPermissions("email");
@@ -128,6 +184,7 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
             @Override
             public void onClick(View view)
             {
+                loading(true);
                 ParseFacebookUtils.logInWithReadPermissionsInBackground(thisActivity, lstPerms, new LogInCallback()
                 {
                     @Override
@@ -138,11 +195,7 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
                             //Check if parse user's fb id is set if not this is a new reg
                             if(parseUser.getString("facebookId") == null)
                             {
-                                //Launches register activity with limited pre-populated fields
-                                Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-                                registerIntent.putExtra("regWithFacebook", true);
-                                registerIntent.putExtra("authData", parseUser.getJSONObject("authData").toString());
-                                startActivityForResult(registerIntent, REQ_CODE_REGISTER_USER);
+                                regWithFacebook(parseUser);
                             }
                             else
                                 login();
@@ -153,8 +206,7 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
                             //Invalid login credentials code 101
                             //Check internet connection code 100
 
-//                    progbLogin.setVisibility(View.GONE);
-                            srLayLogin.setRefreshing(false);
+                            loading(false);
 
                             if(e.getCode() == 100)
                                 Snackbar.make(btnLoginFb, "Please check you internet connection and try again", Snackbar.LENGTH_LONG).show();
@@ -165,39 +217,11 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
                 });
             }
         });
-//        btnLoginFb.registerCallback(callBackMang, new FacebookCallback<LoginResult>()
-//        {
-//            @Override
-//            public void onSuccess(LoginResult loginResult)
-//            {
-//
-//            }
-//
-//            @Override
-//            public void onCancel()
-//            {
-//
-//            }
-//
-//            @Override
-//            public void onError(FacebookException error)
-//            {
-//
-//            }
-//        });
-    }
-
-    @Override
-    public void onRefresh()
-    {
-        srLayLogin.setRefreshing(true);
-        srLayLogin.setRefreshing(false);
     }
 
     public void onClickLogin(View view)
     {
-//        progbLogin.setVisibility(View.VISIBLE);
-        srLayLogin.setRefreshing(true);
+        loading(true);
         //Attempt to login user
         ParseUser.logInInBackground(etxtUsername.getText().toString(), etxtPassword.getText().toString(), new LogInCallback() {
             @Override
@@ -214,8 +238,7 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
                     //Invalid login credentials code 101
                     //Check internet connection code 100
 
-//                    progbLogin.setVisibility(View.GONE);
-                    srLayLogin.setRefreshing(false);
+                    loading(false);
 
                     if(e.getCode() == 101)
                         Snackbar.make(btnLogin, "Invalid Username or Password", Snackbar.LENGTH_LONG).show();
@@ -228,9 +251,19 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
         });
     }
 
+    private void regWithFacebook(ParseUser parseUser)
+    {
+        //Launches register activity with limited pre-populated fields
+        Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+        registerIntent.putExtra("regWithFacebook", true);
+        registerIntent.putExtra("authData", parseUser.getJSONObject("authData").toString());
+        startActivityForResult(registerIntent, REQ_CODE_REGISTER_USER);
+    }
+
     public void login()
     {
         //TODO: animate login to home screen
+        loading(true);
 
         ParsePush.unsubscribeInBackground("not_logged_in");
 
@@ -303,14 +336,12 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
                 if(e == null)
                 {
                     Log.i("Login", "Subscribed to all channels");
-//                    progbLogin.setVisibility(View.GONE);
-                    srLayLogin.setRefreshing(false);
+                    loading(false);
                 }
                 else
                 {
                     Log.e("Login", "Subscribe to channels failed: " + e.getMessage() + " Code: " + e.getCode());
-//                    progbLogin.setVisibility(View.GONE);
-                    srLayLogin.setRefreshing(false);
+                    loading(false);
                 }
             }
         });
@@ -352,10 +383,7 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
             public void onClick(DialogInterface dialog, int which)
             {
                 //Loading animation
-//                progbLogin.setVisibility(View.VISIBLE);
-                srLayLogin.setRefreshing(true);
-
-                final Toast msg = Toast.makeText(thisActivity, "", Toast.LENGTH_LONG);
+                loading(true);
 
                 //Clean up email
                 String email = etxtDialogResetPasswordEmail.getText().toString();
@@ -369,30 +397,26 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
                         if(e == null)
                         {
                             //Successfull
-//                            progbLogin.setVisibility(View.GONE);
-                            srLayLogin.setRefreshing(false);
-                            msg.setText("Reset Email Sent");
+                            loading(false);
+                            Snackbar.make(srLayLogin, "Reset Email Sent", Snackbar.LENGTH_LONG).show();
                         }
                         else
                         {
                             //Failed
-//                            progbLogin.setVisibility(View.GONE);
-                            srLayLogin.setRefreshing(false);
+                            loading(false);
 
                             //No user found with that email address code 205
                             //Invalid email code 125
                             //Check internet connection code 100
                             if(e.getCode() == 205)
-                                msg.setText("No account associated with that email");
+                                Snackbar.make(srLayLogin, "No account associated with that email", Snackbar.LENGTH_LONG).show();
                             else if(e.getCode() == 125)
-                                msg.setText("Invalid email address");
+                                Snackbar.make(srLayLogin, "Invalid email address", Snackbar.LENGTH_LONG).show();
                             else if(e.getCode() == 100)
-                                msg.setText("Check your internet connection and try again");
+                                Snackbar.make(srLayLogin, "Check your internet connection and try again", Snackbar.LENGTH_LONG).show();
                             else
-                                msg.setText("Unsuccessful Email Reset: " + e.getMessage() + " Code: " + e.getCode());
+                                Snackbar.make(srLayLogin, "Unsuccessful Email Reset: " + e.getMessage() + " Code: " + e.getCode(), Snackbar.LENGTH_LONG).show();
                         }
-
-                        msg.show();
                     }
                 });
             }

@@ -120,6 +120,7 @@ public class FragmentDialogGroupsPrivate extends DialogFragment
     {
         srLayGroupsPvt.setEnabled(false);
         srLayGroupsPvt.setColorSchemeColors(getResources().getColor(R.color.FlatLightBlue), getResources().getColor(R.color.Red), getResources().getColor(R.color.SeaGreen));
+        srLayGroupsPvt.setProgressBackgroundColor(R.color.CircleProgLoadingColor);
     }
 
     private void subscribeUserToGroup(ParseObject group)

@@ -1,6 +1,10 @@
 package io.flyingmongoose.brave;
 
+import android.*;
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Criteria;
@@ -10,8 +14,12 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -59,9 +67,11 @@ import java.util.TimerTask;
 /**
  * Created by !Aries! on 2015-06-27.
  */
-public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener,CompoundButton.OnCheckedChangeListener, SwipeRefreshLayout.OnRefreshListener
+public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, CompoundButton.OnCheckedChangeListener, SwipeRefreshLayout.OnRefreshListener
 {
+
     private final String TAG = "FragmentMap";
+    private final int REQ_PERM_LOC = 100;
 
     private final FragmentMap thisFrag = this;
 
@@ -148,7 +158,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "Fragment Map onActivityCreated");
 
-       //Initialize and get a handle on map obj
+        //Initialize and get a handle on map obj
         initMap();
 
         //Check if push notification data exists
@@ -167,7 +177,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
         Log.i(TAG, "Fragment Map onDetach");
     }
 
-     @Override
+    @Override
     public void onHiddenChanged(boolean hidden)
     {
         super.onHiddenChanged(hidden);
@@ -191,8 +201,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
 
             //Check if push notification data exists
             checkPushNotificationData();
-        }
-        else
+        } else
         {
             //if respond dialog is exists dismiss it
             if(respondPopupWindow != null)
@@ -229,7 +238,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
             public void onMapReady(GoogleMap googleMap)
             {
                 googleMap.setMyLocationEnabled(true);
-                googleMap.setPadding(calcLeftPadding(),0,0,calcBottom());
+                googleMap.setPadding(calcLeftPadding(), 0, 0, calcBottom());
                 googleMap.setOnInfoWindowClickListener(thisFrag);
                 googleMap.setOnMapClickListener(thisFrag);
 
@@ -300,7 +309,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                 //get last know location data
                 trackPanicLastKnownLocation = new ParseGeoPoint(jsonObjPushData.getDouble(LAT), jsonObjPushData.getDouble(LON));
 
-            } catch (JSONException e)
+            } catch(JSONException e)
             {
                 e.printStackTrace();
             }
@@ -320,8 +329,11 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
         if(jsonObjPushData != null && trackPanicLastKnownLocation.getLatitude() != 0)
         {
             googMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(trackPanicLastKnownLocation.getLatitude(), trackPanicLastKnownLocation.getLongitude()), MAP_ZOOM_LEVEL));
-        }
-        else
+        } else if(HomeActivity.pushLat != 0 && HomeActivity.pushLng != 0)
+        {
+            Log.d("debug", "Used notif loc to init map cam");
+            googMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(HomeActivity.pushLat, HomeActivity.pushLng), MAP_ZOOM_LEVEL));
+        } else
         {
             //find user last known location and animate to that if it exists
             LocationManager locMang = (LocationManager) getActivity().getSystemService(getActivity().LOCATION_SERVICE);
@@ -331,8 +343,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
             if(userLastKnownLocation != null)
             {
                 googMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(userLastKnownLocation.getLatitude(), userLastKnownLocation.getLongitude()), MAP_ZOOM_LEVEL));
-            }
-            else
+            } else
             {
                 //listen for a location and animate as soon as found, then stop listening
                 googMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener()
@@ -380,8 +391,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                         lastUpdatedAt = SystemClock.elapsedRealtime();
                         Log.i(TAG, "Panics updated by cam location");
                     }
-                }
-                else
+                } else
                 {
                     updatePanics(googMap, new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude));
                     camPrevLocation = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
@@ -439,7 +449,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                 @Override
                 public void done(List<ParseObject> freshPanics, ParseException e)
                 {
-                    if (e == null)
+                    if(e == null)
                     {
 
                         //Cycle trough fresh panics add and update
@@ -458,8 +468,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                                 //Move pin
                                 ParseGeoPoint newLoc = freshPanics.get(i).getParseGeoPoint("location");
                                 panicMarker.setPosition(new LatLng(newLoc.getLatitude(), newLoc.getLongitude()));
-                            }
-                            else
+                            } else
                             {
                                 //add new panic
                                 //Check if pin is to be tracked
@@ -480,8 +489,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                                     //House keeping
                                     panicMarkers.put(freshPanicObjectId, panicMarker);
                                     panicObjs.put(panicMarker.getId(), freshPanics.get(i));
-                                }
-                                else
+                                } else
                                 {
                                     //add normal pin
                                     ParseGeoPoint panicLoc = freshPanics.get(i).getParseGeoPoint("location");
@@ -497,7 +505,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                         //Remove stale panics
                         Iterator<Map.Entry<String, Marker>> iterator = panicMarkers.entrySet().iterator();
                         boolean trackedPanicFound = false;
-                        while (iterator.hasNext())
+                        while(iterator.hasNext())
                         {
                             //Iterate trough searching update list for current entry (key is panic obj id)
                             Map.Entry<String, Marker> entry = iterator.next();
@@ -554,7 +562,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                         //Only check if panic was found if a track panic id was set
                         if(!trackPanicId.isEmpty())
                         {
-                            if (!trackedPanicFound)
+                            if(!trackedPanicFound)
                             {
                                 trackPanicFollow = false;
                                 tbtnTrack.setVisibility(View.GONE);
@@ -654,7 +662,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
             @Override
             public void run()
             {
-               String address = reverseGeoLocation(marker.getPosition());
+                String address = reverseGeoLocation(marker.getPosition());
 
                 txtvAddress.setText(address);
                 txtvAddress.setVisibility(View.VISIBLE);
@@ -695,8 +703,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                         if(e == null)
                         {
                             Toast.makeText(getActivity(), "The user will be notified, you are responding", Toast.LENGTH_LONG).show();
-                        }
-                        else
+                        } else
                             Toast.makeText(getActivity(), "An error occurred while responding: " + e.getMessage() + " Code: " + e.getCode(), Toast.LENGTH_LONG).show();
                     }
                 });
@@ -715,7 +722,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
 
                 if(event.getAction() == MotionEvent.ACTION_DOWN)
                     btnTouched.setBackgroundColor(getResources().getColor(R.color.LightHintGrey));
-                else if (event.getAction() == MotionEvent.ACTION_UP)
+                else if(event.getAction() == MotionEvent.ACTION_UP)
                     btnTouched.setBackground(null);
                 return false;
             }
@@ -749,7 +756,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
             formattedAddress += "\n" + resultAddress.getCountryName();
             formattedAddress += "\n" + resultAddress.getPostalCode();
 
-        } catch (IOException e)
+        } catch(IOException e)
         {
             e.printStackTrace();
         }

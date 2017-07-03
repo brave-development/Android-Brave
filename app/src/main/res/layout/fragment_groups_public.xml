@@ -9,7 +9,7 @@
         android:id="@+id/svGroupsPublic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:queryHint="Search group name"
+        android:queryHint="@string/fragGroupPublicSearchHint"
         android:imeOptions="actionSearch"
         android:iconifiedByDefault="false"/>
 
@@ -23,7 +23,7 @@
         android:gravity="center"
         android:textAppearance="?android:textAppearanceMedium"
         android:textColor="@color/White"
-        android:text="Type at least 3 \ncharacters to search"/>
+        android:text="@string/fragGroupPublicSearchDesc"/>
 
     <com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView
         android:id="@+id/recvGroupsPublic"

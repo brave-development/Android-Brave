@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="Join Private Group"
+        android:text="@string/diagJoinPvtGroupTitle"
         android:textSize="20sp"
         android:textColor="@color/White"/>
 
@@ -25,7 +25,7 @@
         android:layout_marginBottom="10dp"
         android:layout_below="@id/txtvGroupPvtTitle"
         android:textColor="@color/White"
-        android:text="Enter the group code provided to you by another member"/>
+        android:text="@string/diagJoinPvtGroupDesc"/>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/txtiLayGroupCode"
@@ -37,7 +37,7 @@
             android:id="@+id/etxtGroupJoinPvtCode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Group Code"
+            android:hint="@string/diagJoinPvtGroupGroupCodeHint"
             android:textColorHint="@color/SeaGreen"
             android:textColor="@color/White"/>
 
@@ -67,7 +67,7 @@
         android:layout_below="@id/txtiLayGroupCode"
         android:background="@null"
         android:textColor="@color/White"
-        android:text="JOIN"/>
+        android:text="@string/diagJoinPvtGroupBtnJoin"/>
 
     <Button
         android:id="@+id/btnGroupPvtCancel"
@@ -78,6 +78,6 @@
         android:layout_marginTop="25dp"
         android:background="@null"
         android:textColor="@color/White"
-        android:text="CANCEL"/>
+        android:text="@string/diagJoinPvtGroupBtnCancel"/>
 
 </RelativeLayout>

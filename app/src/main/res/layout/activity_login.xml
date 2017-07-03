@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginActivity"
-    android:background="@drawable/main_bg2">
+    android:background="@drawable/main_bg7">
 
     <TextView
         android:layout_width="wrap_content"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_below="@id/txtvAppHeading"
-        android:layout_marginTop="55dp"
+        android:layout_marginTop="25dp"
         android:layout_marginLeft="45dp"
         android:layout_marginRight="45dp"
         android:background="@color/OverlayMoreTranslucentBlack">
@@ -70,6 +70,14 @@
 
     </LinearLayout>
 
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/btnLoginFb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/linLayPassword"/>
+
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/srLayLogin"
         android:layout_width="wrap_content"
@@ -82,14 +90,25 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <TextView
+        android:id="@+id/txtvCopyrightNotice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/White"
+        android:textSize="10sp"
+        android:text="@string/copyrightNotice"/>
+
     <LinearLayout
         android:id="@+id/linLayLoginActionButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@id/txtvCopyrightNotice"
         android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:background="@drawable/bottom_gradual_fade">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
@@ -117,17 +136,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
-            android:text="Reset Password"
+            android:text="@string/btnloginResetPassword"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@color/White"
             android:clickable="true"
             android:onClick="onClickResetPassword"
             android:id="@+id/btnResetPassword"/>
-
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/btnLoginFb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

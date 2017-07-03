@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Last 20 Panics called by you"
+        android:text="@string/fragHistYoursDesc"
         android:textColor="@color/White"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 

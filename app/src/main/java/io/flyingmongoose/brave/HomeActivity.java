@@ -1,5 +1,8 @@
 package io.flyingmongoose.brave;
 
+import android.*;
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.SearchManager;
 import android.content.Context;
@@ -9,16 +12,21 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +49,10 @@ import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.wooplr.spotlight.SpotlightView;
+import com.wooplr.spotlight.utils.SpotlightListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -49,6 +60,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 {
     public static final String PARSE_APP_ID = "PANICING-TURTLE";
     public static final String PARSE_API_KEY = "PANICINGTURTLE3847TR386TB281XN1NY7YNXM";
+    private final int REQ_PERM_LOC = 100;
     private final String LOG_TAG = "HomeActivity";
     private DrawerLayout drawLayNav;
     private ListView lstvNav;
@@ -98,8 +110,13 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     public static ParseUser currentUser = ParseUser.getCurrentUser();
     public boolean userFresh = false;
     public static String jsonPushData = "";
+    public static double pushLat;
+    public static double pushLng;
 
     private static Menu mActionBar;
+
+    private SpotlightView spotvDrawer;
+    private SpotlightView spotvGroups;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +183,15 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            initFragments();
+        else
+            reqRunTimePerms();
 
+    }
+
+    private void initFragments()
+    {
         //Init fragements
         fragPanic = new FragmentPanic();
         fragMap = new FragmentMap();
@@ -199,16 +224,139 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         /*fragTransaction.add(R.id.HomeContentLayout, fragSettings, TAG_FRAG_SETTINGS);
         fragTransaction.hide(fragSettings);*/
 
-        fragTransaction.commit();
+        fragTransaction.commitAllowingStateLoss();
 
-        initFbPush();
+        //initFbPush();
+    }
+
+    private void reqRunTimePerms()
+    {
+        // Should we show an explanation?
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION))
+        {
+            // Show an explanation to the user
+            //Explain to user that loc is required to use the app
+            buildLocPermExplainDiag();
+        }
+        else
+        {
+            // No explanation needed, we can request the permission.
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQ_PERM_LOC);
+        }
+    }
+
+    private void buildLocPermExplainDiag()
+    {
+        final Activity activity = this;
+        final android.support.v7.app.AlertDialog.Builder diagbuilder = new android.support.v7.app.AlertDialog.Builder(this);
+        diagbuilder.setTitle("Location Permissions");
+        diagbuilder.setMessage("Your location is central to the way Brave works and notifies others of your emergencies.");
+        diagbuilder.setNegativeButton("Quit", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                //Close app if user won't grant location permissions
+                finish();
+            }
+        });
+        diagbuilder.setPositiveButton("Got it", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i)
+            {
+                dialogInterface.dismiss();
+
+                // Request permission
+                ActivityCompat.requestPermissions(activity, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQ_PERM_LOC);
+            }
+        });
+        diagbuilder.create().show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        switch(requestCode)
+        {
+            case REQ_PERM_LOC:
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    // permission was granted, init any functionality that require loc perms
+                    initFragments();
+                }
+                else
+                {
+                    // permission denied, app can;t function without loc perm so prompt should close?
+                    buildLocPermExplainDiag();
+                }
+        }
+    }
+
+    public void showDrawTut()
+    {
+        //Open drawer
+        drawLayNav.openDrawer(Gravity.LEFT);
+
+        spotvDrawer =  new SpotlightView.Builder(this)
+                .introAnimationDuration(400)
+                .enableRevealAnimation(true)
+                .performClick(true)
+                .fadeinTextDuration(400)
+                .headingTvColor(ContextCompat.getColor(this, R.color.SeaGreen))
+                .headingTvSize(24)
+                .headingTvText("Menu")
+                .subHeadingTvColor(ContextCompat.getColor(this, R.color.White))
+                .subHeadingTvSize(14)
+                .subHeadingTvText("Tap here to access the menu, or swipe from the left edge of the screen")
+                .maskColor(Color.parseColor("#dc000000"))
+                .targetPadding(165)
+                .target(navAdapter.getView(1, null, null))
+                .lineAnimDuration(400)
+                .lineAndArcColor(ContextCompat.getColor(this, R.color.SeaGreen))
+                .usageId(navAdapter.getGroupView().getId() + "") //UNIQUE ID
+                .dismissOnBackPress(true)
+                .dismissOnTouch(true)
+                .show();
+
+        final HomeActivity activity = this;
+
+        spotvDrawer.setListener(new SpotlightListener()
+        {
+            @Override
+            public void onUserClicked(String s)
+            {
+                spotvGroups =  new SpotlightView.Builder(activity)
+                        .introAnimationDuration(400)
+                        .enableRevealAnimation(true)
+                        .performClick(true)
+                        .fadeinTextDuration(400)
+                        .headingTvColor(ContextCompat.getColor(activity, R.color.SeaGreen))
+                        .headingTvSize(24)
+                        .headingTvText("Groups")
+                        .subHeadingTvColor(ContextCompat.getColor(activity, R.color.White))
+                        .subHeadingTvSize(14)
+                        .subHeadingTvText("Tap groups to join or create groups to be notified of your emergencies")
+                        .maskColor(Color.parseColor("#dc000000"))
+                        .target(lstvNav)
+                        .lineAnimDuration(400)
+                        .lineAndArcColor(ContextCompat.getColor(activity, R.color.SeaGreen))
+                        .targetPadding(-125)
+                        .usageId(lstvNav.getId() + "") //UNIQUE ID
+                        .dismissOnBackPress(true)
+                        .dismissOnTouch(true)
+                        .show();
+            }
+        });
     }
 
     private void initFbPush()
     {
+        boolean forceRefresh = false;
         //Save firebase token to parse server if doesn't exist
         ParseInstallation instObj = ParseInstallation.getCurrentInstallation();
-        if(instObj.getString("firebaseID") == null || instObj.getString("firebaseID").isEmpty())
+        if(instObj.getString("firebaseID") == null || instObj.getString("firebaseID").isEmpty() || forceRefresh)
         {
             instObj.put("firebaseID", FirebaseInstanceId.getInstance().getToken());
             instObj.saveInBackground(new SaveCallback()
@@ -216,7 +364,14 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
                 @Override
                 public void done(ParseException e)
                 {
-                    Log.d("fbPushDebug", "Parse FB Push Token Refreshed: " + FirebaseInstanceId.getInstance().getToken());
+                    if(e == null)
+                    {
+                        Log.d("fbPushDebug", "Parse FB Push Token Refreshed: " + FirebaseInstanceId.getInstance().getToken());
+                    }
+                    else
+                    {
+                        Log.d("fbPushDebug", "Parse FB Push Token Refresh FAILED: " + e.getCode() + " Messages: " + e.getMessage());
+                    }
                 }
             });
         }
@@ -238,12 +393,35 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onPostCreate(savedInstanceState);
         drawerListener.syncState();
 
-        //Check if app opened vai push notification
-        if(getIntent().hasExtra("jsonPushData"))
+//        //Check if app opened vai push notification
+//        if(getIntent().hasExtra("jsonPushData"))
+//        {
+//            jsonPushData = getIntent().getStringExtra("jsonPushData");
+//            fragBottomActionBar.btnNavMap.performClick();
+//            Log.i("Home", "Data read in home activity: " + jsonPushData);
+//        }
+
+        Intent startingIntent = getIntent();
+        if (startingIntent != null)
         {
-            jsonPushData = getIntent().getStringExtra("jsonPushData");
-            fragBottomActionBar.btnNavMap.performClick();
-            Log.i("Home", "Data read in home activity: " + jsonPushData);
+            Log.d("debug", "Trying to set lat and lng from notif: " + startingIntent.hasExtra("lat"));
+
+            Bundle bundle = startingIntent.getExtras();
+            if (bundle != null) {
+                for (String key : bundle.keySet()) {
+                    Object value = bundle.get(key);
+                    Log.d(TAG, String.format("%s %s (%s)", key,
+                            value.toString(), value.getClass().getName()));
+                }
+            }
+            if(startingIntent.getExtras() != null)
+            {
+                pushLat = startingIntent.getExtras().getDouble("lat");
+                pushLng = startingIntent.getExtras().getDouble("lng");
+
+                Log.d("debug", "Managed to set cords from notif");
+                fragBottomActionBar.btnNavMap.performClick();
+            }
         }
     }
 
@@ -304,7 +482,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 
             //Present feedback e mail
             //Report user
-            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "support@panic-sec.org", null));
+            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "feedback@brave.ly", null));
             intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback on Panic v" + version );
             intent.putExtra(Intent.EXTRA_TEXT, "We would like to thank you for your support, your feedback is valuable to us. \nWe use it to enhance your experience, so feel free to make suggestions.\n\nSo what would you like to tell us?\n\n ");
 
@@ -667,6 +845,7 @@ class NavAdapter extends BaseAdapter
     private Context context;
     private String[] navEntries;    //Entries for the navigation menu
     private TypedArray navIcons;     //Icon ids for navigation menu
+    private View vGroupsRef;
 
     public NavAdapter(Context context)
     {
@@ -721,6 +900,12 @@ class NavAdapter extends BaseAdapter
 
         navRow.setTag(navEntries[position]);
 
+        //Get ref to groups view will need it for tut purposes later
+        if(position == 1)
+            vGroupsRef = navRow;
+
         return navRow;
     }
+
+    public View getGroupView(){return vGroupsRef;}
 }

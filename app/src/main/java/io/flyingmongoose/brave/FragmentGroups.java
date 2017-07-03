@@ -1,10 +1,12 @@
 package io.flyingmongoose.brave;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -21,6 +23,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
+import com.wooplr.spotlight.SpotlightView;
 import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
 
 import java.util.ArrayList;
@@ -44,6 +47,8 @@ public class FragmentGroups extends Fragment
     private FloatingActionButton fabJoinCom;
 
     public AdapterGroups lstAdapter;
+
+    private SpotlightView spotvFamGroups;
 
     @Nullable
     @Override
@@ -142,6 +147,7 @@ public class FragmentGroups extends Fragment
         fragTrans.replace(R.id.HomeContentLayout, fragEdit , "fragGroupEdit");
         fragTrans.addToBackStack("fragGroupEdit");
         fragTrans.commit();
+
     }
 
     private void initSwipeRefresh()
@@ -192,6 +198,7 @@ public class FragmentGroups extends Fragment
                             if(e == null)
                             {
                                 updateList(list);
+                                subInstallationToChannels(list);
                             } else
                             {
                                 if(e.getCode() == 100)
@@ -213,6 +220,47 @@ public class FragmentGroups extends Fragment
                 }
             }
         });
+    }
+
+    public void subInstallationToChannels(List<ParseObject> lstGroups)
+    {
+        //sub to channel
+        List<String> lstChannelsToSubTo = new ArrayList<String>();
+
+        for(int g = 0; g < lstGroups.size(); g++)
+        {
+            //Caps start of each word, uncaps every other
+            String groupName = lstGroups.get(g).getString("name");
+            String[] words = groupName.split(" ");
+            String formattedGroupName = "";
+            for(int i = 0; i < words.length; i++)
+            {
+                char[] wordLetters = words[i].toCharArray();
+                wordLetters[0] = Character.toUpperCase(wordLetters[0]);
+
+                //Uncaps the rest
+                if(wordLetters.length > 1)
+                {
+                    for(int j = 1; j < wordLetters.length; j++)
+                    {
+                        wordLetters[j] = Character.toLowerCase(wordLetters[j]);
+                    }
+                }
+
+                formattedGroupName += new String(wordLetters) + " ";
+            }
+            final String finalFormattedGroupName = formattedGroupName;
+
+            final String channelName = groupName.replaceAll("\\s+", "").trim().toString();
+
+            Log.d("FragGroups", "Channel name to unsub from: " + finalFormattedGroupName);
+
+            lstChannelsToSubTo.add(finalFormattedGroupName);
+        }
+
+        ParseInstallation.getCurrentInstallation().remove("channels");
+        ParseInstallation.getCurrentInstallation().addAll("channels", lstChannelsToSubTo);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 
     public void unSubUserFromGroup(final ParseObject group)

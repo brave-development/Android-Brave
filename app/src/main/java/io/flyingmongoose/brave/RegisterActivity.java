@@ -24,14 +24,11 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.parse.Parse;
 import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
@@ -69,6 +66,7 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
 
     private final int NO_OF_FREE_GROUPS_ON_REGISTER = 3;
     private final String TERMS_AND_CONDITIONS_LINK = "http://www.panic-sec.org/terms/";
+    private String facebookId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,82 +154,68 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
                     JSONObject jsonAuthData = new JSONObject(authDataString);
                     final JSONObject jsonFbData = jsonAuthData.getJSONObject("facebook");
 
-                    //set facebook id
-                    ParseUser.getCurrentUser().put("facebookId", jsonFbData.getString("id"));
-                    ParseUser.getCurrentUser().saveInBackground(new SaveCallback()
+
+                    try
                     {
-                        @Override
-                        public void done(ParseException e)
+                        //Get fb auth token to make details graph request
+                        List<String> perms = new ArrayList<String>();
+                        perms.add("email");
+                        perms.add("public_profile");
+
+                        AccessToken fbToken = new AccessToken(jsonFbData.getString("access_token"), getApplicationInfo().metaData.getString("com.facebook.sdk.ApplicationId"), jsonFbData.getString("id"), perms, null, null, null, null);
+
+                        //Request needed info
+                        GraphRequest request = GraphRequest.newMeRequest(fbToken, new GraphRequest.GraphJSONObjectCallback()
                         {
-                            if(e == null)
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response)
                             {
                                 try
                                 {
-                                    //Get fb auth token to make details graph request
-                                    List<String> perms = new ArrayList<String>();
-                                    perms.add("email");
-                                    perms.add("public_profile");
+                                    Log.d(TAG, "DebugFb Graph response: " + object.toString());
 
-                                    AccessToken fbToken = new AccessToken(jsonFbData.getString("access_token"), getApplicationInfo().metaData.getString("com.facebook.sdk.ApplicationId"), jsonFbData.getString("id"), perms, null, null, null, null);
+                                    //Pre populate data
+                                    if(object.has("name"))
+                                        etxtRegisterNameAndSurname.setText(object.getString("name"));
 
-                                    //Request needed info
-                                    GraphRequest request = GraphRequest.newMeRequest(fbToken, new GraphRequest.GraphJSONObjectCallback()
+                                    if(object.has("email"))
                                     {
-                                        @Override
-                                        public void onCompleted(JSONObject object, GraphResponse response)
-                                        {
-                                            try
-                                            {
-                                                //Pre populate data
-                                                if(object.has("name"))
-                                                    etxtRegisterNameAndSurname.setText(object.getString("name"));
+                                        fLayUsername.setVisibility(View.GONE);
+                                        fLayEmail.setVisibility(View.GONE);
+                                        etxtRegisterEmail.setVisibility(View.INVISIBLE);
+                                        etxtRegisterEmail.setText(object.getString("email"));
+                                        etxtRegisterEmail.setEnabled(false);
+                                        fLayPassword.setVisibility(View.GONE);
+                                        etxtRegisterPassword.setVisibility(View.INVISIBLE);
+                                        etxtRegisterPassword.setEnabled(false);
+                                        fLayRetypePassword.setVisibility(View.GONE);
+                                        etxtRegisterRetypePassword.setVisibility(View.INVISIBLE);
+                                        etxtRegisterRetypePassword.setEnabled(false);
+                                    }
 
-                                                if(object.has("email"))
-                                                {
-                                                    fLayUsername.setVisibility(View.GONE);
-                                                    fLayEmail.setVisibility(View.GONE);
-                                                    etxtRegisterEmail.setVisibility(View.INVISIBLE);
-                                                    etxtRegisterEmail.setText(object.getString("email"));
-                                                    etxtRegisterEmail.setEnabled(false);
-                                                    fLayPassword.setVisibility(View.GONE);
-                                                    etxtRegisterPassword.setVisibility(View.INVISIBLE);
-                                                    etxtRegisterPassword.setEnabled(false);
-                                                    fLayRetypePassword.setVisibility(View.GONE);
-                                                    etxtRegisterRetypePassword.setVisibility(View.INVISIBLE);
-                                                    etxtRegisterRetypePassword.setEnabled(false);
-                                                }
+                                    if(object.has("id"))
+                                        facebookId = object.getString("id");
 
-                                                etxtRegisterUsername.setVisibility(View.INVISIBLE);
-                                                etxtRegisterUsername.setEnabled(false);
+                                    etxtRegisterUsername.setVisibility(View.INVISIBLE);
+                                    etxtRegisterUsername.setEnabled(false);
 
-                                            }
-                                            catch(JSONException je)
-                                            {
-                                                je.printStackTrace();
-                                            }
-                                        }
-                                    });
-
-                                    Bundle parameters = new Bundle();
-                                    parameters.putString("fields", "name,email");
-                                    request.setParameters(parameters);
-                                    request.executeAsync();
                                 }
                                 catch(JSONException je)
                                 {
                                     je.printStackTrace();
                                 }
                             }
-                            else if(e.getCode() == 100)
-                            {
-                                Snackbar.make(srLayRegister, "Check your internet connection and try again", Snackbar.LENGTH_LONG).show();
-                            }
-                            else
-                            {
-                                Snackbar.make(srLayRegister, "Unsuccessful while checking if group name exists: " + e.getMessage() + " Code: " + e.getCode(), Snackbar.LENGTH_LONG).show();
-                            }
-                        }
-                    });
+                        });
+
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,name,email");
+                        request.setParameters(parameters);
+                        request.executeAsync();
+                    }
+                    catch(JSONException je)
+                    {
+                        je.printStackTrace();
+                    }
                 }
                 catch(JSONException je)
                 {
@@ -349,10 +333,6 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
 
     public void onClickSubmit(View view)
     {
-       // String name = etxtUsername.getText().toString();
-       //Toast.makeText(this, "Perfom submition procedures: " + etxtUsername.getText().toString() + " " + etxtPassword.getText().toString()
-         //       + " " + etxtCellNumber.getText().toString() + " " + etxtNameAndSurname.getText().toString(), Toast.LENGTH_LONG).show();
-
         //Hide keyboard
         //clear all focus on views by requesting focus on root layout
         LinearLayout linLayRegisterRoot = (LinearLayout) findViewById(R.id.linLayRegisterRoot);
@@ -375,34 +355,29 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
     private void updateNewUser()
     {
         final ParseUser currUser = ParseUser.getCurrentUser();
-        currUser.put("name", etxtRegisterNameAndSurname.getText().toString());
-        currUser.put("cellNumber", etxtRegisterCellNumber.getText().toString());
-        currUser.put("country", ((TextView) spnrRegisterCountry.getSelectedView()).getText().toString());
+        currUser.put("facebookId", facebookId);
+        currUser.put("name", etxtRegisterNameAndSurname.getText().toString().trim());
+        currUser.put("email", etxtRegisterEmail.getText().toString().trim());
+        currUser.put("cellNumber", etxtRegisterCellNumber.getText().toString().trim());
+        currUser.put("country", ((TextView) spnrRegisterCountry.getSelectedView()).getText().toString().trim());
         currUser.put("numberOfGroups", NO_OF_FREE_GROUPS_ON_REGISTER);
         currUser.add("groups", "");
 
-        final Toast succesfulRegisterMsg = Toast.makeText(this, "You have successfully been registered", Toast.LENGTH_LONG);
-        final Toast UnsuccessfulRegisterMsg = Toast.makeText(this, "", Toast.LENGTH_LONG);
-        final Intent intentHome = new Intent(this, HomeActivity.class);
-
         //Loading animation
-        //        final ProgressBar progbRegister = (ProgressBar) findViewById(R.id.progbRegister);
-        //        progbRegister.setVisibility(View.VISIBLE);
         srLayRegister.setRefreshing(true);
-        currUser.signUpInBackground(new SignUpCallback()
+        currUser.saveInBackground(new SaveCallback()
         {
             @Override
             public void done(ParseException e)
             {
                 if (e == null)
                 {
-                    //                    progbRegister.setVisibility(View.GONE);
                     //init sharedPrefs
                     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
                     sharedPrefs.edit().putBoolean("panicDelay", true).commit();
 
                     srLayRegister.setRefreshing(false);
-                    succesfulRegisterMsg.show();
+                    Snackbar.make(srLayRegister, "You have successfully been registered", Snackbar.LENGTH_LONG).show();
 
                     currUser.removeAll("groups", Arrays.asList(""));
                     currUser.saveInBackground();
@@ -425,13 +400,11 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
                     else if (e.getCode() == 125)
                         etxtRegisterEmail.setError("The email you entered is invalid");    //UnsuccessfulRegisterMsg.setText("The email you entered is invalid");
                     else if (e.getCode() == 100)
-                        UnsuccessfulRegisterMsg.setText("Please check your internet connection and try again");
+                        Snackbar.make(srLayRegister, "Please check your internet connection and try again", Snackbar.LENGTH_LONG).show();
                     else if (e.getCode() == -1)
                         etxtRegisterUsername.setError("Username cannot be blank");
                     else
-                        UnsuccessfulRegisterMsg.setText("Registration was unsuccessful: " + e.getMessage() + " Code: " + e.getCode());
-
-                    UnsuccessfulRegisterMsg.show();
+                        Snackbar.make(srLayRegister, "Registration was unsuccessful: " + e.getMessage() + " Code: " + e.getCode(), Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -440,23 +413,17 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
     private void signUpNewUser()
     {
         final ParseUser registerUser = new ParseUser();
-        registerUser.put("name", etxtRegisterNameAndSurname.getText().toString());
-        registerUser.setUsername(etxtRegisterUsername.getText().toString());
-        registerUser.put("cellNumber", etxtRegisterCellNumber.getText().toString());
-        registerUser.setEmail(etxtRegisterEmail.getText().toString());
-        registerUser.put("country", ((TextView) spnrRegisterCountry.getSelectedView()).getText().toString());
+        registerUser.put("name", etxtRegisterNameAndSurname.getText().toString().trim());
+        registerUser.setUsername(etxtRegisterUsername.getText().toString().trim());
+        registerUser.put("cellNumber", etxtRegisterCellNumber.getText().toString().trim());
+        registerUser.setEmail(etxtRegisterEmail.getText().toString().trim());
+        registerUser.put("country", ((TextView) spnrRegisterCountry.getSelectedView()).getText().toString().trim());
         registerUser.setPassword(etxtRegisterPassword.getText().toString());
 
         registerUser.put("numberOfGroups", NO_OF_FREE_GROUPS_ON_REGISTER);
         registerUser.add("groups", "");
 
-        final Toast succesfulRegisterMsg = Toast.makeText(this, "You have successfully been registered", Toast.LENGTH_LONG);
-        final Toast UnsuccessfulRegisterMsg = Toast.makeText(this, "", Toast.LENGTH_LONG);
-        final Intent intentHome = new Intent(this, HomeActivity.class);
-
         //Loading animation
-        //        final ProgressBar progbRegister = (ProgressBar) findViewById(R.id.progbRegister);
-        //        progbRegister.setVisibility(View.VISIBLE);
         srLayRegister.setRefreshing(true);
         registerUser.signUpInBackground(new SignUpCallback()
         {
@@ -465,13 +432,12 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
             {
                 if (e == null)
                 {
-                    //                    progbRegister.setVisibility(View.GONE);
                     //init sharedPrefs
                     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplication());
                     sharedPrefs.edit().putBoolean("panicDelay", true).commit();
 
                     srLayRegister.setRefreshing(false);
-                    succesfulRegisterMsg.show();
+                    Snackbar.make(srLayRegister, "You have successfully been registered", Snackbar.LENGTH_LONG).show();
 
                     registerUser.removeAll("groups", Arrays.asList(""));
                     registerUser.saveInBackground();
@@ -485,7 +451,6 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
                     //Invalid Email code 125
                     //Interconnection down code 100
                     //Read exception
-                    //                    progbRegister.setVisibility(View.GONE);
                     srLayRegister.setRefreshing(false);
                     if (e.getCode() == 202)
                         etxtRegisterUsername.setError("An account with this username already exists");
@@ -494,13 +459,11 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
                     else if (e.getCode() == 125)
                         etxtRegisterEmail.setError("The email you entered is invalid");    //UnsuccessfulRegisterMsg.setText("The email you entered is invalid");
                     else if (e.getCode() == 100)
-                        UnsuccessfulRegisterMsg.setText("Please check your internet connection and try again");
+                        Snackbar.make(srLayRegister, "Please check your internet connection and try again", Snackbar.LENGTH_LONG).show();
                     else if (e.getCode() == -1)
                         etxtRegisterUsername.setError("Username cannot be blank");
                     else
-                        UnsuccessfulRegisterMsg.setText("Registration was unsuccessful: " + e.getMessage() + " Code: " + e.getCode());
-
-                    UnsuccessfulRegisterMsg.show();
+                        Snackbar.make(srLayRegister, "Registration was unsuccessful: " + e.getMessage() + " Code: " + e.getCode(), Snackbar.LENGTH_LONG).show();
                 }
             }
         });

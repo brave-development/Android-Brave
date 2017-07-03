@@ -14,6 +14,8 @@
     <string name="etxtLoginPasswordHint">Password</string>
     <string name="btnLoginLogin">Login</string>
     <string name="btnLoginRegister">Register</string>
+    <string name="btnloginResetPassword">Reset Password</string>
+    <string name="copyrightNotice">Copyright © 2017 Flying Mongoose Pty Ltd</string>
 
     <!-- Strings for Register Activity -->
     <string name="title_activity_register">Register</string>
@@ -27,10 +29,16 @@
     <string name="btnRegisterSubmit">Submit</string>
     <string name="btnRegisterCancel">Cancel</string>
     <string name="btnRegisterChooseCountry">Choose Country</string>
+    <string name="txtvAgreeTAndC">I agree to </string>
     <string name="txtvTermsAndConditionsLink"> <u>Terms and Conditions</u></string>
+
+    <!--Reset password diaglog-->
+    <string name="diagPassResetTitle">Reset Password</string>
+    <string name="diagPassResetDesc">Enter the email address associated with the account. You will receive an email with reset instructions.</string>
 
     <!-- Strings for Home activity -->
     <string name="title_activity_home_panic">Home</string>
+    <string name="txtvProfileNameDefault">User Name Missing</string>
 
     <!-- Nav Menu Drawer entries -->
     <string-array name="navEntries">
@@ -50,7 +58,7 @@
     <string name="navDrawerClosed">Close Navigation Drawer</string>
 
     <!-- Strings for Home Panic Activity -->
-    <string name="btnNavPanic">Panic</string>
+    <string name="btnNavHome">Home</string>
     <string name="btnNavMap">Map</string>
 
     <!--String for Groups Activity-->
@@ -68,6 +76,23 @@
     <string name="groupViewLocation">View Location</string>
     <string name="groupJoin">Join</string>
 
+    <!--frag groups public search-->
+    <string name="fragGroupPublicSearchHint">Search group name</string>
+    <string name="fragGroupPublicSearchDesc">Type at least 3 \ncharacters to search</string>
+
+    <!--dialog join private group-->
+    <string name="diagJoinPvtGroupTitle">Join Private Group</string>
+    <string name="diagJoinPvtGroupDesc">Enter the group code provided to you by another member</string>
+    <string name="diagJoinPvtGroupGroupCodeHint">Group Code</string>
+    <string name="diagJoinPvtGroupBtnJoin">JOIN</string>
+    <string name="diagJoinPvtGroupBtnCancel">CANCEL</string>
+
+    <!--dialog panic description-->
+    <string name="diagPanicDescTitle">Add a message</string>
+    <string name="diagPanicDescMessageHint">Message</string>
+    <string name="diagPanicDescBtnSend">Send</string>
+    <string name="diagPanicDescBtnSkip">Skip</string>
+
     <!-- Strings for History Activity -->
     <string name="title_activity_history">History</string>
     <string name="title_activity_settings">SettingsActivity</string>
@@ -75,6 +100,12 @@
     <string name="title_activity_manage_groups">ManageGroupsActivity</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_history_map">History</string>
+
+    <!--Frag history others-->
+    <string name="fragHistOthersDesc">Last 50 Panics by others</string>
+
+    <!--Frag history yours-->
+    <string name="fragHistYoursDesc">Last 20 Panics called by you</string>
 
     <!--Strings for error messages-->
     <string name="error_100_no_internet">Please check your internet connection and try again.</string>

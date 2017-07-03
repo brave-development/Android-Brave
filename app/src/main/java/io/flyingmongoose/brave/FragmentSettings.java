@@ -30,7 +30,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
@@ -364,10 +367,18 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
     {
         //unsub installation from push channels
         List<String> subbedChannels = ParseInstallation.getCurrentInstallation().getList("channels");
-        ParseInstallation.getCurrentInstallation().removeAll("channels", subbedChannels);
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+        if(subbedChannels != null)  //User might not have joined a group yet
+        {
+            ParseInstallation.getCurrentInstallation().removeAll("channels", subbedChannels);
+            ParseInstallation.getCurrentInstallation().saveInBackground();
+        }
+
+        //check if it's a facebook login then logout of facebook as well
+        if(ParseUser.getCurrentUser().getString("facebookId") != null)
+            LoginManager.getInstance().logOut();
 
         ParseUser.logOut();
+
         ParsePush.subscribeInBackground("not_logged_in");
         Intent intentLogout = new Intent(getActivity(), LoginActivity.class);
         intentLogout.putExtra("initParse", false);

@@ -8,18 +8,18 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:589454325712:android:105977f77c8d1052",
+        "mobilesdk_app_id": "1:589454325712:android:4402fa4b6a11d1d7",
         "android_client_info": {
           "package_name": "io.flyingmongoose.brave"
         }
       },
       "oauth_client": [
         {
-          "client_id": "589454325712-v6kgkl727lhj37lqb6cbakp8j276565q.apps.googleusercontent.com",
+          "client_id": "589454325712-o5682et9j7p63v5m33ir0ai2kdvlqeae.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "io.flyingmongoose.brave",
-            "certificate_hash": "a2e0345defe38fa94230df14bd858e17c971a474"
+            "certificate_hash": "c07e715081ad2a93a0c3f9c2a3155d633ba501fa"
           }
         },
         {
@@ -39,6 +39,13 @@
         "appinvite_service": {
           "status": 2,
           "other_platform_oauth_client": [
+            {
+              "client_id": "589454325712-hq3a9uf69qfqrbesftnkklpto7a25e1i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "SoC.Panic"
+              }
+            },
             {
               "client_id": "589454325712-99k6u6a0snq6o433b1kuq822fvu7nbg6.apps.googleusercontent.com",
               "client_type": 3

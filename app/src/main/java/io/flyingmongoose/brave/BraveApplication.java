@@ -4,12 +4,15 @@ import android.app.Application;
 import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.SaveCallback;
+
+import java.io.IOException;
 
 /**
  * Created by IC on 5/28/2015.
@@ -25,6 +28,15 @@ public class BraveApplication extends Application
     {
         super.onCreate();
         initParse();
+
+//        try
+//        {
+//            FirebaseInstanceId.getInstance().deleteInstanceId();
+//        }
+//        catch(IOException ioe)
+//        {
+//            ioe.printStackTrace();
+//        }
     }
 
     //Initialise PARSE
@@ -59,6 +71,25 @@ public class BraveApplication extends Application
         ParseACL defaultACL = new ParseACL();
         defaultACL.setPublicReadAccess(true);
         ParseACL.setDefaultACL(defaultACL, true);
+
+        //Set allow notifications
+        if(!ParseInstallation.getCurrentInstallation().has("allowNotifications"))
+        {
+            ParseInstallation.getCurrentInstallation().put("allowNotifications", true);
+            ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback()
+            {
+                @Override
+                public void done(ParseException e)
+                {
+                    if(e == null)
+                    {
+                        Log.i(TAG, "allowNotifications saved and set to true on installation object");
+                    }
+                    else
+                        Log.i(TAG, "Couldn't save allowNotifications to installation object: " + e.getCode() + ": " + e.getMessage());
+                }
+            });
+        }
 
         Log.i(TAG, "init Parse complete");
         //Setup push notifications

@@ -17,11 +17,6 @@
         android:title="@string/groupLeave" />
 
     <item
-        android:id="@+id/mnuiViewLocation"
-        android:icon="@drawable/ic_loc_pin"
-        android:title="@string/groupViewLocation" />
-
-    <item
         android:id="@+id/mnuiReport"
         android:icon="@drawable/ic_megaphone"
         android:title="@string/groupReport" />

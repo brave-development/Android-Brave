@@ -1,5 +1,7 @@
 package io.flyingmongoose.brave;
 
+import android.*;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -7,15 +9,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.drawable.TransitionDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -36,6 +43,8 @@ import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
+import com.wooplr.spotlight.SpotlightView;
+import com.wooplr.spotlight.utils.SpotlightListener;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -48,12 +57,12 @@ import java.util.concurrent.TimeUnit;
 public class FragmentPanic extends Fragment implements View.OnClickListener, View.OnFocusChangeListener, TextView.OnEditorActionListener
 {
     private Context context;
-    private static ImageButton ibtnPanic;
+    private ImageButton ibtnPanic;
     private FloatingActionButton fabNeedleDrop;
     private FloatingActionButton fabTestPush;
     private EditText etxtPanicDesc;
     private LinearLayout linLayRespondes;
-    private RelativeLayout relLayPanicRoot;
+    public RelativeLayout relLayPanicRoot;
     private boolean panicing = false;
     public ServiceGps gpsService;
     private boolean isServiceConnected = false;
@@ -61,16 +70,21 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
     public static String panicDetails = "";
     private TransitionDrawable transPanicBtn;
     private int TRANSITION_TIME = 500;
-    private static TextView txtvNoOfResponders;
+    private TextView txtvNoOfResponders;
+    private SpotlightView spotvPanicButton;
+    private SpotlightView spotvNeedleDropButton;
 
     private ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?>  delayPanicTimer;
     private boolean skipTurnOffPanicService = false;
-    private final long PANIC_TIMER_START_DELAY = 5000;
+    private final long PANIC_TIMER_START_DELAY = 0;
+    private final int REQ_PERM_LOC = 100;
     private boolean awaitingNeedleDropCallback = false;
 
     private final String TAG = "FragmentPanic";
     private HomeActivity activity;
+
+    public static ParseObject panicObj;
 
     //Required to bind to service, allows access to service methods
     private ServiceConnection myServiceConnection = new ServiceConnection()
@@ -99,8 +113,6 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
     public FragmentPanic()
     {
     }
-
-
 
     @Nullable
     @Override
@@ -163,6 +175,67 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
         if(!gpsHelper.isGpsOn())
             gpsHelper.showDialog("Your GPS is disabled, no one will be able to respond to your emergency. We strongly recommend leaving it on to ensure your safety.\n\nPlease enable your GPS now?");
 
+
+        initTut(true);
+    }
+
+    private void initTut(boolean showTut)
+    {
+        if(showTut)
+        {
+           spotvPanicButton =  new SpotlightView.Builder(activity)
+                    .introAnimationDuration(400)
+                    .enableRevealAnimation(true)
+                    .performClick(false)
+                    .fadeinTextDuration(400)
+                    .headingTvColor(ContextCompat.getColor(activity, R.color.SeaGreen))
+                    .headingTvSize(24)
+                    .headingTvText("Emergency")
+                    .subHeadingTvColor(ContextCompat.getColor(activity, R.color.White))
+                    .subHeadingTvSize(14)
+                    .subHeadingTvText("Tap here to activate an emergency")
+                    .maskColor(Color.parseColor("#dc000000"))
+                    .target(ibtnPanic)
+                    .lineAnimDuration(400)
+                    .lineAndArcColor(ContextCompat.getColor(activity, R.color.SeaGreen))
+                    .usageId(ibtnPanic.getId() + "") //UNIQUE ID
+                    .show();
+
+            spotvPanicButton.setListener(new SpotlightListener()
+            {
+                @Override
+                public void onUserClicked(String s)
+                {
+                    //Create next one
+                    spotvNeedleDropButton =  new SpotlightView.Builder(activity)
+                            .introAnimationDuration(400)
+                            .enableRevealAnimation(true)
+                            .performClick(false)
+                            .fadeinTextDuration(400)
+                            .headingTvColor(ContextCompat.getColor(activity, R.color.SeaGreen))
+                            .headingTvSize(24)
+                            .headingTvText("Needle Drop")
+                            .subHeadingTvColor(ContextCompat.getColor(activity, R.color.White))
+                            .subHeadingTvSize(14)
+                            .subHeadingTvText("Tap here to mark the location of a needle found")
+                            .maskColor(Color.parseColor("#dc000000"))
+                            .target(fabNeedleDrop)
+                            .lineAnimDuration(400)
+                            .lineAndArcColor(ContextCompat.getColor(activity, R.color.SeaGreen))
+                            .usageId(fabNeedleDrop.getId() + "") //UNIQUE ID
+                            .show();
+
+                    spotvNeedleDropButton.setListener(new SpotlightListener()
+                    {
+                        @Override
+                        public void onUserClicked(String s)
+                        {
+                            activity.showDrawTut();
+                        }
+                    });
+                }
+            });
+        }
     }
 
     @Override
@@ -192,10 +265,12 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
     {
         if(v == ibtnPanic)
         {
+            Log.d(TAG, "Panic button WAS CLICKED");
             panicing = !panicing;   //swap panicing status
 
             if(panicing)
             {
+                Log.d(TAG, "Panic button set to activate");
                 //Check Gps is on
                 GpsHelper gpsHelper = new GpsHelper(getActivity());
                 if(gpsHelper.isGpsOn())
@@ -249,7 +324,38 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
                                 Looper.prepare();
 
                                 //Activate panic immediate
-                                gpsService.onPanic(true);
+                                gpsService.onPanic(true, new OnPanicCreatedListener()
+                                {
+                                    @Override
+                                    public void onPanicCreated(ParseObject objPanic)
+                                    {
+                                        panicObj = objPanic;
+                                        FragmentDialogPanicDescription fragPanicMsg = new FragmentDialogPanicDescription();
+                                        fragPanicMsg.show(getFragmentManager(), "fragDiagPanicMsg");
+                                    }
+                                }, new OnResponderListener()
+                                {
+                                    @Override
+                                    public void onResponderUpdate(int noOfResponders)
+                                    {
+                                        txtvNoOfResponders.setText(noOfResponders + "");
+                                    }
+                                }, new OtePanicListener()
+                                {
+                                    @Override
+                                    public void onDisableOtePanic()
+                                    {
+                                        //Have to run on ui thread for ui to update
+                                        activity.runOnUiThread(new Runnable()
+                                        {
+                                            @Override
+                                            public void run()
+                                            {
+                                                ibtnPanic.performClick();
+                                            }
+                                        });
+                                    }
+                                });
 
                                 Looper.loop();
                             }
@@ -272,6 +378,7 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
             }
             else
             {
+                Log.d(TAG, "Panic button set to deactivate");
                 //Cancel delayed panic
                 if(delayPanicTimer != null)
                     delayPanicTimer.cancel(true);
@@ -300,7 +407,7 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
                 ((HomeActivity)getActivity()).adjustActionBarButtonsVisibility(false);
 
                 if (gpsService != null)
-                    gpsService.onPanic(false); //Kill gps service
+                    gpsService.onPanic(false, null, null, null); //Kill gps service
 
                 /*if(!skipTurnOffPanicService)
                 {
@@ -355,7 +462,30 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id)
                     {
                         //Activate panic immediate
-                        gpsService.onPanic(true);
+                        gpsService.onPanic(true, new OnPanicCreatedListener()
+                        {
+                            @Override
+                            public void onPanicCreated(ParseObject objPanic)
+                            {
+                                panicObj = objPanic;
+                                FragmentDialogPanicDescription fragPanicMsg = new FragmentDialogPanicDescription();
+                                fragPanicMsg.show(getFragmentManager(), "fragDiagPanicMsg");
+                            }
+                        }, new OnResponderListener()
+                        {
+                            @Override
+                            public void onResponderUpdate(int noOfResponders)
+                            {
+                                txtvNoOfResponders.setText(noOfResponders + "");
+                            }
+                        }, new OtePanicListener()
+                        {
+                            @Override
+                            public void onDisableOtePanic()
+                            {
+                                ibtnPanic.performClick();
+                            }
+                        });
                     }
                 });
         final AlertDialog alert = builder.create();
@@ -432,14 +562,9 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
         }
     }
 
-    public static void onUpdateResponder(int noOfResponders)
+    public void onUpdateResponder(int noOfResponders)
     {
         txtvNoOfResponders.setText(noOfResponders + "");
-    }
-
-    public static void performPanicBtnClick()
-    {
-        ibtnPanic.performClick();
     }
 
     public boolean isPanicing(){return panicing;}
