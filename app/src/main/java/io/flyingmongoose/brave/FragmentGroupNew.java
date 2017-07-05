@@ -518,7 +518,7 @@ public class FragmentGroupNew extends Fragment
                                     msg.setText("Group Created");
 
                                     if(!groupPublic)
-                                        showPrivateGroupInfoDialog(groupName);
+                                        showPrivateGroupInfoDialog(newGroup.getObjectId());
 
                                     HomeActivity.fragManager.popBackStack();
                                 } else
@@ -554,10 +554,10 @@ public class FragmentGroupNew extends Fragment
         }
     }
 
-    public void showPrivateGroupInfoDialog(String groupName)
+    public void showPrivateGroupInfoDialog(String groupCode)
     {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Your group was set to private and is hidden from any public searches. Others can join using your group name: " + groupName).setCancelable(false)
+        builder.setMessage("Your group was set to private and is hidden from any public searches. Others can join using your unique group code: " + groupCode).setCancelable(false)
                 .setTitle("How can others join?")
                 .setNegativeButton("Got It", new DialogInterface.OnClickListener()
                 {

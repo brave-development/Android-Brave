@@ -56,6 +56,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.security.Permission;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -71,7 +72,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
 {
 
     private final String TAG = "FragmentMap";
-    private final int REQ_PERM_LOC = 100;
+    private final int REQ_PERM_CALL = 100;
 
     private final FragmentMap thisFrag = this;
 
@@ -112,6 +113,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
     private PopupWindow respondPopupWindow;
     private boolean displayingRespondWindow = false;    //Used to ensure the user can't open 2 respond windows because of laggyness
     private ToggleButton tbtnTrack;
+    private Button btnResponseCall;
 
     private SwipeRefreshLayout srLayMapLoading;
     private boolean refreshingForMap = false;   //Used soo that update of panics don't clear prog cricle when it is being used for other things like dialogs ect
@@ -670,19 +672,29 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
             }
         }).run();
 
-        Button btnCall = (Button) popupWindow.findViewById(R.id.btnPopUpRespondCall);
+        final Button btnCall = (Button) popupWindow.findViewById(R.id.btnPopUpRespondCall);
         btnCall.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                //Call
-                String uri = "tel:" + panicObjs.get(marker.getId()).getParseUser("user").getString("cellNumber").trim();
-                Intent intent = new Intent(Intent.ACTION_CALL);
-                intent.setData(Uri.parse(uri));
-                startActivity(intent);
-                respondPopupWindow.dismiss();
-                displayingRespondWindow = false;
+
+                //Check for run time permission
+                if(ContextCompat.checkSelfPermission(thisFrag.getContext(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED)
+                {
+                    //Call
+                    String uri = "tel:" + panicObjs.get(marker.getId()).getParseUser("user").getString("cellNumber").trim();
+                    Intent intent = new Intent(Intent.ACTION_CALL);
+                    intent.setData(Uri.parse(uri));
+                    startActivity(intent);
+                    respondPopupWindow.dismiss();
+                    displayingRespondWindow = false;
+                }
+                else
+                {
+                    btnResponseCall = btnCall;
+                    requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQ_PERM_CALL);
+                }
             }
         });
 
@@ -771,6 +783,19 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
     {
         if(respondPopupWindow != null)
             respondPopupWindow.dismiss();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        if(requestCode == REQ_PERM_CALL)
+        {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                if(btnResponseCall != null)
+                    btnResponseCall.performClick();
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override

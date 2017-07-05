@@ -142,11 +142,13 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
             linLayUsername.startAnimation(anim);
             linLayPassword.startAnimation(anim);
             linLayActionButtons.startAnimation(anim);
+            btnLoginFb.startAnimation(anim);
 
             //Hide actual views
             linLayUsername.setVisibility(View.INVISIBLE);
             linLayPassword.setVisibility(View.INVISIBLE);
             linLayActionButtons.setVisibility(View.INVISIBLE);
+            btnLoginFb.setVisibility(View.INVISIBLE);
 
             //Make loading animation visible
             srLayLogin.setRefreshing(true);
@@ -161,11 +163,13 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
             linLayUsername.startAnimation(anim);
             linLayPassword.startAnimation(anim);
             linLayActionButtons.startAnimation(anim);
+            btnLoginFb.startAnimation(anim);
 
             //Make other views visible
             linLayUsername.setVisibility(View.VISIBLE);
             linLayPassword.setVisibility(View.VISIBLE);
             linLayActionButtons.setVisibility(View.VISIBLE);
+            btnLoginFb.setVisibility(View.VISIBLE);
         }
 
 
@@ -263,8 +267,6 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
     public void login()
     {
         //TODO: animate login to home screen
-        loading(true);
-
         ParsePush.unsubscribeInBackground("not_logged_in");
 
         if(ParseUser.getCurrentUser() != null)
@@ -336,12 +338,10 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
                 if(e == null)
                 {
                     Log.i("Login", "Subscribed to all channels");
-                    loading(false);
                 }
                 else
                 {
                     Log.e("Login", "Subscribe to channels failed: " + e.getMessage() + " Code: " + e.getCode());
-                    loading(false);
                 }
             }
         });

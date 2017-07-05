@@ -104,6 +104,17 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
         srLayRegister = (SwipeRefreshLayout) findViewById(R.id.srLayRegister);
         initSwipeRefresh();
 
+        //Check to trigger select country dialog
+        etxtRegisterEmail.setOnEditorActionListener(new TextView.OnEditorActionListener()
+        {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent)
+            {
+                btnChooseCountry.performClick();
+                return true;
+            }
+        });
+
         if(getIntent().getBooleanExtra("regWithFacebook", false))
         {
             Log.d("fbLogin", "init as reg with fb");
@@ -477,6 +488,7 @@ public class RegisterActivity extends ActionBarActivity implements AdapterView.O
             String countryText = spnrRegisterCountry.getSelectedItem().toString();
             btnChooseCountry.setTextColor(getResources().getColor(R.color.White));
             btnChooseCountry.setText(countryText);
+            etxtRegisterPassword.requestFocus();
         }
 
         noCountrySelected = !noCountrySelected;

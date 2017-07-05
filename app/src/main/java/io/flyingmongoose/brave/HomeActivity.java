@@ -292,6 +292,8 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
                     buildLocPermExplainDiag();
                 }
         }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public void showDrawTut()
