@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "589454325712",
+    "firebase_url": "https://brave-9176f.firebaseio.com",
+    "project_id": "brave-9176f",
+    "storage_bucket": "brave-9176f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589454325712:android:4402fa4b6a11d1d7",
+        "android_client_info": {
+          "package_name": "io.flyingmongoose.brave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589454325712-99k6u6a0snq6o433b1kuq822fvu7nbg6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDobKjxUZM7i5FS8zlZQpz3uCJ6Wjnxaq4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

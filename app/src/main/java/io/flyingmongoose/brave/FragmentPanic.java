@@ -37,6 +37,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.parse.ParseException;
@@ -46,6 +47,7 @@ import com.parse.SaveCallback;
 import com.wooplr.spotlight.SpotlightView;
 import com.wooplr.spotlight.utils.SpotlightListener;
 
+import java.text.Normalizer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -133,7 +135,15 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
             public void onClick(View view)
             {
 //                gpsService.sendTestFbPush();
-                ibtnPanic.performClick();
+                FragmentDialogShareGroup diagShareGroup = new FragmentDialogShareGroup();
+
+                Bundle args = new Bundle();
+                args.putBoolean("privateGroup", false);
+                args.putString("groupName", "Yea");
+                args.putString("groupCode", "TheBestCode");
+                diagShareGroup.setArguments(args);
+
+                diagShareGroup.show(getFragmentManager(), "testShare");
             }
         });
 

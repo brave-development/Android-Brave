@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:drawable/dialog_holo_light_frame"
+    android:backgroundTint="@color/androidGrey800">
+
+    <TextView
+        android:id="@+id/diagShareGrouptxtvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:textSize="18sp"
+        android:text="Share GS Riders 2000"
+        android:textColor="@color/White"
+        android:background="@color/SeaGreen"/>
+
+    <TextView
+        android:id="@+id/diagShareGrouptxtvMsg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/diagShareGrouptxtvTitle"
+        android:padding="16dp"
+        android:textColor="@color/White"
+        android:text="@string/diagShareGroupMsgPrefix"/>
+
+    <LinearLayout
+        android:id="@+id/diagShareGroupLinLayShareOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/diagShareGrouptxtvMsg"
+        android:layout_marginBottom="10dp">
+
+        <Button
+            android:id="@+id/diagShareGroupBtnFacebook"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:drawableTop="@drawable/ic_fb_large"
+            android:text="@string/diagShareGroupFacebookOption"
+            android:textColor="@color/Blue"/>
+
+        <Button
+            android:id="@+id/diagShareGroupBtnWhatsapp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="@string/diagShareGroupWhatsappOption"
+            android:drawableTop="@drawable/ic_wa_large"
+            android:textColor="@color/Jade"/>
+
+        <Button
+            android:id="@+id/diagShareGroupBtnTwitter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="@string/diagShareGroupTwitterOption"
+            android:drawableTop="@drawable/ic_tw_large"
+            android:textColor="@color/FlatLightBlue"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/diagShareGroupBtnOther"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="15dp"
+        android:layout_below="@id/diagShareGroupLinLayShareOptions"
+        android:background="@null"
+        android:text="@string/diagShareGroupBtnOther"
+        android:textColor="@color/White"/>
+
+    <Button
+        android:id="@+id/diagShareGroupBtnNoThanks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:layout_below="@id/diagShareGroupLinLayShareOptions"
+        android:background="@null"
+        android:text="@string/diagShareGroupBtnSkip"
+        android:textColor="@color/White"/>
+
+</RelativeLayout>

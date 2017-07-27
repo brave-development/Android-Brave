@@ -231,31 +231,7 @@ public class FragmentGroups extends Fragment
         {
             //Caps start of each word, uncaps every other
             String groupName = lstGroups.get(g).getString("name");
-            String[] words = groupName.split(" ");
-            String formattedGroupName = "";
-            for(int i = 0; i < words.length; i++)
-            {
-                char[] wordLetters = words[i].toCharArray();
-                wordLetters[0] = Character.toUpperCase(wordLetters[0]);
-
-                //Uncaps the rest
-                if(wordLetters.length > 1)
-                {
-                    for(int j = 1; j < wordLetters.length; j++)
-                    {
-                        wordLetters[j] = Character.toLowerCase(wordLetters[j]);
-                    }
-                }
-
-                formattedGroupName += new String(wordLetters) + " ";
-            }
-            final String finalFormattedGroupName = formattedGroupName;
-
-            final String channelName = groupName.replaceAll("\\s+", "").trim().toString();
-
-            Log.d("FragGroups", "Channel name to unsub from: " + finalFormattedGroupName);
-
-            lstChannelsToSubTo.add(finalFormattedGroupName);
+            lstChannelsToSubTo.add(FormatHelper.formatChannelName(groupName));
         }
 
         ParseInstallation.getCurrentInstallation().remove("channels");
@@ -323,34 +299,10 @@ public class FragmentGroups extends Fragment
             }
         });
 
-        //sub to channel
-        //Caps start of each word, uncaps every other
+        //unsub to channel
         String groupName = group.getString("name");
-        String[] words = groupName.split(" ");
-        String formattedGroupName = "";
-        for (int i = 0; i < words.length; i++)
-        {
-            char[] wordLetters = words[i].toCharArray();
-            wordLetters[0] = Character.toUpperCase(wordLetters[0]);
-
-            //Uncaps the rest
-            if (wordLetters.length > 1)
-            {
-                for (int j = 1; j < wordLetters.length; j++)
-                {
-                    wordLetters[j] = Character.toLowerCase(wordLetters[j]);
-                }
-            }
-
-            formattedGroupName += new String(wordLetters) + " ";
-        }
-        final String finalFormattedGroupName = formattedGroupName;
-
-        final String channelName = groupName.replaceAll("\\s+", "").trim().toString();
-
-        Log.d("FragGroups", "Channel name to unsub from: " + finalFormattedGroupName);
         List<String> lstChannelsToUnSub = new ArrayList<String>();
-        lstChannelsToUnSub.add(finalFormattedGroupName);
+        lstChannelsToUnSub.add(FormatHelper.formatChannelName(groupName));
         ParseInstallation.getCurrentInstallation().removeAll("channels", lstChannelsToUnSub);
         ParseInstallation.getCurrentInstallation().saveInBackground();
 

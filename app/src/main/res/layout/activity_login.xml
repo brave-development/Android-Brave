@@ -57,7 +57,7 @@
 
         <EditText
             android:id="@+id/etxtPassword"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="10dp"
             android:textSize="18sp"
@@ -65,8 +65,7 @@
             android:textColorHint="@color/HintWhite"
             android:hint="@string/etxtLoginPasswordHint"
             android:gravity="center"
-            android:inputType="textPassword"
-            android:ems="20" />
+            android:inputType="textPassword" />
 
     </LinearLayout>
 

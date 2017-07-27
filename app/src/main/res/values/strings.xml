@@ -3,7 +3,7 @@
 
     <string name="app_name">Brave</string>
     <string name="action_settings">Settings</string>
-    <string name="appUrlANDROID">https://Brave.io/Android</string>
+    <string name="appUrlANDROID">https://play.google.com/store/apps/details?id=io.flyingmongoose.brave</string>
     <string name="appUrlIOS">https://Brave.io/Ios</string>
 
     <string name="facebook_app_id">1613107172034757</string>
@@ -87,6 +87,32 @@
     <string name="diagJoinPvtGroupBtnJoin">JOIN</string>
     <string name="diagJoinPvtGroupBtnCancel">CANCEL</string>
 
+    <!--share group dialog-->
+    <string name="diagShareGroupTitle">Share </string>
+    <string name="diagShareGroupMsgPrefix">Your group has been created, others can join your group via your unique group code: </string>
+    <string name="diagShareGroupMsgSuffix">\n\nWould you like to share your group with others via:</string>
+    <string name="diagShareGroupFacebookOption">Facebook</string>
+    <string name="diagShareGroupWhatsappOption">Whatsapp</string>
+    <string name="diagShareGroupTwitterOption">Twitter</string>
+    <string name="diagShareGroupBtnOther">Other</string>
+    <string name="diagShareGroupBtnSkip">Skip</string>
+    <string name="diagShareGroupWANotInstalled">Whatsapp have not been installed</string>
+    <string name="diagShareGroupShareMsgPrefix"> would like you to join their group on Brave.\nUse their group code  </string>
+    <string name="diagShareGroupShareMsgSuffix">  to join</string>
+
+    <!--feedback dialog-->
+    <string name="diagFeedbackTitle">Feedback</string>
+    <string name="diagFeedbackSubject">Subject</string>
+    <string name="diagFeedbackExplanation">We would like to thank you for your support, your feedback is valuable to us.
+        We use it to enhance your experience, so feel free to make suggestions.
+
+        So what would you like to tell us?
+
+    </string>
+    <string name="diagFeedbackBtnSend">Send</string>
+    <string name="diagFeedbackSubjectPrefix">Android Feedback from: </string>
+    <string name="diagFeedbackSentSuccess">Feedback sent, Thank you.</string>
+
     <!--dialog panic description-->
     <string name="diagPanicDescTitle">Add a message</string>
     <string name="diagPanicDescMessageHint">Message</string>
@@ -109,6 +135,7 @@
 
     <!--Strings for error messages-->
     <string name="error_100_no_internet">Please check your internet connection and try again.</string>
+    <string name="error_cannot_be_empty">Cannot be empty</string>
 
     <!--List of countries supported-->
     <string-array name="arrayCountries">

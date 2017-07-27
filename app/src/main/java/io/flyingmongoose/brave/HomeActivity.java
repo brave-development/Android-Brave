@@ -470,25 +470,8 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 
         if(item.getItemId() == 1)
         {
-            //Get app version
-            PackageInfo pInfo = null;
-            String version = "";
-            try
-            {
-                pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-                version = pInfo.versionName;
-            } catch (PackageManager.NameNotFoundException e)
-            {
-                e.printStackTrace();
-            }
-
-            //Present feedback e mail
-            //Report user
-            Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "feedback@brave.ly", null));
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback on Panic v" + version );
-            intent.putExtra(Intent.EXTRA_TEXT, "We would like to thank you for your support, your feedback is valuable to us. \nWe use it to enhance your experience, so feel free to make suggestions.\n\nSo what would you like to tell us?\n\n ");
-
-            startActivity(Intent.createChooser(intent, "Send Feedback"));
+            FragmentDialogFeedback diagFeedback = new FragmentDialogFeedback();
+            diagFeedback.show(getSupportFragmentManager(), "diagFeedback");
         }
 
         //Make nav bar icon open or close nav drawer

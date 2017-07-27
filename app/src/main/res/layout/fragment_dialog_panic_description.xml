@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/androidGrey800"
+    android:paddingTop="16dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
+
+    <TextView
+        android:id="@+id/txtvPanicDescTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/diagPanicDescTitle"
+        android:textSize="20sp"
+        android:textColor="@color/White"/>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/txtiLayPanicDesc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtvPanicDescTitle">
+
+        <EditText
+            android:id="@+id/etxtPanicDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/diagPanicDescMessageHint"
+            android:imeOptions="actionDone"
+            android:textColorHint="@color/SeaGreen"
+            android:textColor="@color/White"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srLayPanicDesc"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_below="@id/txtiLayPanicDesc"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></View>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <Button
+        android:id="@+id/btnPanicDescSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/txtiLayPanicDesc"
+        android:background="@null"
+        android:textColor="@color/White"
+        android:text="@string/diagPanicDescBtnSend"/>
+
+    <Button
+        android:id="@+id/btnPanicDescSkip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtiLayPanicDesc"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="25dp"
+        android:background="@null"
+        android:textColor="@color/White"
+        android:text="@string/diagPanicDescBtnSkip"/>
+
+</RelativeLayout>

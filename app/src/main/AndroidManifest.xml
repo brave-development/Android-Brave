@@ -2,20 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.flyingmongoose.brave" >
 
-    <compatible-screens>
-        <!-- all normal size screens -->
-        <screen android:screenSize="normal" android:screenDensity="hdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xhdpi" />
-
-        <!-- all large size screens -->
-        <screen android:screenSize="large" android:screenDensity="hdpi" />
-        <screen android:screenSize="large" android:screenDensity="xhdpi" />
-
-        <!-- support for Xperia Z, Galaxy S4 and HTC One -->
-        <screen android:screenDensity="480" android:screenSize="normal" />
-        <screen android:screenDensity="480" android:screenSize="large" />
-    </compatible-screens>
-
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />

@@ -57,8 +57,7 @@
         fab:fab_colorNormal="@color/Jade"
         fab:fab_colorPressed="@color/SeaGreen"
         fab:fab_colorRipple="@color/SeaGreen"
-        fab:fab_size="normal"
-        android:visibility="gone"/>
+        fab:fab_size="normal"/>
 
     <LinearLayout
         android:id="@+id/linLayResponders"

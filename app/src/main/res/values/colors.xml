@@ -23,4 +23,8 @@
     <color name="CircleProgLoadingColor">#3e3e3e</color>
     <color name="androidGrey800">#424242</color>
 
+    <color name="colorPrimary">#16a085</color>
+    <color name="colorPrimaryDark">#424242</color>
+    <color name="colorAccent">#00C169</color>
+
 </resources>

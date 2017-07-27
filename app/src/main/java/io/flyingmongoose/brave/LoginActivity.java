@@ -212,10 +212,13 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
 
                             loading(false);
 
-                            if(e.getCode() == 100)
-                                Snackbar.make(btnLoginFb, "Please check you internet connection and try again", Snackbar.LENGTH_LONG).show();
-                            else
-                                Snackbar.make(btnLoginFb, "Unsuccessful: " + e.getMessage() + " Code: " + e.getCode(), Snackbar.LENGTH_LONG).show();
+                            if(e != null)   //Check for null user might have canceled fb login
+                            {
+                                if(e.getCode() == 100)
+                                    Snackbar.make(btnLoginFb, getString(R.string.error_100_no_internet), Snackbar.LENGTH_LONG).show();
+                                else
+                                    Snackbar.make(btnLoginFb, "Unsuccessful: " + e.getMessage() + " Code: " + e.getCode(), Snackbar.LENGTH_LONG).show();
+                            }
                         }
                     }
                 });
@@ -321,13 +324,12 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
     public void subscribeToChannels(List<ParseObject> groups)
     {
         //sub to channel
-        //Caps start of each word, uncaps every other
         List<String> channelNames = new ArrayList<>();
 
         channelNames.add("");   //Add broadcast channel
 
         for(int i = 0; i < groups.size(); i++)
-            channelNames.add(groups.get(i).getString("name").replaceAll("\\s+", "").trim().toString());
+            channelNames.add(FormatHelper.formatChannelName(groups.get(i).getString("name")));
 
         ParseInstallation.getCurrentInstallation().addAllUnique("channels", channelNames);
         ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback()

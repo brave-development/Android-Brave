@@ -11,6 +11,7 @@ import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.SaveCallback;
+import com.twitter.sdk.android.core.Twitter;
 
 import java.io.IOException;
 
@@ -28,6 +29,7 @@ public class BraveApplication extends Application
     {
         super.onCreate();
         initParse();
+        Twitter.initialize(this);
 
 //        try
 //        {

@@ -1,8 +1,6 @@
 package io.flyingmongoose.brave;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -22,8 +20,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.github.clans.fab.FloatingActionButton;
 import com.parse.GetCallback;
 import com.parse.ParseACL;
@@ -74,7 +70,6 @@ public class FragmentGroupNew extends Fragment
     {
         View constructedView = inflater.inflate(R.layout.fragment_groups_new, container, false);
 
-
         //Get handle on views
         fabGroupBg = (FloatingActionButton) constructedView.findViewById(R.id.fabGroupBg);
         fabPrivate = (FloatingActionButton) constructedView.findViewById(R.id.fabGroupPrivate);
@@ -119,14 +114,14 @@ public class FragmentGroupNew extends Fragment
             @Override
             public void onClick(View view)
             {
-                if(groupPublic == true)
+                if(groupPublic)
                 {
                     groupPublic = false;
 
                     //Swap image
                     fabPrivate.setImageResource(R.drawable.ic_lock_closed);
 
-                    Snackbar.make(fabPrivate, "Group set to private", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(fabPrivate, "Group set to private", Snackbar.LENGTH_LONG).show();
                 }
                 else
                 {
@@ -207,29 +202,9 @@ public class FragmentGroupNew extends Fragment
                     final String groupDescription = etxtGroupDescrition.getText().toString().trim();
 
                     //Format group name
-                    //Caps start of each word, uncaps every other
-                    String[] words = groupName.split(" ");
-                    String formattedGroupName = "";
-                    for (int i = 0; i < words.length; i++)
-                    {
-                        char[] wordLetters = words[i].toCharArray();
-                        wordLetters[0] = Character.toUpperCase(wordLetters[0]);
-
-                        //Uncaps the rest
-                        if (wordLetters.length > 1)
-                        {
-                            for (int j = 1; j < wordLetters.length; j++)
-                            {
-                                wordLetters[j] = Character.toLowerCase(wordLetters[j]);
-                            }
-                        }
-
-                        formattedGroupName += new String(wordLetters) + " ";
-                    }
-                    final String finalFormattedGroupName = formattedGroupName;
-
-                    final String channelName = groupName.replaceAll("\\s+", "").trim().toString();
-                    final String groupNameFlat = channelName.toLowerCase().toString();   //Process group name to flat value
+                    final String groupNameFlat = FormatHelper.formatGroupFlatName(groupName);
+                    final String finalFormattedGroupName = FormatHelper.formatGroupName(groupName);
+                    final String channelName = FormatHelper.formatChannelName(groupName);
 
                     srLayNewGroup.setRefreshing(true);
 
@@ -267,7 +242,16 @@ public class FragmentGroupNew extends Fragment
                             }
 
                             if (!msg.isEmpty())
-                                Snackbar.make(btnFinish, msg, Snackbar.LENGTH_LONG).show();
+                            {
+                                Snackbar.make(btnFinish, msg, Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener()
+                                {
+                                    @Override
+                                    public void onClick(View view)
+                                    {
+                                        btnFinish.performClick();
+                                    }
+                                }).show();
+                            }
                         }
                     });
                 }
@@ -354,7 +338,14 @@ public class FragmentGroupNew extends Fragment
                                                 }
 
                                                 if(!msg.isEmpty())
-                                                    Snackbar.make(btnFinish, msg, Snackbar.LENGTH_LONG).show();
+                                                    Snackbar.make(btnFinish, msg, Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener()
+                                                    {
+                                                        @Override
+                                                        public void onClick(View view)
+                                                        {
+                                                            btnFinish.performClick();
+                                                        }
+                                                    }).show();
                                             }
                                         });
                                     } else
@@ -373,7 +364,14 @@ public class FragmentGroupNew extends Fragment
                                     }
 
                                     if(!msg.isEmpty())
-                                        Snackbar.make(btnFinish, msg, Snackbar.LENGTH_LONG).show();
+                                        Snackbar.make(btnFinish, msg, Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener()
+                                        {
+                                            @Override
+                                            public void onClick(View view)
+                                            {
+                                                btnFinish.performClick();
+                                            }
+                                        }).show();
                                 }
                             });
                         }
@@ -411,7 +409,16 @@ public class FragmentGroupNew extends Fragment
                                 }
 
                                 if(!msg.isEmpty())
-                                    Snackbar.make(btnFinish, msg, Snackbar.LENGTH_LONG).show();
+                                {
+                                    Snackbar.make(btnFinish, msg, Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener()
+                                    {
+                                        @Override
+                                        public void onClick(View view)
+                                        {
+                                            btnFinish.performClick();
+                                        }
+                                    }).show();
+                                }
                             }
                         });
                     }
@@ -481,7 +488,7 @@ public class FragmentGroupNew extends Fragment
 
                         newGroup.setACL(groupACL);
 
-                        final Snackbar msg = Snackbar.make(btnFinish, "", Toast.LENGTH_LONG);
+                        final Snackbar msg = Snackbar.make(btnFinish, "", Snackbar.LENGTH_LONG);
                         newGroup.saveInBackground(new SaveCallback()
                         {
                             @Override
@@ -517,8 +524,7 @@ public class FragmentGroupNew extends Fragment
 
                                     msg.setText("Group Created");
 
-                                    if(!groupPublic)
-                                        showPrivateGroupInfoDialog(newGroup.getObjectId());
+                                    showShareGroupDialog(newGroup);
 
                                     HomeActivity.fragManager.popBackStack();
                                 } else
@@ -539,10 +545,27 @@ public class FragmentGroupNew extends Fragment
                     else
                     {
                         srLayNewGroup.setRefreshing(false);
-                        if(e.getCode() == 100)
-                            Snackbar.make(btnFinish, "Check internet connection and try again", Snackbar.LENGTH_LONG).show();
-                        else
-                            Snackbar.make(btnFinish, "Unsuccessful group image upload: " + e.getMessage() + " Code:" + e.getCode(), Snackbar.LENGTH_LONG).show();
+
+                        //Check that user has not canceled group creation whilst a request was being made otherwise a snackbar has no view to attach to
+                        if(thisFrag.isVisible())
+                        {
+                            Snackbar snackMsg;
+
+                            if(e.getCode() == 100)
+                                snackMsg = Snackbar.make(btnFinish, "Check internet connection and try again", Snackbar.LENGTH_INDEFINITE);
+                            else
+                                snackMsg = Snackbar.make(btnFinish, "Unsuccessful group image upload: " + e.getMessage() + " Code:" + e.getCode(), Snackbar.LENGTH_INDEFINITE);
+
+                            snackMsg.setAction("Retry", new View.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(View view)
+                                {
+                                    btnFinish.performClick();
+                                }
+                            });
+                            snackMsg.show();
+                        }
                     }
                 }
             });
@@ -554,20 +577,32 @@ public class FragmentGroupNew extends Fragment
         }
     }
 
-    public void showPrivateGroupInfoDialog(String groupCode)
+    public void showShareGroupDialog(ParseObject group)
     {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Your group was set to private and is hidden from any public searches. Others can join using your unique group code: " + groupCode).setCancelable(false)
-                .setTitle("How can others join?")
-                .setNegativeButton("Got It", new DialogInterface.OnClickListener()
-                {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id)
-                    {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        builder.setMessage("Your group was set to private and is hidden from any public searches. Others can join using your unique group code: " + groupCode).setCancelable(false)
+//                .setTitle("How can others join?")
+//                .setNegativeButton("Got It", new DialogInterface.OnClickListener()
+//                {
+//                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id)
+//                    {
+//                        dialog.cancel();
+//                    }
+//                });
+//        final AlertDialog alert = builder.create();
+//        alert.show();
+
+        FragmentDialogShareGroup diagShare = new FragmentDialogShareGroup();
+
+        //Add arguments
+        Bundle args = new Bundle();
+        args.putBoolean("privateGroup", !group.getBoolean("public"));
+        args.putString("groupCode", group.getObjectId());
+        args.putString("groupName", group.getString("name"));
+
+        diagShare.setArguments(args);
+
+        diagShare.show(getFragmentManager(), "shareGroup");
     }
 
     @Override
