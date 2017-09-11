@@ -74,12 +74,15 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
         callBackMang = CallbackManager.Factory.create();
 
         //check if opened vai notification
-        if(getIntent().hasExtra("com.parse.Data"))
-        {
+        if(getIntent().hasExtra("google.message_id"))
             openedVaiPush = true;
-            jsonStringData = getIntent().getStringExtra("com.parse.Data");
-            Log.d("Login", jsonStringData);
-        }
+
+//        if(getIntent().hasExtra("com.parse.Data"))
+//        {
+//            openedVaiPush = true;
+//            jsonStringData = getIntent().getStringExtra("com.parse.Data");
+//            Log.d("Login", jsonStringData);
+//        }
 
         linLayActionButtons = (LinearLayout) findViewById(R.id.linLayLoginActionButtons);
         btnLogin = (TextView) findViewById(R.id.btnLogin);
@@ -105,6 +108,13 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
 
         initSwipeRefresh();
         initFbLogin();
+    }
+
+    public void register()
+    {
+        OnBoardingActivity testBoaringActv = new OnBoardingActivity();
+        Intent boardingIntent = new Intent(this, OnBoardingActivity.class);
+        startActivity(boardingIntent);
     }
 
     @Override
@@ -308,7 +318,7 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
         final Intent intentLogin = new Intent(LoginActivity.this, HomeActivity.class);
 
         if(openedVaiPush)   //add data if opened vai push
-            intentLogin.putExtra("jsonPushData", jsonStringData);
+            intentLogin.putExtras(getIntent().getExtras());
 
         thisActivity.startActivity(intentLogin);
         thisActivity.finish();
@@ -317,8 +327,9 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
     public void onClickRegister(View view)
     {
         //Launches register activity
-        Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-        startActivityForResult(registerIntent, REQ_CODE_REGISTER_USER);
+//        Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+//        startActivityForResult(registerIntent, REQ_CODE_REGISTER_USER);
+        register();
     }
 
     public void subscribeToChannels(List<ParseObject> groups)

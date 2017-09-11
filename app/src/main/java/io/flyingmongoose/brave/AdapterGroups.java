@@ -309,7 +309,7 @@ public class AdapterGroups extends RecyclerView.Adapter<AdapterGroups.ViewHolder
      */
     public static class ViewHolder extends ParallaxViewHolder
     {
-        private final int animationRes = R.anim.anim_float;
+        private final int animationRes = R.anim.anim_float_register;
         private final Animation animShake;
         private final ImageView imgvDownloadIndicator;
         private final View holderView;

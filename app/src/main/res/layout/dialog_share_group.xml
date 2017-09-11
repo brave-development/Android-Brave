@@ -41,7 +41,6 @@
             android:layout_weight="1"
             android:background="@null"
             android:drawableTop="@drawable/ic_fb_large"
-            android:text="@string/diagShareGroupFacebookOption"
             android:textColor="@color/Blue"/>
 
         <Button
@@ -50,7 +49,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"
-            android:text="@string/diagShareGroupWhatsappOption"
             android:drawableTop="@drawable/ic_wa_large"
             android:textColor="@color/Jade"/>
 
@@ -60,7 +58,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@null"
-            android:text="@string/diagShareGroupTwitterOption"
             android:drawableTop="@drawable/ic_tw_large"
             android:textColor="@color/FlatLightBlue"/>
     </LinearLayout>

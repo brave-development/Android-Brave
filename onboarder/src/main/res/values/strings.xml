@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Ahoy!</string>
+    <string name="button.finish">FINISH</string>
+    <string name="button.next">NEXT</string>
+    <string name="button.skip">SKIP</string>
+    <string name="shareAppMsg">I would like to show you Brave. An App than make random acts of kindness available to you.</string>
+    <string name="appUrlANDROID">https://play.google.com/store/apps/details?id=io.flyingmongoose.brave</string>
+    <string name="WANotInstalled">Whatsapp have not been installed</string>
+</resources>

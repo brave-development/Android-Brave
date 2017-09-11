@@ -5,6 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="appUrlANDROID">https://play.google.com/store/apps/details?id=io.flyingmongoose.brave</string>
     <string name="appUrlIOS">https://Brave.io/Ios</string>
+    <string name="appSiteUrl">http://www.brave.ly/download</string>
 
     <string name="facebook_app_id">1613107172034757</string>
     <string name="fb_login_protocol_scheme">fb1613107172034757</string>
@@ -99,6 +100,11 @@
     <string name="diagShareGroupWANotInstalled">Whatsapp have not been installed</string>
     <string name="diagShareGroupShareMsgPrefix"> would like you to join their group on Brave.\nUse their group code  </string>
     <string name="diagShareGroupShareMsgSuffix">  to join</string>
+
+    <!--share app dialog-->
+    <string name="diagShareAppTitle">Share Brave</string>
+    <string name="diagShareAppMsg">Great you have decided to share Brave. Helping others with random acts of kindness.</string>
+    <string name="diagShareAppShareMsg">would like to show you Brave. An App than make random acts of kindness available to you.</string>
 
     <!--feedback dialog-->
     <string name="diagFeedbackTitle">Feedback</string>

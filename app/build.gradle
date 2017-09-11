@@ -15,8 +15,8 @@ android {
         applicationId "io.flyingmongoose.brave"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 6
-        versionName "1.0.4"
+        versionCode 8
+        versionName "1.0.6"
         multiDexEnabled true
     }
     buildTypes {
@@ -36,11 +36,12 @@ android {
 }
 
 dependencies {
-//    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //    compile fileTree(dir: 'libs', include: ['*.jar'])
     //compile 'com.parse.bolts:bolts-android:1.+'
-//    compile fileTree(dir: 'libs', include: 'bolts-android-*.jar')
-//    compile fileTree(dir: 'libs', include: 'Parse-*.jar')
+    //    compile fileTree(dir: 'libs', include: 'bolts-android-*.jar')
+    //    compile fileTree(dir: 'libs', include: 'Parse-*.jar')
     compile 'com.parse:parse-android:1.15.1'
+    compile 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1'
     compile 'com.parse:parsefacebookutils-v4-android:1.10.4@aar'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.twitter.sdk.android:tweet-composer:3.0.0'
@@ -57,6 +58,7 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.2.6'
     compile 'com.google.firebase:firebase-config:10.2.6 '
     compile 'com.google.firebase:firebase-messaging:10.2.6'
+    compile project(':onboarder')
 }
 
 apply plugin: 'com.google.gms.google-services'

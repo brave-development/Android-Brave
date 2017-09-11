@@ -20,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -112,7 +113,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
 
     private PopupWindow respondPopupWindow;
     private boolean displayingRespondWindow = false;    //Used to ensure the user can't open 2 respond windows because of laggyness
-    private ToggleButton tbtnTrack;
+    private SwitchCompat tbtnTrack;
     private Button btnResponseCall;
 
     private SwipeRefreshLayout srLayMapLoading;
@@ -128,7 +129,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
         mvMap.onCreate(savedInstanceState);
 
         vMapPopupAnchor = view.findViewById(R.id.vMapPopupAnchor);
-        tbtnTrack = (ToggleButton) view.findViewById(R.id.tbtnTrack);
+        tbtnTrack = (SwitchCompat) view.findViewById(R.id.tbtnTrack);
 
         srLayMapLoading = (SwipeRefreshLayout) view.findViewById(R.id.srLayMapLoading);
         srLayMapLoading.setOnRefreshListener(this);
@@ -287,6 +288,23 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
     {
         Log.i(TAG, "Fragment Map checkPushNotificationData");
         //Check if push notification data exists and perform house keeping
+        if(HomeActivity.pushPanicObjectId != null)
+        {
+            trackPanicId = HomeActivity.pushPanicObjectId;
+            //Make follow button visible and as active, TODO: can animate here as well
+            tbtnTrack.setVisibility(View.VISIBLE);
+            tbtnTrack.setChecked(true);
+            tbtnTrack.setOnCheckedChangeListener(this);
+
+            //get last know location data
+            trackPanicLastKnownLocation = new ParseGeoPoint(HomeActivity.pushLat, HomeActivity.pushLng);
+        }
+    }
+
+    private void checkPushNotificationDataParse()
+    {
+        Log.i(TAG, "Fragment Map checkPushNotificationData");
+        //Check if push notification data exists and perform house keeping
         if(!HomeActivity.jsonPushData.isEmpty())
         {
             //Convert json string to json object
@@ -331,10 +349,9 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
         if(jsonObjPushData != null && trackPanicLastKnownLocation.getLatitude() != 0)
         {
             googMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(trackPanicLastKnownLocation.getLatitude(), trackPanicLastKnownLocation.getLongitude()), MAP_ZOOM_LEVEL));
-        } else if(HomeActivity.pushLat != 0 && HomeActivity.pushLng != 0)
+        } else if(HomeActivity.pushPanicObjectId != null && trackPanicLastKnownLocation.getLatitude() != 0)
         {
-            Log.d("debug", "Used notif loc to init map cam");
-            googMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(HomeActivity.pushLat, HomeActivity.pushLng), MAP_ZOOM_LEVEL));
+            googMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(trackPanicLastKnownLocation.getLatitude(), trackPanicLastKnownLocation.getLongitude()), MAP_ZOOM_LEVEL));
         } else
         {
             //find user last known location and animate to that if it exists

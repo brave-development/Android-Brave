@@ -112,6 +112,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     public static String jsonPushData = "";
     public static double pushLat;
     public static double pushLng;
+    public static String pushPanicObjectId;
 
     private static Menu mActionBar;
 
@@ -409,17 +410,18 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
             Log.d("debug", "Trying to set lat and lng from notif: " + startingIntent.hasExtra("lat"));
 
             Bundle bundle = startingIntent.getExtras();
-            if (bundle != null) {
-                for (String key : bundle.keySet()) {
-                    Object value = bundle.get(key);
-                    Log.d(TAG, String.format("%s %s (%s)", key,
-                            value.toString(), value.getClass().getName()));
-                }
-            }
-            if(startingIntent.getExtras() != null)
+//            if (bundle != null) {
+//                for (String key : bundle.keySet()) {
+//                    Object value = bundle.get(key);
+//                    Log.d(TAG, String.format("%s %s (%s)", key,
+//                            value.toString(), value.getClass().getName()));
+//                }
+//            }
+            if(bundle != null)
             {
-                pushLat = startingIntent.getExtras().getDouble("lat");
-                pushLng = startingIntent.getExtras().getDouble("lng");
+                pushLat = bundle.getDouble("lat");
+                pushLng = bundle.getDouble("lng");
+                pushPanicObjectId = bundle.getString("objectId");
 
                 Log.d("debug", "Managed to set cords from notif");
                 fragBottomActionBar.btnNavMap.performClick();
@@ -456,16 +458,18 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         if(item.getItemId() == 0)
         {
             //Start sharing intent with app url
-            Intent share = new Intent(android.content.Intent.ACTION_SEND);
-            share.setType("text/plain");
-            share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-
-            // Add data to the intent, the receiving app will decide
-            // what to do with it.
-            share.putExtra(Intent.EXTRA_SUBJECT, "Panic Crowd Sourced Security");
-            share.putExtra(Intent.EXTRA_TEXT, "http://www.panic-sec.org/what/");
-
-            startActivity(Intent.createChooser(share, "Share Panic"));
+//            Intent share = new Intent(android.content.Intent.ACTION_SEND);
+//            share.setType("text/plain");
+//            share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+//
+//            // Add data to the intent, the receiving app will decide
+//            // what to do with it.
+//            share.putExtra(Intent.EXTRA_SUBJECT, "Panic Crowd Sourced Security");
+//            share.putExtra(Intent.EXTRA_TEXT, "http://www.panic-sec.org/what/");
+//
+//            startActivity(Intent.createChooser(share, "Share Panic"));
+            FragmentDialogShareApp diagShareApp = new FragmentDialogShareApp();
+            diagShareApp.show(getSupportFragmentManager(), "diagShareApp");
         }
 
         if(item.getItemId() == 1)

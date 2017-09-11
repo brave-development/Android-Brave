@@ -1,9 +1,11 @@
 package io.flyingmongoose.brave;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -48,7 +50,10 @@ public class ServiceFirebaseMessaging extends FirebaseMessagingService
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_stat_healing)
+                .setColor(getColor(R.color.bravely))
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+                .setPriority(Notification.PRIORITY_MAX)
                 .setContentTitle(title)
                 .setContentText(messageBody)
                 .setExtras(extras)

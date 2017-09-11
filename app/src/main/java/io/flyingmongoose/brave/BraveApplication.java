@@ -48,12 +48,20 @@ public class BraveApplication extends Application
         Parse.enableLocalDatastore(this);
 //        Parse.initialize(this, "qR8lv9KafH4E9CakPJfKSoDLGlOSPbPMbXVVdbBC", "EYia5DIkfo2OgYOkLJ5NxeUW8lqEUx1nRt2GeyTv"); Panic Dev db
 //        Parse.initialize(this, "cBZmGCzXfaQAyxqnTh6eF2kIqCUnSm1ET8wYL5O7", "rno7DabpDMU293yi2TF4S3jKOlrZX2P27EW70C3G"); //Panic Live db db
+
+        //TODO: Live server detail
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("PANICING-TURTLE")
                 .clientKey("PANICINGTURTLE3847TR386TB281XN1NY7YNXM")
                 .server("http://panicing-turtle.herokuapp.com/parse")
-                .build()
-        );
+                .build());
+
+//        Parse.initialize(new Parse.Configuration.Builder(this)
+//                .applicationId("PANICING-TORTOISE")
+//                .clientKey("PANICINGTORTOISE3847TR386TB281XN1NY7YNXM")
+//                .server("http://panicing-tortoise.herokuapp.com/parse")
+//                .build()
+//        );
 
         ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback()
         {

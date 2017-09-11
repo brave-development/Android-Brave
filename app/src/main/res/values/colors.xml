@@ -26,5 +26,6 @@
     <color name="colorPrimary">#16a085</color>
     <color name="colorPrimaryDark">#424242</color>
     <color name="colorAccent">#00C169</color>
+    <color name="bravely">#00AFA1</color>
 
 </resources>

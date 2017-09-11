@@ -135,15 +135,22 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
             public void onClick(View view)
             {
 //                gpsService.sendTestFbPush();
-                FragmentDialogShareGroup diagShareGroup = new FragmentDialogShareGroup();
 
-                Bundle args = new Bundle();
-                args.putBoolean("privateGroup", false);
-                args.putString("groupName", "Yea");
-                args.putString("groupCode", "TheBestCode");
-                diagShareGroup.setArguments(args);
+                //test share group
+//                FragmentDialogShareGroup diagShareGroup = new FragmentDialogShareGroup();
+//
+//                Bundle args = new Bundle();
+//                args.putBoolean("privateGroup", false);
+//                args.putString("groupName", "Yea");
+//                args.putString("groupCode", "TheBestCode");
+//                diagShareGroup.setArguments(args);
+//
+//                diagShareGroup.show(getFragmentManager(), "testShare");
 
-                diagShareGroup.show(getFragmentManager(), "testShare");
+                //Test onboarding
+                OnBoardingActivity testBoaringActv = new OnBoardingActivity();
+                Intent boardingIntent = new Intent(activity, OnBoardingActivity.class);
+                startActivity(boardingIntent);
             }
         });
 
