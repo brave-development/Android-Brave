@@ -1,5 +1,7 @@
 package io.flyingmongoose.brave;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,12 +13,15 @@ import android.view.View;
 import android.widget.Toast;
 import com.codemybrainsout.onboarder.AhoyOnboarderActivity;
 import com.codemybrainsout.onboarder.AhoyOnboarderCard;
+import com.codemybrainsout.onboarder.OnAhoyListeners;
+import com.codemybrainsout.onboarder.OnIntroListener;
 import com.codemybrainsout.onboarder.OnTextInputProvidedListener;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 import java.text.Normalizer;
@@ -30,12 +35,15 @@ import java.util.List;
 public class OnBoardingActivity extends AhoyOnboarderActivity
 {
 
+    private String password;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
         //Set basic page info
+        AhoyOnboarderCard cardIntro = new AhoyOnboarderCard("The home of random acts of kindness", R.drawable.ic_huge_brave, AhoyOnboarderCard.OnboardType.INTRO);
         AhoyOnboarderCard cardFullName = new AhoyOnboarderCard("What's your name, friend?", "Full Name", R.drawable.ic_fullname, R.drawable.ic_accept_fullname, R.drawable.ic_reject_fullname, AhoyOnboarderCard.OnboardType.TEXT_INUPT);
         AhoyOnboarderCard cardEmail = new AhoyOnboarderCard("Promise I don't spam...", "you@youremail.com", R.drawable.ic_email, R.drawable.ic_accept_email, R.drawable.ic_reject_email, AhoyOnboarderCard.OnboardType.TEXT_INUPT);
         AhoyOnboarderCard cardPassword = new AhoyOnboarderCard("Sssshhh...", "Create a password", R.drawable.ic_password, R.drawable.ic_accept_password, R.drawable.ic_reject_password, AhoyOnboarderCard.OnboardType.TEXT_INUPT);
@@ -43,13 +51,25 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
         AhoyOnboarderCard cardShare = new AhoyOnboarderCard("Got a referral code?", "Referral Code", R.drawable.ic_network, R.drawable.ic_accept_network, R.drawable.ic_reject_network, AhoyOnboarderCard.OnboardType.TEXT_INPUT_SHARE_OPTION);
 
         // You can define title and description colors (by default white)
+        cardIntro.setTitleColor(R.color.common_google_signin_btn_text_dark);
+        cardIntro.setTitleTextSize(dpToPixels(12, this));
+        cardIntro.setBackgroundColor(android.R.color.transparent);
+        OnIntroListener introListener = new OnIntroListener()
+        {
+            @Override
+            public void onIntroAnimationFinish()
+            {
+                goToNextPage();
+            }
+        };
+
         cardFullName.setTitleColor(R.color.common_google_signin_btn_text_dark);
         cardFullName.setDescriptionColor(R.color.common_google_signin_btn_text_dark);
         cardFullName.setBackgroundColor(R.color.black_transparent);
-        cardFullName.setTitleTextSize(dpToPixels(10, this));
-        cardFullName.setDescriptionTextSize(dpToPixels(8, this));
+        cardFullName.setTitleTextSize(dpToPixels(8, this));
+        cardFullName.setDescriptionTextSize(dpToPixels(6, this));
         cardFullName.setInputType(InputType.TYPE_CLASS_TEXT, InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-        OnTextInputProvidedListener listener1 = new OnTextInputProvidedListener()
+        OnTextInputProvidedListener cardListenerFullName = new OnTextInputProvidedListener()
         {
             @Override
             public void onInputProvided(String textInput, TextInputLayout tillInput)
@@ -94,7 +114,8 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
         cardEmail.setTitleTextSize(dpToPixels(10, this));
         cardEmail.setDescriptionTextSize(dpToPixels(8, this));
         cardEmail.setInputType(InputType.TYPE_CLASS_TEXT, InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        OnTextInputProvidedListener listener2 = new OnTextInputProvidedListener()
+        cardEmail.setFbLogin(true);
+        OnTextInputProvidedListener cardListenerEmail = new OnTextInputProvidedListener()
         {
             @Override
             public void onInputProvided(String textInput, TextInputLayout tillInput)
@@ -109,12 +130,44 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
             }
 
             @Override
-            public void onValidate(String textInput, TextInputLayout tillInput, boolean fromScroll)
+            public void onValidate(String textInput, TextInputLayout tillInput, final boolean fromScroll)
             {
                 if(validateEmail(textInput, tillInput, true))
                 {
-                    if(!fromScroll)
-                        goToNextPage();
+                    //Check already if exists
+                    ParseQuery<ParseUser> queryEmailExists = ParseQuery.getQuery("User");
+                    queryEmailExists.whereEqualTo("email", textInput);
+                    queryEmailExists.getFirstInBackground(new GetCallback<ParseUser>()
+                    {
+                        @Override
+                        public void done(ParseUser object, ParseException e)
+                        {
+                            if(e == null)
+                            {
+                                //if user exists treat as login else as a register
+                                if(object != null)
+                                {
+                                    //setup for login instead of reg
+                                    removeOnboarderPage(3);
+                                    removeOnboarderPage(4);
+                                    removeOnboarderPage(5);
+
+                                    //Display forget password and change behaviour for login instead
+                                    Toast.makeText(getApplicationContext(), "Use as Login instead", Toast.LENGTH_LONG).show();
+                                }
+
+                                if(!fromScroll)
+                                    goToNextPage();
+                            }
+                            else
+                            {
+                                if(e.getCode() == 101)
+                                    Toast.makeText(getApplicationContext(), "Use as Register", Toast.LENGTH_LONG).show();
+                                else
+                                    Toast.makeText(getApplicationContext(), "Error connecting: " + e.getCode() + " " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                 }
                 else
                 {
@@ -138,7 +191,7 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
         cardPassword.setTitleTextSize(dpToPixels(10, this));
         cardPassword.setDescriptionTextSize(dpToPixels(8, this));
         cardPassword.setInputType(InputType.TYPE_CLASS_TEXT, InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        OnTextInputProvidedListener listener3 = new OnTextInputProvidedListener()
+        OnTextInputProvidedListener cardListenerPassword = new OnTextInputProvidedListener()
         {
             @Override
             public void onInputProvided(String textInput, TextInputLayout tillInput)
@@ -159,6 +212,8 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
                 {
                     if(!fromScroll)
                         goToNextPage();
+
+                    password = textInput;
                 }
                 else
                 {
@@ -182,7 +237,7 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
         cardPhone.setTitleTextSize(dpToPixels(10, this));
         cardPhone.setDescriptionTextSize(dpToPixels(8, this));
         cardPhone.setInputType(InputType.TYPE_CLASS_PHONE, InputType.TYPE_NULL);
-        OnTextInputProvidedListener listener4 = new OnTextInputProvidedListener()
+        OnTextInputProvidedListener cardListenerPhone = new OnTextInputProvidedListener()
         {
             @Override
             public void onInputProvided(String textInput, TextInputLayout tillInput)
@@ -228,7 +283,7 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
         cardShare.setInputType(InputType.TYPE_CLASS_TEXT, InputType.TYPE_NULL);
         cardShare.setShareTitle("Share");
         cardShare.setShareTitleColor(R.color.common_google_signin_btn_text_dark);
-        OnTextInputProvidedListener listener5 = new OnTextInputProvidedListener()
+        OnTextInputProvidedListener cardListenerShare = new OnTextInputProvidedListener()
         {
             @Override
             public void onInputProvided(String textInput, TextInputLayout tillInput)
@@ -262,18 +317,20 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
 
 
         List<AhoyOnboarderCard> cards = new ArrayList<>();
-        cards.add(cardFullName);
+        cards.add(cardIntro);
         cards.add(cardEmail);
         cards.add(cardPassword);
+        cards.add(cardFullName);
         cards.add(cardPhone);
         cards.add(cardShare);
 
-        List<OnTextInputProvidedListener> listeners = new ArrayList<OnTextInputProvidedListener>();
-        listeners.add(listener1);
-        listeners.add(listener2);
-        listeners.add(listener3);
-        listeners.add(listener4);
-        listeners.add(listener5);
+        List<OnAhoyListeners> listeners = new ArrayList<OnAhoyListeners>();
+        listeners.add(introListener);
+        listeners.add(cardListenerEmail);
+        listeners.add(cardListenerPassword);
+        listeners.add(cardListenerFullName);
+        listeners.add(cardListenerPhone);
+        listeners.add(cardListenerShare);
 
 
         setOnboardPages(cards, listeners);
@@ -447,7 +504,7 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
 
             //Check already if exists
             ParseQuery<ParseObject> queryGroupExists = ParseQuery.getQuery("Groups");
-            queryGroupExists.whereEqualTo("flatValue", formattedReferralCode);
+            queryGroupExists.whereEqualTo("referralCode", formattedReferralCode);
             queryGroupExists.getFirstInBackground(new GetCallback<ParseObject>()
             {
                 @Override
@@ -457,9 +514,9 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
                     if (e == null)
                     {
                         //An obj was found
-                        registerUser.add("Groups", group);
+                        registerUser.add("groups", group.getString("name"));
 
-                        doSignUp(registerUser, tillLast);
+                        doSignUp(registerUser, tillLast, group);
 
                     } else
                     {
@@ -498,10 +555,10 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
             });
         }
         else
-            doSignUp(registerUser, tillLast);
+            doSignUp(registerUser, tillLast, null);
     }
 
-    private void doSignUp(ParseUser registerUser, final TextInputLayout tillLast)
+    private void doSignUp(final ParseUser registerUser, final TextInputLayout tillLast, final ParseObject group)
     {
         //Loading animation
         animateLoading(true);
@@ -520,7 +577,18 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
 
                     Snackbar.make(parentLayout, "You have successfully been registered", Snackbar.LENGTH_LONG).show();
 
-                    finish();
+                    //Update group with parse user id if a referral code was used
+                    if(group != null)
+                        subUserToGroup(registerUser, group);
+                    else    //Log user in via shared prefs
+                    {
+                        Intent result = new Intent();
+                        result.putExtra("email", registerUser.getEmail());
+                        result.putExtra("password", password);
+                        setResult(Activity.RESULT_OK, result);
+                        finish();
+                    }
+
 
                 } else
                 {
@@ -565,6 +633,47 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
                             }
                         }).show();
                 }
+            }
+        });
+    }
+
+    private void subUserToGroup(final ParseUser registerUser , final ParseObject group)
+    {
+        group.addUnique("subscriberObjects", registerUser.getObjectId());
+        group.increment("subscribers");
+        group.saveInBackground(new SaveCallback()
+        {
+            @Override
+            public void done(ParseException e)
+            {
+                if(e == null)
+                {
+                    Intent result = new Intent();
+                    result.putExtra("email", registerUser.getEmail());
+                    result.putExtra("password", password);
+                    setResult(Activity.RESULT_OK, result);
+                    finish();
+                }
+                else if (e.getCode() == 100)
+                {
+                    Snackbar.make(parentLayout, "Please check your internet connection and try again, Joining referral code's group was only partially completed",Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View view)
+                        {
+                            subUserToGroup(registerUser, group);
+                        }
+                    }).show();
+                }
+                else
+                    Snackbar.make(parentLayout, "Joining referral code's group was only partially completed: " + e.getMessage() + " Code: " + e.getCode(),Snackbar.LENGTH_INDEFINITE).setAction("Retry", new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View view)
+                        {
+                            subUserToGroup(registerUser, group);
+                        }
+                    }).show();
             }
         });
     }

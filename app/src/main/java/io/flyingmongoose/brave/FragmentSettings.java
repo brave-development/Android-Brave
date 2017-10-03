@@ -164,7 +164,7 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
         etxtEmail.setOnEditorActionListener(this);
         etxtEmail.setOnFocusChangeListener(this);
 
-        selectCountry();
+//        selectCountry();
 
         //init Notifications switch
         sSettingsNotifications.setChecked(!ParseInstallation.getCurrentInstallation().getBoolean("allowNotifications"));
@@ -273,7 +273,7 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
             {
                 if (e == null)
                 {
-                    HomeActivity.txtvProfileName.setText(name);
+//                    HomeActivity.txtvProfileName.setText(name);
                 }
                 else
                     Toast.makeText(getActivity(), "Changes aborted: " + e.getMessage() + " Code: " + e.getCode(), Toast.LENGTH_LONG).show();

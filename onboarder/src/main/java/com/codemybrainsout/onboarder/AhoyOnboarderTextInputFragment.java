@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputEditText;
@@ -24,6 +25,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.facebook.login.widget.LoginButton;
 
 public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
 {
@@ -46,6 +49,7 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
     private static final String AHOY_PAGE_MARGIN_RIGHT = "ahoy_page_margin_right";
     private static final String AHOY_PAGE_MARGIN_TOP = "ahoy_page_margin_top";
     private static final String AHOY_PAGE_MARGIN_BOTTOM = "ahoy_page_margin_bottom";
+    private static final String AHOY_PAGE_FB_LOGIN = "ahoy_page_fb_login";
 
 
     private String title;
@@ -74,6 +78,7 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
     private TextView tvOnboarderTitle;
     private EditText etxtOnboarderInput;
     private TextInputLayout tilOnboarderInput;
+    private LoginButton btnLoginFb;
     private CardView cardView;
     private SwipeRefreshLayout srLayLoading;
     private int iconHeight, iconWidth;
@@ -84,6 +89,8 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
 
     private int currentIconResId;
     private boolean fabVisible = false;
+    private boolean animationTriggered = false;
+    private boolean fbLogin = false;
 
     public AhoyOnboarderTextInputFragment()
     {
@@ -110,6 +117,7 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         args.putInt(AHOY_PAGE_MARGIN_RIGHT, card.getMarginRight());
         args.putInt(AHOY_PAGE_MARGIN_TOP, card.getMarginTop());
         args.putInt(AHOY_PAGE_MARGIN_BOTTOM, card.getMarginBottom());
+        args.putBoolean(AHOY_PAGE_FB_LOGIN, card.getFbLoginActive());
 
         AhoyOnboarderTextInputFragment fragment = new AhoyOnboarderTextInputFragment();
         fragment.setArguments(args);
@@ -151,12 +159,14 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         marginBottom = bundle.getInt(AHOY_PAGE_MARGIN_BOTTOM, (int) dpToPixels(0, getActivity()));
         marginLeft = bundle.getInt(AHOY_PAGE_MARGIN_LEFT, (int) dpToPixels(0, getActivity()));
         marginRight = bundle.getInt(AHOY_PAGE_MARGIN_RIGHT, (int) dpToPixels(0, getActivity()));
+        fbLogin = bundle.getBoolean(AHOY_PAGE_FB_LOGIN, false);
 
         view = inflater.inflate(R.layout.fragment_ahoy_text_input, container, false);
         fabOnBoarderImage = (FloatingActionButton) view.findViewById(R.id.fab_image);
         tvOnboarderTitle = (TextView) view.findViewById(R.id.tv_title);
         etxtOnboarderInput = (EditText) view.findViewById(R.id.etxt_input);
         tilOnboarderInput = (TextInputLayout) view.findViewById(R.id.til_input);
+        btnLoginFb = (LoginButton) view.findViewById(R.id.btn_fb_login);
         cardView = (CardView) view.findViewById(R.id.cv_cardview);
         srLayLoading = (SwipeRefreshLayout) view.findViewById(R.id.srLay_loading);
 
@@ -212,6 +222,11 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
             cardView.setCardBackgroundColor(ContextCompat.getColor(getActivity(), backgroundColor));
         }
 
+        if(fbLogin)
+        {
+            btnLoginFb.setVisibility(View.VISIBLE);
+        }
+
 //        if (iconWidth != 0 && iconHeight != 0)
 //        {
 //            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(iconWidth, iconHeight);
@@ -255,6 +270,12 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         initLoadingCircle();
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
     }
 
     private void initLoadingCircle()
@@ -325,7 +346,10 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
             animFloat = AnimationUtils.loadAnimation(getActivity(), R.anim.anim_float_register_no_fade_in);
 
         fabOnBoarderImage.startAnimation(animFloat);
+        animationTriggered = true;
     }
+
+    public boolean getAnimationTriggered(){return animationTriggered;}
 
     public void setInputType(int inputClass, int inputVariation)
     {

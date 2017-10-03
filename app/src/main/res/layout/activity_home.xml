@@ -1,12 +1,46 @@
-<android.support.v4.widget.DrawerLayout
+<android.support.design.widget.CoordinatorLayout
+    android:id="@+id/CoordinatorLayout01"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawLayNav"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <!--<android.support.v4.widget.DrawerLayout-->
+        <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:id="@+id/drawLayNav"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+
+    <it.sephiroth.android.library.bottomnavigation.BottomNavigation
+        android:id="@+id/BottomNavigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:bbn_entries="@menu/menu_bottom_nav"
+        app:bbn_scrollEnabled="true"
+        app:bbn_badgeProvider="@string/bbn_badgeProvider"
+        app:layout_behavior="@string/bbn_phone_view_behavior"
+        />
+
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/fabMainAlert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="45dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:src="@drawable/ic_fire_color1"
+        android:scaleType="fitXY"
+        app:fab_elevationCompat="10dp"
+        app:fab_size="normal"
+        app:fab_colorNormal="@color/androidGrey800"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="55dp"
         android:background="@drawable/main_bg7">
 
         <LinearLayout
@@ -22,95 +56,98 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_gravity="bottom">
+            android:layout_gravity="bottom"
+            android:visibility="gone">
 
         </FrameLayout>
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="200dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="left"
-        android:background="@color/OverlayTranslucentBlack">
+</android.support.design.widget.CoordinatorLayout>
 
-        <TextView
-            android:id="@+id/txtvProfileName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:gravity="center"
-            android:text="@string/txtvProfileNameDefault"
-            android:textAppearance="?android:textAppearanceLarge"
-            android:textColor="@color/White"/>
+    <!--<RelativeLayout-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="left"-->
+        <!--android:background="@color/OverlayTranslucentBlack">-->
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/imgvProfilePic"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="70dp"
-            android:src="@drawable/panic_profile_pic"
-            app:border_color="@color/White"
-            app:border_width="0dp"/>
+        <!--<TextView-->
+            <!--android:id="@+id/txtvProfileName"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:gravity="center"-->
+            <!--android:text="@string/txtvProfileNameDefault"-->
+            <!--android:textAppearance="?android:textAppearanceLarge"-->
+            <!--android:textColor="@color/White"/>-->
 
-        <ListView
-            android:id="@+id/lstvNav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/imgvProfilePic"
-            android:layout_marginTop="40dp"
-            android:divider="@null">
-        </ListView>
+        <!--<de.hdodenhof.circleimageview.CircleImageView-->
+            <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+            <!--android:id="@+id/imgvProfilePic"-->
+            <!--android:layout_width="96dp"-->
+            <!--android:layout_height="96dp"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:layout_marginTop="70dp"-->
+            <!--android:src="@drawable/panic_profile_pic"-->
+            <!--app:border_color="@color/White"-->
+            <!--app:border_width="0dp"/>-->
 
-        <ImageView
-            android:id="@+id/imgvNavDrwawerActionBarDivider"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/linLayNavDrawerActionBar"
-            android:src="@drawable/divider"
-            android:visibility="gone"/>
+        <!--<ListView-->
+            <!--android:id="@+id/lstvNav"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@id/imgvProfilePic"-->
+            <!--android:layout_marginTop="40dp"-->
+            <!--android:divider="@null">-->
+        <!--</ListView>-->
 
-        <LinearLayout
-            android:id="@+id/linLayNavDrawerActionBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal"
-            android:visibility="gone">
+        <!--<ImageView-->
+            <!--android:id="@+id/imgvNavDrwawerActionBarDivider"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_above="@+id/linLayNavDrawerActionBar"-->
+            <!--android:src="@drawable/divider"-->
+            <!--android:visibility="gone"/>-->
 
-            <ImageButton
-                android:id="@+id/imgvPublicHistory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/Translucent"
-                android:onClick="onClickPublicHistory"
-                android:src="@drawable/public_history"/>
+        <!--<LinearLayout-->
+            <!--android:id="@+id/linLayNavDrawerActionBar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:visibility="gone">-->
 
-            <ImageButton
-                android:id="@+id/imgvTelephone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/Translucent"
-                android:onClick="onClickTelephone"
-                android:src="@drawable/telephone"
-                android:visibility="gone"/>
+            <!--<ImageButton-->
+                <!--android:id="@+id/imgvPublicHistory"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@color/Translucent"-->
+                <!--android:onClick="onClickPublicHistory"-->
+                <!--android:src="@drawable/public_history"/>-->
 
-            <ImageButton
-                android:id="@+id/imgvLogout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/Translucent"
-                android:onClick="onClickLogout"
-                android:src="@drawable/logout"/>
+            <!--<ImageButton-->
+                <!--android:id="@+id/imgvTelephone"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@color/Translucent"-->
+                <!--android:onClick="onClickTelephone"-->
+                <!--android:src="@drawable/telephone"-->
+                <!--android:visibility="gone"/>-->
 
-        </LinearLayout>
+            <!--<ImageButton-->
+                <!--android:id="@+id/imgvLogout"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@color/Translucent"-->
+                <!--android:onClick="onClickLogout"-->
+                <!--android:src="@drawable/logout"/>-->
 
-    </RelativeLayout>
+        <!--</LinearLayout>-->
 
-</android.support.v4.widget.DrawerLayout>
+    <!--</RelativeLayout>-->
+
+<!--</android.support.v4.widget.DrawerLayout>-->

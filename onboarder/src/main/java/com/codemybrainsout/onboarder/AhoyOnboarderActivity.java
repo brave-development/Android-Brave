@@ -68,7 +68,7 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
         ivNext = (ImageView) findViewById(R.id.ivNext);
         ivPrev = (ImageView) findViewById(R.id.ivPrev);
         backgroundImage = (ImageView) findViewById(R.id.background_image);
-        backgroundImageOverlay = (View) findViewById(R.id.background_image_overlay);
+        backgroundImageOverlay = findViewById(R.id.background_image_overlay);
         vpOnboarderPager = (ViewPager) findViewById(R.id.vp_pager);
         vpOnboarderPager.addOnPageChangeListener(this);
         btnSkip.setOnClickListener(this);
@@ -77,6 +77,7 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
 
         hideFinish(false);
         fadeOut(ivPrev, false);
+        fadeOut(circleIndicatorView, false);
     }
 
     public void setOnboardPages(List<AhoyOnboarderCard> pages)
@@ -92,7 +93,7 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
 
     }
 
-    public void setOnboardPages(List<AhoyOnboarderCard> pages, List<OnTextInputProvidedListener> listeners)
+    public void setOnboardPages(List<AhoyOnboarderCard> pages, List<OnAhoyListeners> listeners)
     {
 
         this.pages = pages;
@@ -103,6 +104,11 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
         vpOnboarderPager.setPageTransformer(false, mCardShadowTransformer);
         circleIndicatorView.setPageIndicators(pages.size());
 
+    }
+
+    public void removeOnboarderPage(int position)
+    {
+        ahoyOnboarderAdapter.removeCardFragment(position);
     }
 
     public void showRejectIcon()
@@ -151,7 +157,10 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
             vpOnboarderPager.setCurrentItem(vpOnboarderPager.getCurrentItem() - 1);
         } else if (i == R.id.ivNext && !isInLastPage)
         {
-            ahoyOnboarderAdapter.getTextInputFragPage(vpOnboarderPager.getCurrentItem()).onValidate(false);
+            if(ahoyOnboarderAdapter.getCardTypeAt(vpOnboarderPager.getCurrentItem()) == AhoyOnboarderCard.OnboardType.TEXT_INUPT)
+                ahoyOnboarderAdapter.getTextInputFragPage(vpOnboarderPager.getCurrentItem()).onValidate(false);
+            else
+                vpOnboarderPager.setCurrentItem(vpOnboarderPager.getCurrentItem() + 1);
         }
     }
 
@@ -176,10 +185,23 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
         return ahoyOnboarderAdapter.getTextInputFragPage(position).getTextInputView();
     }
 
+    public void initPages()
+    {
+        vpOnboarderPager.setCurrentItem(0);
+    }
+
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
     {
-        ahoyOnboarderAdapter.getTextInputFragPage(position).animateFloat();
+        if(ahoyOnboarderAdapter.getCardTypeAt(position) == AhoyOnboarderCard.OnboardType.TEXT_INUPT)   //Only try to animate if frag is of the correct type
+        {
+           AhoyOnboarderTextInputFragment frag = ahoyOnboarderAdapter.getTextInputFragPage(position);
+
+            if(!frag.getAnimationTriggered())
+                frag.animateFloat();
+        }
+//        else if(ahoyOnboarderAdapter.getCardTypeAt(position) == AhoyOnboarderCard.OnboardType.INTRO && position)
+
     }
 
     @Override
@@ -202,7 +224,8 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
             fadeOut(ivPrev);
             fadeIn(ivNext);
             hideFinish();
-            fadeIn(circleIndicatorView);
+            fadeOut(circleIndicatorView);
+            ahoyOnboarderAdapter.getIntroFragPage(position).animateText();
         } else
         {
             fadeIn(circleIndicatorView);
@@ -217,7 +240,10 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
         }
 
         if(position > 0)
-            ahoyOnboarderAdapter.getTextInputFragPage(vpOnboarderPager.getCurrentItem() - 1).onValidate(true);
+        {
+            if(ahoyOnboarderAdapter.getCardTypeAt(vpOnboarderPager.getCurrentItem() - 1) == AhoyOnboarderCard.OnboardType.TEXT_INUPT)
+                ahoyOnboarderAdapter.getTextInputFragPage(vpOnboarderPager.getCurrentItem() - 1).onValidate(true);
+        }
 
     }
 

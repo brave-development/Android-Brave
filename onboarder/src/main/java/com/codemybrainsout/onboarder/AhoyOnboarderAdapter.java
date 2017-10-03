@@ -18,7 +18,7 @@ public class AhoyOnboarderAdapter extends FragmentStatePagerAdapter implements S
 
     private String TAG = AhoyOnboarderAdapter.class.getSimpleName();
     List<AhoyOnboarderCard> pages = new ArrayList<AhoyOnboarderCard>();
-    List<OnTextInputProvidedListener> listeners = new ArrayList<OnTextInputProvidedListener>();
+    List<OnAhoyListeners> listeners = new ArrayList<OnAhoyListeners>();
     private List<AhoyOnboarderFragment> mFragments = new ArrayList<>();
     private float mBaseElevation;
     private Typeface typeface;
@@ -39,7 +39,7 @@ public class AhoyOnboarderAdapter extends FragmentStatePagerAdapter implements S
 
     }
 
-    public AhoyOnboarderAdapter(List<AhoyOnboarderCard> pages, List<OnTextInputProvidedListener> listeners, FragmentManager fm, float baseElevation, Typeface typeface)
+    public AhoyOnboarderAdapter(List<AhoyOnboarderCard> pages, List<OnAhoyListeners> listeners, FragmentManager fm, float baseElevation, Typeface typeface)
     {
         super(fm);
         this.pages = pages;
@@ -59,8 +59,20 @@ public class AhoyOnboarderAdapter extends FragmentStatePagerAdapter implements S
     @Override
     public Fragment getItem(int position)
     {
-        //return AhoyOnboarderFragment.newInstance(pages.get(position));
-        return mFragments.get(position);
+        Fragment createdFrag = mFragments.get(position);
+        AhoyOnboarderCard card = pages.get(position);
+        AhoyOnboarderCard.OnboardType cardType = card.getOnboardType();
+
+        if(cardType == AhoyOnboarderCard.OnboardType.STATIC)
+            createdFrag = AhoyOnboarderFragment.newInstance(card);
+        else if(cardType == AhoyOnboarderCard.OnboardType.INTRO)
+            createdFrag = AhoyOnboarderFragmentIntro.newInstance(card, (OnIntroListener) listeners.get(position));
+        else if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INUPT)
+            createdFrag = AhoyOnboarderTextInputFragment.newInstance(card, (OnTextInputProvidedListener) listeners.get(position));
+        else if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INPUT_SHARE_OPTION)
+            createdFrag = AhoyOnboarderTextInputShareOptionFragment.newInstance(card, (OnTextInputProvidedListener) listeners.get(position));
+
+        return createdFrag;
     }
 
     @Override
@@ -87,18 +99,51 @@ public class AhoyOnboarderAdapter extends FragmentStatePagerAdapter implements S
         return mFragments.get(position).getCardView();
     }
 
+    public AhoyOnboarderCard.OnboardType getCardTypeAt(int position){return pages.get(position).getOnboardType();}
+
     public AhoyOnboarderFragment getFragPageAt(int pageIndex){return mFragments.get(pageIndex);}
 
-    public AhoyOnboarderTextInputFragment getTextInputFragPage (int pageIndex){return (AhoyOnboarderTextInputFragment) mFragments.get(pageIndex);}
-
-    public void addCardFragment(AhoyOnboarderCard page, OnTextInputProvidedListener listener)
+    public AhoyOnboarderFragmentIntro getIntroFragPage(int pageIndex)
     {
-        if(page.onboardType == AhoyOnboarderCard.OnboardType.STATIC)
+        //Check that the requested page is of type TextInputFragment
+        AhoyOnboarderCard.OnboardType cardType = pages.get(pageIndex).getOnboardType();
+
+        if(cardType == AhoyOnboarderCard.OnboardType.INTRO)
+            return (AhoyOnboarderFragmentIntro) mFragments.get(pageIndex);
+        else
+            return null;
+    }
+
+    public AhoyOnboarderTextInputFragment getTextInputFragPage (int pageIndex)
+    {
+        //Check that the requested page is of type TextInputFragment
+        AhoyOnboarderCard.OnboardType cardType = pages.get(pageIndex).getOnboardType();
+
+        if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INUPT)
+            return (AhoyOnboarderTextInputFragment) mFragments.get(pageIndex);
+        else
+            return null;
+    }
+
+    public void addCardFragment(AhoyOnboarderCard page, OnAhoyListeners listener)
+    {
+        AhoyOnboarderCard.OnboardType cardType = page.getOnboardType();
+        if(cardType == AhoyOnboarderCard.OnboardType.STATIC)
             mFragments.add(AhoyOnboarderFragment.newInstance(page));
-        else if(page.onboardType == AhoyOnboarderCard.OnboardType.TEXT_INUPT)
-            mFragments.add(AhoyOnboarderTextInputFragment.newInstance(page, listener));
-        else if(page.onboardType == AhoyOnboarderCard.OnboardType.TEXT_INPUT_SHARE_OPTION)
-            mFragments.add(AhoyOnboarderTextInputShareOptionFragment.newInstance(page, listener));
+        else if(cardType == AhoyOnboarderCard.OnboardType.INTRO)
+            mFragments.add(AhoyOnboarderFragmentIntro.newInstance(page, (OnIntroListener) listener));
+        else if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INUPT)
+            mFragments.add(AhoyOnboarderTextInputFragment.newInstance(page, (OnTextInputProvidedListener) listener));
+        else if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INPUT_SHARE_OPTION)
+            mFragments.add(AhoyOnboarderTextInputShareOptionFragment.newInstance(page, (OnTextInputProvidedListener) listener));
+    }
+
+    public void removeCardFragment(int position)
+    {
+        mFragments.remove(position);
+        listeners.remove(position);
+        pages.remove(position);
+        notifyDataSetChanged();
     }
 
     public AhoyOnboarderCard getPage(int pageIndex) {return pages.get(pageIndex);}

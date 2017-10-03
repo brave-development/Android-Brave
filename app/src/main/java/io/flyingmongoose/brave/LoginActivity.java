@@ -43,7 +43,8 @@ import java.util.List;
 public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener, TextView.OnEditorActionListener
 {
 
-    private final int REQ_CODE_REGISTER_USER = 1;
+    private final int REQ_CODE_REGISTER_USER_FB = 1;
+    private final int REQ_CODE_REGISTER_USER = 2;
     private final LoginActivity thisActivity = this;
 //    private ProgressBar progbLogin;
     private SwipeRefreshLayout srLayLogin;
@@ -112,9 +113,8 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
 
     public void register()
     {
-        OnBoardingActivity testBoaringActv = new OnBoardingActivity();
         Intent boardingIntent = new Intent(this, OnBoardingActivity.class);
-        startActivity(boardingIntent);
+        startActivityForResult(boardingIntent, REQ_CODE_REGISTER_USER);
     }
 
     @Override
@@ -274,7 +274,7 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
         Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
         registerIntent.putExtra("regWithFacebook", true);
         registerIntent.putExtra("authData", parseUser.getJSONObject("authData").toString());
-        startActivityForResult(registerIntent, REQ_CODE_REGISTER_USER);
+        startActivityForResult(registerIntent, REQ_CODE_REGISTER_USER_FB);
     }
 
     public void login()
@@ -369,13 +369,28 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQ_CODE_REGISTER_USER)
+        if(requestCode == REQ_CODE_REGISTER_USER_FB)
         {
             if(resultCode == Activity.RESULT_OK)
             {
                 Intent homePanicIntent = new Intent(LoginActivity.this, HomeActivity.class);
                 startActivity(homePanicIntent);
                 this.finish();
+            }
+        }
+        else if(requestCode == REQ_CODE_REGISTER_USER)
+        {
+            if(resultCode == Activity.RESULT_OK)
+            {
+                String userEmail = data.getStringExtra("email");
+                String userPassword = data.getStringExtra("password");
+
+                if(userEmail.length() != 0 && userPassword.length() != 0)
+                {
+                    etxtUsername.setText(userEmail);
+                    etxtPassword.setText(userPassword);
+                    btnLogin.performClick();
+                }
             }
         }
     }

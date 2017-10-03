@@ -9,9 +9,10 @@ import android.text.InputType;
 
 public class AhoyOnboarderCard {
 
-    public enum OnboardType{STATIC, TEXT_INUPT, TEXT_INPUT_SHARE_OPTION}
+    public enum OnboardType{STATIC, INTRO, TEXT_INUPT, TEXT_INPUT_SHARE_OPTION}
 
     public OnboardType onboardType;
+    public boolean fbLogin = false;
     public String title;
     public String shareTitle;
     public String description;
@@ -53,6 +54,12 @@ public class AhoyOnboarderCard {
         this.titleResourceId = title;
         this.descriptionResourceId = description;
         this.onboardType = onboardType;
+    }
+
+    public AhoyOnboarderCard(String title, int imageResourceId,  OnboardType onboardType) {
+        this.title = title;
+        this.onboardType = onboardType;
+        this.imageResourceId = imageResourceId;
     }
 
     public AhoyOnboarderCard(String title, String description, int imageResourceId, OnboardType onboardType) {
@@ -97,6 +104,12 @@ public class AhoyOnboarderCard {
         this.inputClass = inputClass;
         this.inputVariation = inputVariation;
     }
+
+    public void setFbLogin(boolean fbLogin){this.fbLogin = fbLogin;}
+
+    public OnboardType getOnboardType(){return onboardType;}
+
+    public boolean getFbLoginActive(){return fbLogin;}
 
     public int getInputClass(){return inputClass;}
 

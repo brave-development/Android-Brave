@@ -55,6 +55,13 @@
         <item>@drawable/settings</item>
     </string-array>
 
+    <!--Bottom Nav Menu-->
+    <string name="navEntry1">Feed</string>
+    <string name="navEntry2">Map</string>
+    <string name="navEntry3"></string>
+    <string name="navEntry4">Me</string>
+    <string name="navEntry5">Settings</string>
+
     <string name="navDrawerOpen">Open Navigation Drawer</string>
     <string name="navDrawerClosed">Close Navigation Drawer</string>
 

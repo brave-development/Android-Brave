@@ -71,6 +71,15 @@
 
             </LinearLayout>
 
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/btn_fb_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/vCenterVert"
+                android:layout_marginTop="75dp"
+                android:visibility="invisible"/>
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/fab_image"
                 android:layout_width="@dimen/section_image_item"

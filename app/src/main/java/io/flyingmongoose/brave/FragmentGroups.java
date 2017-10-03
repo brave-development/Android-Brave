@@ -185,7 +185,11 @@ public class FragmentGroups extends Fragment
             {
                 if(e == null)
                 {
-                    List<String> groupNames = parseObject.getList("groups");
+                    List<String> groupNames = new ArrayList<String>();
+
+                    if(parseObject.getList("groups") != null)
+                        groupNames = parseObject.getList("groups");
+
                     //Query for group objects, ps only ones the user is subbed to
                     ParseQuery<ParseObject> querySubbedGroups = new ParseQuery<ParseObject>("Groups");
                     querySubbedGroups.whereContainedIn("name", groupNames);

@@ -13,9 +13,13 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.os.SystemClock;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -26,6 +30,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -33,6 +38,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
@@ -55,11 +61,13 @@ import com.wooplr.spotlight.utils.SpotlightListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
+
 
 public class HomeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener
 {
-    public static final String PARSE_APP_ID = "PANICING-TURTLE";
-    public static final String PARSE_API_KEY = "PANICINGTURTLE3847TR386TB281XN1NY7YNXM";
+    public static final String PARSE_APP_ID = "PANICING-TORTOISE";
+    public static final String PARSE_API_KEY = "PANICINGTORTOISE3847TR386TB281XN1NY7YNXM";
     private final int REQ_PERM_LOC = 100;
     private final String LOG_TAG = "HomeActivity";
     private DrawerLayout drawLayNav;
@@ -119,6 +127,13 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     private SpotlightView spotvDrawer;
     private SpotlightView spotvGroups;
 
+    //New Bottom Nav
+    private int prevMenuItem = 0;
+    private BottomNavigation bottomNavigation;
+    private FloatingActionButton fabMainAlert;
+
+    private float btnMainPos1X, btnMainPos2X, btnMainPos3X, btnMainPos4X, btnMainPos5X;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,12 +145,12 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         //Set profile name in drawer
-        txtvProfileName = (TextView) findViewById(R.id.txtvProfileName);
+//        txtvProfileName = (TextView) findViewById(R.id.txtvProfileName);
 
-        if(currentUser != null)
-            txtvProfileName.setText(currentUser.getString("name"));
-        else
-            txtvProfileName.setVisibility(View.INVISIBLE);
+//        if(currentUser != null)
+//            txtvProfileName.setText(currentUser.getString("name"));
+//        else
+//            txtvProfileName.setVisibility(View.INVISIBLE);
 
         //Update current user
         currentUser.fetchInBackground(new GetCallback<ParseObject>()
@@ -146,43 +161,243 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
                 if(parseObject != null)
                 {
                     userFresh = true;
-                    txtvProfileName.setText(parseObject.getString("name"));
-                    txtvProfileName.setVisibility(View.VISIBLE);
+//                    txtvProfileName.setText(parseObject.getString("name"));
+//                    txtvProfileName.setVisibility(View.VISIBLE);
                 }
             }
         });
 
         fLayBottomActionBar = (FrameLayout) findViewById(R.id.fragmentBottomActionBar);
         fabNeedleDrop = (FloatingActionButton) findViewById(R.id.fabNeedleDrop);
-
-        //Initialise & populate nav drawer
-        drawLayNav = (DrawerLayout)findViewById(R.id.drawLayNav);
-        lstvNav = (ListView)findViewById(R.id.lstvNav);
+        bottomNavigation = (BottomNavigation) findViewById(R.id.BottomNavigation);
+        fabMainAlert = (FloatingActionButton) findViewById(R.id.fabMainAlert);
+                //Initialise & populate nav drawer
+//        drawLayNav = (DrawerLayout)findViewById(R.id.drawLayNav);
+//        lstvNav = (ListView)findViewById(R.id.lstvNav);
 
 
         //Initialise custom adaptor
-        navAdapter = new NavAdapter(this);
-        lstvNav.setAdapter(navAdapter);
-        lstvNav.setOnItemClickListener(this);
+//        navAdapter = new NavAdapter(this);
+//        lstvNav.setAdapter(navAdapter);
+//        lstvNav.setOnItemClickListener(this);
 
-        drawerListener = new ActionBarDrawerToggle(this, drawLayNav, R.string.navDrawerOpen, R.string.navDrawerClosed)
+//        drawerListener = new ActionBarDrawerToggle(this, drawLayNav, R.string.navDrawerOpen, R.string.navDrawerClosed)
+//        {
+//            @Override
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//               // Toast.makeText(HomeActivity.this, "Drawer Opened", Toast.LENGTH_LONG).show();
+//            }
+//
+//            @Override
+//            public void onDrawerClosed(View drawerView) {
+//                super.onDrawerClosed(drawerView);
+//                //Toast.makeText(HomeActivity.this, "Drawer Closed", Toast.LENGTH_LONG).show();
+//            }
+//        };
+
+//        drawLayNav.setDrawerListener(drawerListener);
+//        getSupportActionBar().setHomeButtonEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        final BottomNavigation.OnMenuItemSelectionListener mnuListener = new BottomNavigation.OnMenuItemSelectionListener()
         {
             @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-               // Toast.makeText(HomeActivity.this, "Drawer Opened", Toast.LENGTH_LONG).show();
+            public void onMenuItemSelect(@IdRes int i, int position, boolean b)
+            {
+
+                //Calculate positions if any are 0
+                if(btnMainPos1X == 0 || btnMainPos2X == 0 || btnMainPos3X == 0 || btnMainPos4X == 0 || btnMainPos5X == 0)
+                    calcMainBtnScreenPositions();
+
+                FragmentTransaction fragTrans = fragManager.beginTransaction();
+
+                //Check position clicked
+                switch(position)
+                {
+                    case 0:
+                        translateViewToXPos(fabMainAlert, calcRelatveXPositionChange(fabMainAlert, btnMainPos1X));
+
+                        //Swap fire drawable
+                        fabMainAlert.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_fire_color1));
+
+                        //Pull in new relevant fragment
+                        if(fragGroups == null)
+                            fragGroups = new FragmentGroups();
+
+
+                        //Set animation based on previously selected item, Have to set animation first otherwise it's not shown
+                        switch(prevMenuItem)
+                        {
+                            case 1:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_slide_out_to_left);
+                                break;
+
+                            case 2:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_push_out_down);
+                                break;
+
+                            case 3:
+                            case 4:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_slide_out_to_right);
+                                break;
+                        }
+
+                        fragTrans.replace(R.id.HomeContentLayout, fragGroups, TAG_FRAG_GROUPS);
+                        fragTrans.commit();
+                        prevMenuItem = 0;
+                        break;
+
+                    case 1:
+                        translateViewToXPos(fabMainAlert, calcRelatveXPositionChange(fabMainAlert, btnMainPos2X));
+
+                        //Swap fire drawable
+                        fabMainAlert.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_fire_color2));
+
+                        //Pull in new relevant fragment
+                        if(fragMap == null)
+                            fragMap = new FragmentMap();
+
+
+                        //Set animation based on previously selected item, Have to set animation first otherwise it's not shown
+                        switch(prevMenuItem)
+                        {
+                            case 0:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_slide_out_to_left);
+                                break;
+
+                            case 2:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_push_out_down);
+                                break;
+
+                            case 3:
+                            case 4:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_slide_out_to_right);
+                                break;
+                        }
+
+                        fragTrans.replace(R.id.HomeContentLayout, fragMap, TAG_FRAG_MAP);
+                        fragTrans.commit();
+                        prevMenuItem = 1;
+                        break;
+
+                    case 2:
+                        translateViewToXPos(fabMainAlert, calcRelatveXPositionChange(fabMainAlert, btnMainPos3X));
+
+                        //Swap fire drawable
+                        fabMainAlert.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_fire_color3));
+
+                        //Pull in new relevant fragment
+                        if(fragPanic == null)
+                            fragPanic = new FragmentPanic();
+
+
+                        //Set animation based on previously selected item, Have to set animation first otherwise it's not shown
+                        switch(prevMenuItem)
+                        {
+                            case 0:
+                            case 1:
+                                fragTrans.setCustomAnimations(R.anim.anim_push_in_up, R.anim.anim_slide_out_to_left);
+                                break;
+
+                            case 3:
+                            case 4:
+                                fragTrans.setCustomAnimations(R.anim.anim_push_in_up, R.anim.anim_slide_out_to_right);
+                                break;
+                        }
+
+                        fragTrans.replace(R.id.HomeContentLayout, fragPanic, TAG_FRAG_PANIC);
+                        fragTrans.commit();
+                        prevMenuItem = 2;
+                        break;
+
+                    case 3:
+                        translateViewToXPos(fabMainAlert, calcRelatveXPositionChange(fabMainAlert, btnMainPos4X));
+
+                        //Swap fire drawable
+                        fabMainAlert.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_fire_color4));
+
+                        //Pull in new relevant fragment
+                        if(fragHistory == null)
+                            fragHistory = new FragmentHistory();
+
+                        fragTrans = fragManager.beginTransaction();
+
+                        //Set animation based on previously selected item, Have to set animation first otherwise it's not shown
+                        switch(prevMenuItem)
+                        {
+                            case 0:
+                            case 1:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_right, R.anim.anim_slide_out_to_left);
+                                break;
+
+                            case 2:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_right, R.anim.anim_push_out_down);
+                                break;
+
+                            case 4:
+                                fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_right, R.anim.anim_slide_out_to_right);
+                                break;
+                        }
+
+                        fragTrans.replace(R.id.HomeContentLayout, fragHistory, TAG_FRAG_HISTORY);
+                        fragTrans.commit();
+                        prevMenuItem = 3;
+                        break;
+
+                    case 4:
+                        translateViewToXPos(fabMainAlert, calcRelatveXPositionChange(fabMainAlert, btnMainPos5X));
+
+                        //Swap fire drawable
+                        fabMainAlert.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_fire_color5));
+
+                        //Pull in new relevant fragment
+                        if(fragSettings == null)
+                            fragSettings = new FragmentSettings();
+
+                        fragTrans = fragManager.beginTransaction();
+
+                                //Set animation based on previously selected item, Have to set animation first otherwise it's not shown
+                                switch(prevMenuItem)
+                                {
+                                    case 0:
+                                    case 1:
+                                        fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_right, R.anim.anim_slide_out_to_left);
+                                        break;
+
+                                    case 2:
+                                        fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_right, R.anim.anim_push_out_down);
+                                        break;
+
+                                    case 3:
+                                        fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_right, R.anim.anim_slide_out_to_right);
+                                        break;
+                                }
+
+                        fragTrans.replace(R.id.HomeContentLayout, fragSettings, TAG_FRAG_SETTINGS);
+                        fragTrans.commit();
+                        prevMenuItem = 4;
+                        break;
+                }
             }
 
             @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                //Toast.makeText(HomeActivity.this, "Drawer Closed", Toast.LENGTH_LONG).show();
+            public void onMenuItemReselect(@IdRes int i, int position, boolean b)
+            {
+
             }
         };
 
-        drawLayNav.setDrawerListener(drawerListener);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        bottomNavigation.setOnMenuItemClickListener(mnuListener);
+
+        fabMainAlert.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                bottomNavigation.setSelectedIndex(2, true);
+            }
+        });
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             initFragments();
@@ -191,15 +406,85 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    private void initBtnMainAlertPosition()
+    {
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float screenWidth = size.x;
+        float screenCenterWidth = screenWidth / 2;
+        float xWeightFactor = screenWidth / 5;   //This is the size of one fith of the screen's width
+
+        fabMainAlert.setX(screenCenterWidth + xWeightFactor);
+    }
+
+    //Calculate Main middle button positions acording to screen size
+    private void calcMainBtnScreenPositions()
+    {
+        //Get screen x size
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        float screenWidth = size.x;
+        float screenCenterWidth = screenWidth / 2;
+//        Log.d("debugBottomNav", "screenWidth: " + screenWidth);
+//        Log.d("debugBottomNav", "screenCenterWidth: " + screenCenterWidth);
+
+        //Get button width
+        float btnWidth = fabMainAlert.getWidth();
+        float btnInitialPosX = fabMainAlert.getX();
+        float btnCenterOffsetFactor = btnWidth / 2;   //This is the factor to subtract from an x value to place the view's center on the given x co-ordinate
+//        Log.d("debugBottomNav", "btnWidth: " + btnWidth);
+//        Log.d("debugBottomNav", "btnInitialPosX: " + btnInitialPosX);
+//        Log.d("debugBottomNav", "btnCenterOffsetWidth: " + btnCenterOffsetFactor);
+
+        //Divide the screen in 5 since there is 5 buttons on the nav bar
+        float xWeightFactor = screenWidth / 6;   //This is the size of one fith of the screen's width
+//        Log.d("debugBottomNav", "xWeight5th: " + xWeightFactor);
+
+        //Calculate position 1 this is when item 1 on the menu is selected
+        //So we need to place the view the furthest past it's center position that we are willing to go
+        //The view needs to be pushed to the right
+        btnMainPos1X = (screenCenterWidth + (xWeightFactor / 2.5f)) - btnCenterOffsetFactor;
+//        Log.d("debugBottomNav", "Position1X: " + btnMainPos1X);
+
+        //Calculate position 2, this would be the second most pushed to the right
+        btnMainPos2X = (screenCenterWidth + (xWeightFactor / 4f)) - btnCenterOffsetFactor;
+//        Log.d("debugBottomNav", "Position2X: " + btnMainPos2X);
+
+        //Calculate position 3, this would essentially place the butotn in the center
+        btnMainPos3X = screenCenterWidth - btnCenterOffsetFactor;
+//        Log.d("debugBottomNav", "Position3X: " + btnMainPos3X);
+
+        //Calculate position 4, this is when the 4th button is selected and the second most pushed to the left
+        btnMainPos4X = (screenCenterWidth - (xWeightFactor / 4.2f)) - btnCenterOffsetFactor;
+//        Log.d("debugBottomNav", "Position4X: " + btnMainPos4X);
+
+        //Calculate position 5, this is when the 5th button is selected and the most pushed to the left
+        btnMainPos5X = (screenCenterWidth - (xWeightFactor / 2.8f)) - btnCenterOffsetFactor;
+//        Log.d("debugBottomNav", "Position5X: " + btnMainPos5X);
+    }
+
+    private float calcRelatveXPositionChange(View view , float absolutePosition)
+    {
+        float relativePosition = view.getX();
+        return absolutePosition - relativePosition;
+    }
+
+    private void translateViewToXPos(View view, float byX)
+    {
+        view.animate().translationXBy(byX).setInterpolator(new AccelerateDecelerateInterpolator()).setDuration(150).start();
+    }
+
     private void initFragments()
     {
         //Init fragements
         fragPanic = new FragmentPanic();
-        fragMap = new FragmentMap();
+//        fragMap = new FragmentMap();
 //        fragGroups = new FragmentGroupsOld();
 //        fragSettings = new FragmentSettings();
 //        fragHistory = new FragmentHistory();
-        fragBottomActionBar = new FragmentBottomActionBar();
+//        fragBottomActionBar = new FragmentBottomActionBar();
 //        fragMangGroups = new FragmentManageGroups();
 
 
@@ -207,11 +492,11 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 
         fragManager = getSupportFragmentManager();
         fragTransaction = fragManager.beginTransaction();
-        fragTransaction.add(R.id.fragmentBottomActionBar, fragBottomActionBar, TAG_FRAG_BOTTOM_ACTION_BAR);
+//        fragTransaction.add(R.id.fragmentBottomActionBar, fragBottomActionBar, TAG_FRAG_BOTTOM_ACTION_BAR);
         fragTransaction.add(R.id.HomeContentLayout, fragPanic, TAG_FRAG_PANIC);
 
-        fragTransaction.add(R.id.HomeContentLayout, fragMap, TAG_FRAG_MAP);
-        fragTransaction.hide(fragMap);
+//        fragTransaction.add(R.id.HomeContentLayout, fragMap, TAG_FRAG_MAP);
+//        fragTransaction.hide(fragMap);
 
         /*fragTransaction.add(R.id.HomeContentLayout,fragGroups, TAG_FRAG_GROUPS);
         fragTransaction.hide(fragGroups);*/
@@ -394,7 +679,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onPostCreate(Bundle savedInstanceState)
     {
         super.onPostCreate(savedInstanceState);
-        drawerListener.syncState();
+//        drawerListener.syncState();
 
 //        //Check if app opened vai push notification
 //        if(getIntent().hasExtra("jsonPushData"))

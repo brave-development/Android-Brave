@@ -7,7 +7,7 @@ import android.widget.EditText;
  * Created by wprenison on 2017/08/17.
  */
 
-public interface OnTextInputProvidedListener
+public interface OnTextInputProvidedListener extends OnAhoyListeners
 {
     void onInputProvided(String textInput, TextInputLayout tillInput);
 

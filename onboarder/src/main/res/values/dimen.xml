@@ -6,6 +6,7 @@
     <dimen name="activity_half_margin">8dp</dimen>
     <dimen name="indicator_size">8dp</dimen>
     <dimen name="section_image_item">128dp</dimen>
+    <dimen name="intro_image_item">200dp</dimen>
     <dimen name="design_fab_size_normal" tools:overide="true">90dp</dimen>
     <dimen name="design_fab_image_size" tools:override="true">90dp</dimen>
 </resources>

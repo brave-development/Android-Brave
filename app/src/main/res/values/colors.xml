@@ -4,7 +4,7 @@
     <color name="SelectedWhite">#ffffff</color>
     <color name="White">#ffffff</color>
     <color name="HintWhite">#BFffffff</color>
-    <color name="FlatLightBlue">#00bbff</color>
+    <color name="FlatLightBlue">#29B6F6</color>
     <color name="FlatLightBluePressed">#54d1fe</color>
     <color name="WetAsphalt">#34495e</color>
     <color name="HintGrey">#808080</color>
@@ -19,6 +19,7 @@
     <color name="RedPressed">#fc5c5d</color>
     <color name="StandardHoloDark">#222222</color>
     <color name="SeaGreen">#16a085</color>
+    <color name="Amethyst">#9b59b6</color>
     <color name="Jade">#00C169</color>
     <color name="CircleProgLoadingColor">#3e3e3e</color>
     <color name="androidGrey800">#424242</color>
