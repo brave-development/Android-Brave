@@ -119,7 +119,7 @@ public class AhoyOnboarderAdapter extends FragmentStatePagerAdapter implements S
         //Check that the requested page is of type TextInputFragment
         AhoyOnboarderCard.OnboardType cardType = pages.get(pageIndex).getOnboardType();
 
-        if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INUPT)
+        if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INUPT || cardType == AhoyOnboarderCard.OnboardType.TEXT_INPUT_SHARE_OPTION)
             return (AhoyOnboarderTextInputFragment) mFragments.get(pageIndex);
         else
             return null;
@@ -138,11 +138,39 @@ public class AhoyOnboarderAdapter extends FragmentStatePagerAdapter implements S
             mFragments.add(AhoyOnboarderTextInputShareOptionFragment.newInstance(page, (OnTextInputProvidedListener) listener));
     }
 
+    public void reAddCardFragment(AhoyOnboarderCard page, OnAhoyListeners listener, int position)
+    {
+        pages.add(position, page);
+        listeners.add(position, listener);
+
+        AhoyOnboarderCard.OnboardType cardType = page.getOnboardType();
+        if(cardType == AhoyOnboarderCard.OnboardType.STATIC)
+            mFragments.add(position, AhoyOnboarderFragment.newInstance(page));
+        else if(cardType == AhoyOnboarderCard.OnboardType.INTRO)
+            mFragments.add(position, AhoyOnboarderFragmentIntro.newInstance(page, (OnIntroListener) listener));
+        else if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INUPT)
+            mFragments.add(position, AhoyOnboarderTextInputFragment.newInstance(page, (OnTextInputProvidedListener) listener));
+        else if(cardType == AhoyOnboarderCard.OnboardType.TEXT_INPUT_SHARE_OPTION)
+            mFragments.add(position, AhoyOnboarderTextInputShareOptionFragment.newInstance(page, (OnTextInputProvidedListener) listener));
+
+
+        notifyDataSetChanged();
+    }
+
     public void removeCardFragment(int position)
     {
-        mFragments.remove(position);
-        listeners.remove(position);
-        pages.remove(position);
+        Log.d("DebugRmCard", "Position: " + position + "no of frags:" + mFragments.size());
+        if(mFragments.size() >= (position + 1))
+            mFragments.remove(position);
+
+        Log.d("DebugRmCard", "Position: " + position + "no of listeners:" + mFragments.size());
+        if(listeners.size() >= (position + 1))
+            listeners.remove(position);
+
+        Log.d("DebugRmCard", "Position: " + position + "no of pages:" + mFragments.size());
+        if(pages.size() >= (position + 1))
+            pages.remove(position);
+
         notifyDataSetChanged();
     }
 

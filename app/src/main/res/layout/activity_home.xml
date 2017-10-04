@@ -29,9 +29,8 @@
         android:id="@+id/fabMainAlert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="45dp"
         android:layout_gravity="center_horizontal|bottom"
-        android:src="@drawable/ic_fire_color1"
+        android:src="@drawable/ic_fire_color3"
         android:scaleType="fitXY"
         app:fab_elevationCompat="10dp"
         app:fab_size="normal"
@@ -62,6 +61,14 @@
         </FrameLayout>
 
     </RelativeLayout>
+
+    <View
+        android:id="@+id/vDummyGroupTut"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="bottom"/>
 
 </android.support.design.widget.CoordinatorLayout>
 

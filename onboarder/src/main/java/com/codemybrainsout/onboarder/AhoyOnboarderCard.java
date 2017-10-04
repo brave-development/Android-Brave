@@ -14,6 +14,7 @@ public class AhoyOnboarderCard {
     public OnboardType onboardType;
     public boolean fbLogin = false;
     public String title;
+    public String linkTitle;
     public String shareTitle;
     public String description;
     public Drawable imageResource;
@@ -78,6 +79,16 @@ public class AhoyOnboarderCard {
         this.onboardType = onboardType;
     }
 
+    public AhoyOnboarderCard(String title, String description, String linkTitle, int imageResourceId, int imageAcceptResourceId, int imageRejectResourceId, OnboardType onboardType) {
+        this.title = title;
+        this.description = description;
+        this.linkTitle = linkTitle;
+        this.imageResourceId = imageResourceId;
+        this.imageAcceptResourceId = imageAcceptResourceId;
+        this.imageRejectResourceId = imageRejectResourceId;
+        this.onboardType = onboardType;
+    }
+
     public AhoyOnboarderCard(String title, String description, Drawable imageResource, OnboardType onboardType) {
         this.title = title;
         this.description = description;
@@ -118,6 +129,8 @@ public class AhoyOnboarderCard {
     public String getTitle() {
         return title;
     }
+
+    public String getLinkTitle(){return linkTitle;}
 
     public String getShareTitle(){return shareTitle;}
 

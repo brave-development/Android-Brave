@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     private ActionBarDrawerToggle drawerListener;   //This is used because it already implements drawer listener
     private NavAdapter navAdapter;      //Custom adapter for populating nav menu
     public static TextView txtvProfileName;
+    private View vDummyGroupTut;
 
     //fragments
     public  FragmentPanic fragPanic = null;
@@ -130,7 +131,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     //New Bottom Nav
     private int prevMenuItem = 0;
     private BottomNavigation bottomNavigation;
-    private FloatingActionButton fabMainAlert;
+    public static FloatingActionButton fabMainAlert;
 
     private float btnMainPos1X, btnMainPos2X, btnMainPos3X, btnMainPos4X, btnMainPos5X;
 
@@ -171,6 +172,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         fabNeedleDrop = (FloatingActionButton) findViewById(R.id.fabNeedleDrop);
         bottomNavigation = (BottomNavigation) findViewById(R.id.BottomNavigation);
         fabMainAlert = (FloatingActionButton) findViewById(R.id.fabMainAlert);
+        vDummyGroupTut = findViewById(R.id.vDummyGroupTut);
                 //Initialise & populate nav drawer
 //        drawLayNav = (DrawerLayout)findViewById(R.id.drawLayNav);
 //        lstvNav = (ListView)findViewById(R.id.lstvNav);
@@ -404,6 +406,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         else
             reqRunTimePerms();
 
+        bottomNavigation.setSelectedIndex(2, false);
     }
 
     private void initBtnMainAlertPosition()
@@ -582,61 +585,87 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public void showDrawTut()
-    {
-        //Open drawer
-        drawLayNav.openDrawer(Gravity.LEFT);
+//    public void showDrawTut()
+//    {
+////        //Open drawer
+////        drawLayNav.openDrawer(Gravity.LEFT);
+//
+//        spotvDrawer =  new SpotlightView.Builder(this)
+//                .introAnimationDuration(400)
+//                .enableRevealAnimation(true)
+//                .performClick(true)
+//                .fadeinTextDuration(400)
+//                .headingTvColor(ContextCompat.getColor(this, R.color.SeaGreen))
+//                .headingTvSize(24)
+//                .headingTvText("Menu")
+//                .subHeadingTvColor(ContextCompat.getColor(this, R.color.White))
+//                .subHeadingTvSize(14)
+//                .subHeadingTvText("Tap here to access the menu, or swipe from the left edge of the screen")
+//                .maskColor(Color.parseColor("#dc000000"))
+//                .targetPadding(165)
+//                .target()
+//                .lineAnimDuration(400)
+//                .lineAndArcColor(ContextCompat.getColor(this, R.color.SeaGreen))
+//                .usageId(navAdapter.getGroupView().getId() + "") //UNIQUE ID
+//                .dismissOnBackPress(true)
+//                .dismissOnTouch(true)
+//                .show();
+//
+//        final HomeActivity activity = this;
+//
+//        spotvDrawer.setListener(new SpotlightListener()
+//        {
+//            @Override
+//            public void onUserClicked(String s)
+//            {
+//                spotvGroups =  new SpotlightView.Builder(activity)
+//                        .introAnimationDuration(400)
+//                        .enableRevealAnimation(true)
+//                        .performClick(true)
+//                        .fadeinTextDuration(400)
+//                        .headingTvColor(ContextCompat.getColor(activity, R.color.SeaGreen))
+//                        .headingTvSize(24)
+//                        .headingTvText("Groups")
+//                        .subHeadingTvColor(ContextCompat.getColor(activity, R.color.White))
+//                        .subHeadingTvSize(14)
+//                        .subHeadingTvText("Tap groups to join or create groups to be notified of your emergencies")
+//                        .maskColor(Color.parseColor("#dc000000"))
+//                        .target(lstvNav)
+//                        .lineAnimDuration(400)
+//                        .lineAndArcColor(ContextCompat.getColor(activity, R.color.SeaGreen))
+//                        .targetPadding(-125)
+//                        .usageId(lstvNav.getId() + "") //UNIQUE ID
+//                        .dismissOnBackPress(true)
+//                        .dismissOnTouch(true)
+//                        .show();
+//            }
+//        });
+//    }
 
-        spotvDrawer =  new SpotlightView.Builder(this)
+    public void showGroupTut()
+    {
+//        Open drawer
+//        drawLayNav.openDrawer(Gravity.LEFT);
+
+        spotvGroups =  new SpotlightView.Builder(this)
                 .introAnimationDuration(400)
                 .enableRevealAnimation(true)
                 .performClick(true)
                 .fadeinTextDuration(400)
                 .headingTvColor(ContextCompat.getColor(this, R.color.SeaGreen))
                 .headingTvSize(24)
-                .headingTvText("Menu")
+                .headingTvText("Groups")
                 .subHeadingTvColor(ContextCompat.getColor(this, R.color.White))
                 .subHeadingTvSize(14)
-                .subHeadingTvText("Tap here to access the menu, or swipe from the left edge of the screen")
+                .subHeadingTvText("Tap groups to join or create groups to be notified of your emergencies")
                 .maskColor(Color.parseColor("#dc000000"))
-                .targetPadding(165)
-                .target(navAdapter.getView(1, null, null))
+                .target(vDummyGroupTut)
                 .lineAnimDuration(400)
                 .lineAndArcColor(ContextCompat.getColor(this, R.color.SeaGreen))
-                .usageId(navAdapter.getGroupView().getId() + "") //UNIQUE ID
+                .usageId(vDummyGroupTut.getId() + "") //UNIQUE ID
                 .dismissOnBackPress(true)
                 .dismissOnTouch(true)
                 .show();
-
-        final HomeActivity activity = this;
-
-        spotvDrawer.setListener(new SpotlightListener()
-        {
-            @Override
-            public void onUserClicked(String s)
-            {
-                spotvGroups =  new SpotlightView.Builder(activity)
-                        .introAnimationDuration(400)
-                        .enableRevealAnimation(true)
-                        .performClick(true)
-                        .fadeinTextDuration(400)
-                        .headingTvColor(ContextCompat.getColor(activity, R.color.SeaGreen))
-                        .headingTvSize(24)
-                        .headingTvText("Groups")
-                        .subHeadingTvColor(ContextCompat.getColor(activity, R.color.White))
-                        .subHeadingTvSize(14)
-                        .subHeadingTvText("Tap groups to join or create groups to be notified of your emergencies")
-                        .maskColor(Color.parseColor("#dc000000"))
-                        .target(lstvNav)
-                        .lineAnimDuration(400)
-                        .lineAndArcColor(ContextCompat.getColor(activity, R.color.SeaGreen))
-                        .targetPadding(-125)
-                        .usageId(lstvNav.getId() + "") //UNIQUE ID
-                        .dismissOnBackPress(true)
-                        .dismissOnTouch(true)
-                        .show();
-            }
-        });
     }
 
     private void initFbPush()
@@ -714,6 +743,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    //TODO: Uncomment to get share and feedback functionallity back
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -730,9 +760,9 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public void adjustActionBarButtonsVisibility(boolean visible)
     {
-        mActionBar.findItem(0).setVisible(visible);
-        mActionBar.findItem(1).setVisible(visible);
-        this.invalidateOptionsMenu();
+//        mActionBar.findItem(0).setVisible(visible);
+//        mActionBar.findItem(1).setVisible(visible);
+//        this.invalidateOptionsMenu();
     }
 
     @Override
@@ -763,10 +793,10 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
             diagFeedback.show(getSupportFragmentManager(), "diagFeedback");
         }
 
-        //Make nav bar icon open or close nav drawer
-        if(drawerListener.onOptionsItemSelected(item))
-            return true;
-        else
+//        //Make nav bar icon open or close nav drawer
+//        if(drawerListener.onOptionsItemSelected(item))
+//            return true;
+//        else
             return super.onOptionsItemSelected(item);
 
     }
@@ -875,18 +905,18 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     public void lockDrawer(boolean locked)
     {
 
-        if(locked)
-        {
-            drawLayNav.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-            getSupportActionBar().setHomeButtonEnabled(false);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        }
-        else
-        {
-            drawLayNav.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
-            getSupportActionBar().setHomeButtonEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+//        if(locked)
+//        {
+//            drawLayNav.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+//            getSupportActionBar().setHomeButtonEnabled(false);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//        }
+//        else
+//        {
+//            drawLayNav.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+//            getSupportActionBar().setHomeButtonEnabled(true);
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        }
     }
 
     @Override

@@ -107,7 +107,7 @@ public class FragmentDialogFeedback extends DialogFragment
                             if(e == null)
                             {
                                 dismiss();
-                                Snackbar.make(HomeActivity.txtvProfileName, getString(R.string.diagFeedbackSentSuccess), Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(HomeActivity.fabMainAlert, getString(R.string.diagFeedbackSentSuccess), Snackbar.LENGTH_LONG).show();
                             }
                             else
                             {

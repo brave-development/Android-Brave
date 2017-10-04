@@ -14,4 +14,8 @@ public interface OnTextInputProvidedListener extends OnAhoyListeners
     void onValidate(String textInput, TextInputLayout tillInput, boolean fromScroll);
 
     void onImeEnterPressed(TextInputLayout tillInput);
+
+    void onLinkClick();
+
+    void onFbClick();
 }

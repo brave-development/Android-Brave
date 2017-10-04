@@ -247,7 +247,7 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
                         @Override
                         public void onUserClicked(String s)
                         {
-                            activity.showDrawTut();
+                            activity.showGroupTut();
                         }
                     });
                 }

@@ -68,7 +68,7 @@ public class FragmentDialogPanicDescription extends DialogFragment
 
                             if(e == null)
                             {
-                                Snackbar.make(HomeActivity.txtvProfileName, "Message sent", Snackbar.LENGTH_LONG).show();
+                                Snackbar.make(HomeActivity.fabMainAlert, "Message sent", Snackbar.LENGTH_LONG).show();
                                 dismiss();
                             } else
                             {

@@ -111,6 +111,11 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
         ahoyOnboarderAdapter.removeCardFragment(position);
     }
 
+//    public void reAddOnboarderPage(AhoyOnboarderCard page, OnAhoyListeners listener, int position)
+//    {
+//        ahoyOnboarderAdapter.reAddCardFragment(page, listener, position);
+//    }
+
     public void showRejectIcon()
     {
         ahoyOnboarderAdapter.getTextInputFragPage(vpOnboarderPager.getCurrentItem()).showRejectIcon();
@@ -490,13 +495,23 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
         ahoyOnboarderAdapter.getTextInputFragPage(ahoyOnboarderAdapter.getCount() - 1).onValidate(false);
     }
 
+    public void setLinkVisible(boolean visible, int position)
+    {
+        ahoyOnboarderAdapter.getTextInputFragPage(position).setLinkVisible(visible);
+    }
+
     public String[] getAllInputData()
     {
         String [] inputData = new String[ahoyOnboarderAdapter.getCount()];
 
         for(int i = 0; i < ahoyOnboarderAdapter.getCount(); i++)
         {
-            inputData[i] = ahoyOnboarderAdapter.getTextInputFragPage(i).getInputData();
+            AhoyOnboarderTextInputFragment currInputFrag = ahoyOnboarderAdapter.getTextInputFragPage(i);
+
+            if(currInputFrag != null)
+                inputData[i] = currInputFrag.getInputData();
+            else
+                inputData[i] = null;
         }
 
         return inputData;
@@ -505,6 +520,16 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
     public void animateLoading(boolean loading)
     {
         ahoyOnboarderAdapter.getTextInputFragPage(vpOnboarderPager.getCurrentItem()).animateLoading(loading);
+    }
+
+    public void setInputText(String inputText, int position)
+    {
+        ahoyOnboarderAdapter.getTextInputFragPage(position).setInputText(inputText);
+    }
+
+    public void setLoading(boolean active, int position)
+    {
+        ahoyOnboarderAdapter.getTextInputFragPage(position).loading(active);
     }
 
 }

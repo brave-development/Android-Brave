@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <transition xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/btn_painc_activate"/>
-    <item android:drawable="@drawable/btn_painc_deactivate"/>
+    <item android:drawable="@drawable/btn_painc_activate2"/>
+    <item android:drawable="@drawable/btn_painc_deactivate2"/>
 </transition>

@@ -380,7 +380,7 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
         ParseUser.logOut();
 
         ParsePush.subscribeInBackground("not_logged_in");
-        Intent intentLogout = new Intent(getActivity(), LoginActivity.class);
+        Intent intentLogout = new Intent(getActivity(), OnBoardingActivity.class);
         intentLogout.putExtra("initParse", false);
         startActivity(intentLogout);
         getActivity().finish();

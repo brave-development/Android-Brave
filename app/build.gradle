@@ -15,8 +15,8 @@ android {
         applicationId "io.flyingmongoose.brave"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 8
-        versionName "1.0.6"
+        versionCode 9
+        versionName "1.0.7"
         multiDexEnabled true
     }
     buildTypes {

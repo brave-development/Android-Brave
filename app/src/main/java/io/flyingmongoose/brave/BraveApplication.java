@@ -57,9 +57,9 @@ public class BraveApplication extends Application
 //                .build());
 
         Parse.initialize(new Parse.Configuration.Builder(this)
-                .applicationId("PANICING-TORTOISE")
-                .clientKey("PANICINGTORTOISE3847TR386TB281XN1NY7YNXM")
-                .server("http://panicing-tortoise.herokuapp.com/parse")
+                .applicationId("PANICING-TURTLE")
+                .clientKey("PANICINGTURTLE3847TR386TB281XN1NY7YNXM")
+                .server("https://panicing-turtle.herokuapp.com/parse")
                 .build()
         );
 

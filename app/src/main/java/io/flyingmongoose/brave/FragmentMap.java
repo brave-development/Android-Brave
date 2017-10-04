@@ -241,7 +241,7 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
             public void onMapReady(GoogleMap googleMap)
             {
                 googleMap.setMyLocationEnabled(true);
-                googleMap.setPadding(calcLeftPadding(), 0, 0, calcBottom());
+                googleMap.setPadding(0, 0, 0, 0);
                 googleMap.setOnInfoWindowClickListener(thisFrag);
                 googleMap.setOnMapClickListener(thisFrag);
 

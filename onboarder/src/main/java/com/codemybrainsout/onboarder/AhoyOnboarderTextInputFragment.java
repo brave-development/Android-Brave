@@ -1,12 +1,15 @@
 package com.codemybrainsout.onboarder;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
@@ -39,6 +42,7 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
     private static final String AHOY_PAGE_DESCRIPTION_RES_ID = "ahoy_page_description_res_id";
     private static final String AHOY_PAGE_DESCRIPTION_COLOR = "ahoy_page_description_color";
     private static final String AHOY_PAGE_DESCRIPTION_TEXT_SIZE = "ahoy_page_description_text_size";
+    private static final String AHOY_PAGE_LINK_TITLE = "shoy_page_lin_title";
     private static final String AHOY_PAGE_IMAGE_RES_ID = "ahoy_page_image_res_id";
     private static final String AHOY_PAGE_IMAGE_ACCEPT_RES_ID = "ahoy_page_image_accept_res_id";
     private static final String AHOY_PAGE_IMAGE_REJECT_RES_ID = "ahoy_page_image_reject_res_id";
@@ -70,12 +74,16 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
     private int imageAcceptResId;
     @DrawableRes
     private int imageRejectResId;
+
+    private String linkTitle;
+
     private float titleTextSize;
     private float hintTextSize;
 
     private View view;
     private FloatingActionButton fabOnBoarderImage;
     private TextView tvOnboarderTitle;
+    private TextView tvLink;
     private EditText etxtOnboarderInput;
     private TextInputLayout tilOnboarderInput;
     private LoginButton btnLoginFb;
@@ -101,6 +109,7 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         Bundle args = new Bundle();
         args.putString(AHOY_PAGE_TITLE, card.getTitle());
         args.putString(AHOY_PAGE_DESCRIPTION, card.getDescription());
+        args.putString(AHOY_PAGE_LINK_TITLE, card.getLinkTitle());
         args.putInt(AHOY_PAGE_TITLE_RES_ID, card.getTitleResourceId());
         args.putInt(AHOY_PAGE_DESCRIPTION_RES_ID, card.getDescriptionResourceId());
         args.putInt(AHOY_PAGE_TITLE_COLOR, card.getTitleColor());
@@ -142,6 +151,7 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         Bundle bundle = getArguments();
 
         title = bundle.getString(AHOY_PAGE_TITLE, null);
+        linkTitle = bundle.getString(AHOY_PAGE_LINK_TITLE, null);
         titleResId = bundle.getInt(AHOY_PAGE_TITLE_RES_ID, 0);
         titleColor = bundle.getInt(AHOY_PAGE_TITLE_COLOR, 0);
         titleTextSize = bundle.getFloat(AHOY_PAGE_TITLE_TEXT_SIZE, 0f);
@@ -164,6 +174,7 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         view = inflater.inflate(R.layout.fragment_ahoy_text_input, container, false);
         fabOnBoarderImage = (FloatingActionButton) view.findViewById(R.id.fab_image);
         tvOnboarderTitle = (TextView) view.findViewById(R.id.tv_title);
+        tvLink = (TextView) view.findViewById(R.id.txtv_link);
         etxtOnboarderInput = (EditText) view.findViewById(R.id.etxt_input);
         tilOnboarderInput = (TextInputLayout) view.findViewById(R.id.til_input);
         btnLoginFb = (LoginButton) view.findViewById(R.id.btn_fb_login);
@@ -175,6 +186,20 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         if (title != null)
         {
             tvOnboarderTitle.setText(title);
+        }
+
+        if(linkTitle != null)
+        {
+            tvLink.setText(linkTitle);
+
+            tvLink.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    onTextInputProvidedListener.onLinkClick();
+                }
+            });
         }
 
         if (titleResId != 0)
@@ -225,6 +250,15 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         if(fbLogin)
         {
             btnLoginFb.setVisibility(View.VISIBLE);
+            btnLoginFb.setReadPermissions("email");
+            btnLoginFb.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    onTextInputProvidedListener.onFbClick();
+                }
+            });
         }
 
 //        if (iconWidth != 0 && iconHeight != 0)
@@ -284,6 +318,11 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         srLayLoading.setColorSchemeColors(getResources().getColor(R.color.FlatLightBlue), getResources().getColor(R.color.Red), getResources().getColor(R.color.SeaGreen));
         srLayLoading.setProgressBackgroundColor(R.color.CircleProgLoadingColor);
         srLayLoading.setProgressViewOffset(true, 0, 8);
+    }
+
+    public void loading(boolean active)
+    {
+        srLayLoading.setRefreshing(active);
     }
 
     public float dpToPixels(int dp, Context context)
@@ -357,6 +396,8 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         this.inputVariation = inputVariation;
     }
 
+    public void setInputText(String inputText){etxtOnboarderInput.setText(inputText);}
+
     public void showAcceptIcon()
     {
         if(currentIconResId != imageAcceptResId)
@@ -429,5 +470,13 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
             srLayLoading.setRefreshing(true);
         else
             srLayLoading.setRefreshing(false);
+    }
+
+    public void setLinkVisible(boolean visible)
+    {
+        if(visible)
+            tvLink.setVisibility(View.VISIBLE);
+        else
+            tvLink.setVisibility(View.INVISIBLE);
     }
 }
