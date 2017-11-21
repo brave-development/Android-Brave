@@ -23,6 +23,7 @@ import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SendCallback;
 
@@ -61,6 +62,7 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
     private LocationManager locMang;
     private LocationListener panicLocListner;
     private LocationListener slowTrackListner;
+    private LocationListener occasionalTrackListener;
     private UserLocationListener userLocListner;
     private ParseObject panicUpdate;
     private boolean panicCanBeUpdated = true;
@@ -68,6 +70,7 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
     private boolean pushNotificationsSent = false;
     private String details = "";
     public Location prevLocation;
+
 
     //Google Play and last know location vars
     GoogleApiClient googApiClient;
@@ -264,6 +267,56 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
 
             }
         };
+
+        occasionalTrackListener =  new LocationListener()
+        {
+            @Override
+            public void onLocationChanged(final Location location)
+            {
+                //Update user record with new location
+                Log.i(TAG, "Occasional location update received");
+
+                //Create parse location object
+                ParseGeoPoint occasionalLocation = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+
+                ParseUser.getCurrentUser().put("lastLocation", occasionalLocation);
+                ParseUser.getCurrentUser().saveInBackground(new SaveCallback()
+                {
+                    @Override
+                    public void done(ParseException e)
+                    {
+                        if(e == null)
+                        {
+                            Log.i(TAG, "User object's last location updated to: " + location.getLatitude() + "," + location.getLongitude());
+                        }
+                        else
+                        {
+                            e.printStackTrace();
+                            Log.e(TAG, "User object last location save failed because: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle)
+            {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s)
+            {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s)
+            {
+
+            }
+        };
+
     }
 
     protected synchronized void buildGoogleApiClient()
@@ -302,13 +355,13 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
         Headers reqHeaders = new Headers.Builder()
                 .add("cache-control", "no-cache")
                 .add("content-type", "application/x-www-form-urlencoded")
-                .add("x-parse-application-id", HomeActivity.PARSE_APP_ID)
-                .add("x-parse-rest-api-key", HomeActivity.PARSE_API_KEY)
+                .add("x-parse-application-id", BraveApplication.PARSE_APP_ID)
+                .add("x-parse-rest-api-key", BraveApplication.PARSE_API_KEY)
                 .build();
 
-        RequestBody formBody = new FormBody.Builder().add("objectId", panicObjectId).build();
+        RequestBody formBody = new FormBody.Builder().add("objectId", panicObjectId).add("installationId", ParseInstallation.getCurrentInstallation().getInstallationId()).build();
 
-        Request request = new Request.Builder().url("http://panicing-turtle.herokuapp.com/parse/functions/pushFromId")
+        Request request = new Request.Builder().url(BraveApplication.API_BASE_URL + BraveApplication.API_SEND_PUSH_FROM_ID)
                 .headers(reqHeaders)
                 .post(formBody).build();
 
@@ -326,7 +379,7 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
             public void onResponse(Call call, Response response) throws IOException
             {
                 Log.i(TAG, "Push Notif Post Sent for panic: " + panicObjectId);
-                Log.d(TAG, "Response from cloud code: " + response.code());
+                Log.d(TAG, "Response from cloud code: " + response.code() + " - " + response.body().string());
             }
         });
 
@@ -415,8 +468,8 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
                 Headers reqHeaders = new Headers.Builder()
                         .add("cache-control", "no-cache")
                         .add("content-type", "application/x-www-form-urlencoded")
-                        .add("x-parse-application-id", HomeActivity.PARSE_APP_ID)
-                        .add("x-parse-rest-api-key", HomeActivity.PARSE_API_KEY)
+                        .add("x-parse-application-id", BraveApplication.PARSE_APP_ID)
+                        .add("x-parse-rest-api-key", BraveApplication.PARSE_API_KEY)
                         .build();
 
                 RequestBody formBody = new FormBody.Builder()
@@ -454,6 +507,14 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
             locMang.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, slowTrackListner);
         else
             locMang.removeUpdates(slowTrackListner);
+    }
+
+    public void occasionalTrack(boolean enabled, int minTime, int minDistance)
+    {
+        if(enabled)
+            locMang.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, occasionalTrackListener);
+        else
+            locMang.removeUpdates(occasionalTrackListener);
     }
 
     public void getUserLocation(UserLocationListener callback)
@@ -615,6 +676,36 @@ public class ServiceGps extends Service implements GoogleApiClient.ConnectionCal
                         finalOnPanicCreatedListener.onPanicCreated(panicUpdate);
 
                     Log.i(TAG, "Panic created");
+
+                    //Create Panic Group (itemediary table for get active panics from a provided list of groups
+                    //Get the list of groups the user belongs to
+                    List<String> lstGroups = new ArrayList<String>();
+                    lstGroups = HomeActivity.currentUser.getList("groups");
+
+                    if(lstGroups != null)
+                    {
+                        //get group objects
+                        ParseAPIUtils.getGroupObjects(HomeActivity.fabMainAlert, lstGroups, new ParseApiInterface()
+                        {
+                            @Override
+                            public void onLoadingStatusChanged(boolean loading)
+                            {
+                                if(loading)
+                                    Log.i(TAG, "Fetching group objects");
+                                else
+                                    Log.i(TAG, "Finished fetching group objects");
+                            }
+
+                            @Override
+                            public void onParseObjectListResponse(List<ParseObject> listGroupObjects)
+                            {
+                                //Create PanicGroup records for each group through server api
+                                ParseAPIUtils.cloudCodeNewAlertHookHttp(panicUpdate, listGroupObjects, HomeActivity.currentUser);
+                            }
+                        });
+                    }
+                    else
+                        Log.i(TAG, "User does not belong to any groups");
                 }
                 else
                 {

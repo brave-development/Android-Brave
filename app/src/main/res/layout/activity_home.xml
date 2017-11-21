@@ -1,4 +1,4 @@
-<android.support.design.widget.CoordinatorLayout
+<FrameLayout
     android:id="@+id/CoordinatorLayout01"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -70,7 +70,7 @@
         android:layout_marginBottom="16dp"
         android:layout_gravity="bottom"/>
 
-</android.support.design.widget.CoordinatorLayout>
+</FrameLayout>
 
     <!--<RelativeLayout-->
         <!--android:layout_width="200dp"-->

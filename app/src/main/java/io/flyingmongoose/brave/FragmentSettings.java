@@ -49,7 +49,7 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
     private EditText etxtName;
     private EditText etxtCellNumber;
     private EditText etxtEmail;
-    private Spinner spnrCountry;
+//    private Spinner spnrCountry;
     private Button btnLogout;
     private Button btnDelete;
     private TextView txtvTutorial;
@@ -72,8 +72,8 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
         etxtCellNumber = (EditText) view.findViewById(R.id.etxtSettingsCellNumber);
         etxtEmail = (EditText) view.findViewById(R.id.etxtSettingsEmail);
 
-        spnrCountry = (Spinner) view.findViewById(R.id.spnrSettingsCountry);
-        spnrCountry.setOnItemSelectedListener(this);
+//        spnrCountry = (Spinner) view.findViewById(R.id.spnrSettingsCountry);
+//        spnrCountry.setOnItemSelectedListener(this);
 
         txtvCountry = (TextView) view.findViewById(R.id.txtvSettingsChooseCountry);
         txtvCountry.setOnClickListener(this);
@@ -165,6 +165,8 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
         etxtEmail.setOnFocusChangeListener(this);
 
 //        selectCountry();
+        //Get users country
+        txtvCountry.setText(HomeActivity.currentUser.getString("country"));
 
         //init Notifications switch
         sSettingsNotifications.setChecked(!ParseInstallation.getCurrentInstallation().getBoolean("allowNotifications"));
@@ -177,16 +179,16 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
 
     }
 
-    public void selectCountry()
-    {
-
-        //Get the array of countries
-        String [] countries = getResources().getStringArray(R.array.arrayCountries);
-
-        for(int i = 0; i < countries.length; i++)
-            if(countries[i].equalsIgnoreCase(HomeActivity.currentUser.getString("country").trim()))
-                spnrCountry.setSelection(i);
-    }
+//    public void selectCountry()
+//    {
+//
+//        //Get the array of countries
+//        String [] countries = getResources().getStringArray(R.array.arrayCountries);
+//
+//        for(int i = 0; i < countries.length; i++)
+//            if(countries[i].equalsIgnoreCase(HomeActivity.currentUser.getString("country").trim()))
+//                spnrCountry.setSelection(i);
+//    }
 
     @Override
     public void onFocusChange(View v, boolean hasFocus)
@@ -337,7 +339,7 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
         else if(v == txtvCountry)
         {
             //Open countries spinner
-            spnrCountry.performClick();
+//            spnrCountry.performClick();
         }
         else if(v == ibtnSettingsHelpPanicConfirmation)
         {
@@ -350,8 +352,8 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
     {
         //Prompt user if they are sure
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Enabling this will remove the 5 second delay before sending notifications, however you will have to manually select 'Yes' each time you activate Panic.").setCancelable(false)
-                .setTitle("Panic Confirmation")
+        builder.setMessage("Enabling this will remove the 5 second delay before sending notifications, however you will have to manually select 'Yes' each time you activate an alert.").setCancelable(false)
+                .setTitle("Alert Confirmation")
                 .setNegativeButton("Got It", new DialogInterface.OnClickListener()
                 {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id)
@@ -485,7 +487,7 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
             else if(event.getAction() == MotionEvent.ACTION_UP)
                 btnDelete.setBackgroundColor(getResources().getColor(R.color.Red));
         }
-        else if(v == txtvTutorial || v == txtvReportBug ||  v == txtvReportUser || v == txtvCountry )
+        else if(v == txtvTutorial || v == txtvReportBug ||  v == txtvReportUser)
         {
             if(event.getAction() == MotionEvent.ACTION_DOWN)
                 ((TextView)v).setTextColor(getResources().getColor(R.color.FlatLightBluePressed));
@@ -500,7 +502,7 @@ public class FragmentSettings extends Fragment implements View.OnFocusChangeList
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
     {
         //Set btn test to selected country
-        txtvCountry.setText(spnrCountry.getSelectedItem().toString());
+//        txtvCountry.setText(spnrCountry.getSelectedItem().toString());
     }
 
     @Override

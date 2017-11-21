@@ -108,7 +108,7 @@
                     android:background="@android:drawable/divider_horizontal_textfield"/>
 
                 <TableRow
-                    android:visibility="invisible">
+                    android:visibility="visible">
 
                     <TextView
                         android:id="@+id/txtvSettingsCountryDesc"
@@ -124,7 +124,7 @@
                         android:padding="15dp"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="Choose Country"
-                        android:textColor="@color/FlatLightBlue"
+                        android:textColor="@color/HintGrey"
                         android:gravity="right"/>
                 </TableRow>
 
@@ -182,7 +182,7 @@
                         android:layout_weight="1"
                         android:textColor="@color/abc_primary_text_disable_only_material_light"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="Panic Confirmation"/>
+                        android:text="Alert Confirmation"/>
 
                     <ImageButton
                         android:id="@+id/ibtnSettingsHelpPanicConfirmation"
@@ -218,12 +218,13 @@
                 <View
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:background="@android:drawable/divider_horizontal_textfield"/>
+                    android:background="@android:drawable/divider_horizontal_textfield"
+                    android:visibility="gone"/>
 
                 <TableRow
                     android:id="@+id/trSettingsTutorial"
                     android:clickable="true"
-                    android:visibility="invisible">
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/txtvSettingsTutorial"
@@ -303,14 +304,14 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Delete Account"/>
 
-            <Spinner
-                android:id="@+id/spnrSettingsCountry"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:spinnerMode="dialog"
-                android:prompt="@string/btnRegisterChooseCountry"
-                android:entries="@array/arrayCountries"
-                android:visibility="invisible"/>
+            <!--<Spinner-->
+                <!--android:id="@+id/spnrSettingsCountry"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:spinnerMode="dialog"-->
+                <!--android:prompt="@string/btnRegisterChooseCountry"-->
+                <!--android:entries="@array/arrayCountries"-->
+                <!--android:visibility="invisible"/>-->
 
         </LinearLayout>
 

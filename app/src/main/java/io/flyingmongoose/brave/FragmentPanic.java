@@ -108,6 +108,7 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
             GpsServiceIsBound = true;
             isServiceConnected = true;
             gpsService.slowTrack(true, 5000, 10);
+            gpsService.occasionalTrack(true, 5000, 100);
             Log.i("Connecting service: ", "Service connected");
         }
     };
@@ -268,11 +269,14 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
     {
         //Disconnect service
         //Start gps service
-        Intent stopGpsService = new Intent(context, ServiceGps.class);
-        context.stopService(stopGpsService);
+//        Intent stopGpsService = new Intent(context, ServiceGps.class);
+//        context.stopService(stopGpsService);
 
         if(isServiceConnected)
-            context.unbindService(myServiceConnection);
+        {
+//            context.unbindService(myServiceConnection);
+            gpsService.slowTrack(false, 0, 0);
+        }
 
         super.onDetach();
     }
@@ -327,13 +331,13 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
 
                     //Check if panic delay is enabled
                     SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    boolean panicDelay = sharedPrefs.getBoolean("panicDelay", true);
+                    boolean alertDelay = sharedPrefs.getBoolean(getString(R.string.prefAlertDelay), true);
 
-                    if(panicDelay)
+                    if(alertDelay)
                     {
                         worker = Executors.newSingleThreadScheduledExecutor();
 
-                        Runnable panicDelayedTask = new Runnable()
+                        Runnable alertDelayedTask = new Runnable()
                         {
                             @Override
                             public void run()
@@ -378,7 +382,7 @@ public class FragmentPanic extends Fragment implements View.OnClickListener, Vie
                             }
                         };
 
-                        delayPanicTimer = worker.schedule(panicDelayedTask, PANIC_TIMER_START_DELAY, TimeUnit.MILLISECONDS);
+                        delayPanicTimer = worker.schedule(alertDelayedTask, PANIC_TIMER_START_DELAY, TimeUnit.MILLISECONDS);
                     }
                     else
                     {

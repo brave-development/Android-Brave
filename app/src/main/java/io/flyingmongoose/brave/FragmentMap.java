@@ -2,9 +2,11 @@ package io.flyingmongoose.brave;
 
 import android.*;
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.location.Address;
 import android.location.Criteria;
@@ -44,6 +46,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
@@ -58,6 +61,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.security.Permission;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -240,6 +244,16 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
             @Override
             public void onMapReady(GoogleMap googleMap)
             {
+                try
+                {
+                    googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity(), R.raw.map_style));
+                }
+                catch (Resources.NotFoundException rne)
+                {
+                    rne.printStackTrace();
+                    Log.e(TAG, "Map style could not be found");
+                }
+
                 googleMap.setMyLocationEnabled(true);
                 googleMap.setPadding(0, 0, 0, 0);
                 googleMap.setOnInfoWindowClickListener(thisFrag);
@@ -253,7 +267,9 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                 camPrevLocation = new LatLng(tempCamPos.target.latitude, tempCamPos.target.longitude);
 
                 //Load initial panics, build house keeping and begin updates
-                requestPanicUpdates(googleMap);
+//                requestPanicUpdates(googleMap);
+
+                intervalUpdatesNew(googleMap);
             }
         });
 
@@ -382,6 +398,66 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
         Log.i(TAG, "Camera initialized");
     }
 
+    private void requestActiveAlertUpdate(final GoogleMap googMap)
+    {
+        //Get the list of groups the user belongs to
+        List<String> lstGroups = new ArrayList<String>();
+        lstGroups = HomeActivity.currentUser.getList("groups");
+
+        if(lstGroups != null)
+        {
+            //get group objects
+            ParseAPIUtils.getGroupObjects(HomeActivity.fabMainAlert, lstGroups, new ParseApiInterface()
+            {
+                @Override
+                public void onLoadingStatusChanged(boolean loading)
+                {
+                    if(loading)
+                        Log.i(TAG, "Fetching group objects");
+                    else
+                        Log.i(TAG, "Finished fetching group objects");
+                }
+
+                @Override
+                public void onParseObjectListResponse(List<ParseObject> listGroupObjects)
+                {
+                    //Get active alerts for the list of groups
+                    ParseAPIUtils.cloudCodeGetActiveAlertsHttp(listGroupObjects, new ParseApiInterface()
+                    {
+                        @Override
+                        public void onLoadingStatusChanged(boolean loading)
+                        {
+                            if(loading)
+                                Log.i(TAG, "Fetching active alerts for user's groups");
+                            else
+                                Log.i(TAG, "Finished fetching active alerts objects");
+                        }
+
+                        @Override
+                        public void onParseObjectListResponse(final List<ParseObject> listObjects)
+                        {
+                            Activity activity = getActivity();
+
+                            if(activity != null)
+                            {
+                                activity.runOnUiThread(new Runnable()
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        updatePanics(googMap, listObjects);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        else
+            Log.i(TAG, "User does not belong to any groups");
+    }
+
     private void requestPanicUpdates(final GoogleMap googMap)
     {
         //Load all panics within 100km of the camera
@@ -441,6 +517,29 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
                 if((timeNow - lastUpdatedAt) >= PANIC_UPDATE_INTERVAL)
                 {
                     updatePanics(googMap, camPrevLocation);  //THis is actual most recently known location, cant access map camera from a thread other than the main thread
+                    lastUpdatedAt = SystemClock.elapsedRealtime();
+                    Log.i(TAG, "Panics updated by interval");
+                }
+            }
+        }, PANIC_UPDATE_INTERVAL, PANIC_UPDATE_INTERVAL);
+    }
+
+    //Set panic updates to check every 10 seconds if last update is older than 10 secs, update if it is
+    private void intervalUpdatesNew(final GoogleMap googMap)
+    {
+        panicUpdateTimer = new Timer();
+
+        panicUpdateTimer.scheduleAtFixedRate(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                long timeNow = SystemClock.elapsedRealtime();
+
+                if((timeNow - lastUpdatedAt) >= PANIC_UPDATE_INTERVAL)
+                {
+//                    updatePanics(googMap, camPrevLocation);  //THis is actual most recently known location, cant access map camera from a thread other than the main thread
+                    requestActiveAlertUpdate(googMap);
                     lastUpdatedAt = SystemClock.elapsedRealtime();
                     Log.i(TAG, "Panics updated by interval");
                 }
@@ -627,6 +726,158 @@ public class FragmentMap extends Fragment implements GoogleMap.OnInfoWindowClick
             });
         }
     }
+
+    public void updatePanics(final GoogleMap googMap, List<ParseObject> lstActiveAlerts)
+    {
+        Log.i(TAG, "Fragment Map updatePanics");
+        //Check if update is locked
+        if(!panicUpdateLocked)
+        {
+            //Lock panic updates
+            panicUpdateLocked = true;
+
+            //Cycle trough fresh panics add and update
+            for(int i = 0; i < lstActiveAlerts.size(); i++)
+            {
+                String freshPanicObjectId = lstActiveAlerts.get(i).getObjectId();
+
+                //Check if object id exist in current panic data
+                if(panicMarkers.containsKey(freshPanicObjectId))
+                {
+                    //update panic data with fresh coordinates
+                    Marker panicMarker = panicMarkers.get(freshPanicObjectId);
+
+                    //Update panic obj
+                    panicObjs.put(panicMarker.getId(), lstActiveAlerts.get(i));
+                    //Move pin
+                    ParseGeoPoint newLoc = lstActiveAlerts.get(i).getParseGeoPoint("location");
+                    panicMarker.setPosition(new LatLng(newLoc.getLatitude(), newLoc.getLongitude()));
+                } else
+                {
+                    //add new panic
+                    //Check if pin is to be tracked
+                    if(trackPanicId.toString().equals(freshPanicObjectId))
+                    {
+                        //add a tracked panic
+                        //add tracked pin
+                        ParseGeoPoint panicLoc = lstActiveAlerts.get(i).getParseGeoPoint("location");
+                        Marker panicMarker = googMap.addMarker(new MarkerOptions().position(new LatLng(panicLoc.getLatitude(), panicLoc.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.panic_follow_pin)));
+
+                        //If follow is enabled follow pin by animating camera
+                        trackPanicMarker = panicMarker;
+
+                        if(trackPanicFollow)
+                            googMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trackPanicMarker.getPosition(), MAP_ZOOM_LEVEL));
+
+
+                        //House keeping
+                        panicMarkers.put(freshPanicObjectId, panicMarker);
+                        panicObjs.put(panicMarker.getId(), lstActiveAlerts.get(i));
+                    } else
+                    {
+                        //add normal pin
+                        ParseGeoPoint panicLoc = lstActiveAlerts.get(i).getParseGeoPoint("location");
+                        Marker panicMarker = googMap.addMarker(new MarkerOptions().position(new LatLng(panicLoc.getLatitude(), panicLoc.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.panic_pin)));
+
+                        //House keeping
+                        panicMarkers.put(freshPanicObjectId, panicMarker);
+                        panicObjs.put(panicMarker.getId(), lstActiveAlerts.get(i));
+                    }
+                }
+            }
+
+            //Remove stale panics
+            Iterator<Map.Entry<String, Marker>> iterator = panicMarkers.entrySet().iterator();
+            boolean trackedPanicFound = false;
+            while(iterator.hasNext())
+            {
+                //Iterate trough searching update list for current entry (key is panic obj id)
+                Map.Entry<String, Marker> entry = iterator.next();
+
+                boolean found = false;
+                for(int i = 0; i < lstActiveAlerts.size(); i++)
+                {
+                    //Check if track pin is found in update, else clear notification data and track pin setting
+                    if(!trackPanicId.isEmpty())
+                        if(lstActiveAlerts.get(i).getObjectId().equals(trackPanicId))
+                            trackedPanicFound = true;
+
+                    if(lstActiveAlerts.get(i).getObjectId().equals(entry.getKey()))
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if(!found)
+                {
+                    /*ParseObject panicObjNotFounInUpdate = panicObjs.get(entry.getValue().getId());
+
+                               //check if the pin being tracked is removed and notify user
+                               if(panicObjNotFounInUpdate.getObjectId().equals(trackPanicId))
+                               {
+                                   ParseUser userObj = panicObjNotFounInUpdate.getParseUser("user");
+
+
+
+                               }*/
+
+                    //remove from panic data
+                    panicObjs.remove(entry.getValue().getId());
+                    entry.getValue().remove();  //removes pin from map
+                    iterator.remove();
+                }
+            }
+
+                        /*//Reset panicUserData & Get user data for info window details
+                        //Build list of users to fetch and marker id for keys
+                        Iterator<Map.Entry<String, ParseObject>> iteratorObj = panicObjs.entrySet().iterator();
+
+                        while (iteratorObj.hasNext())
+                        {
+                            Map.Entry<String, ParseObject> entry = iteratorObj.next();
+
+                            panicUsers.put(entry.getKey(), entry.getValue().getParseUser("user"));
+                        }*/
+
+                        //set info window adapter
+            googMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(getActivity(), panicObjs));
+
+            //Only check if panic was found if a track panic id was set
+            if(!trackPanicId.isEmpty())
+            {
+                if(!trackedPanicFound)
+                {
+                    trackPanicFollow = false;
+                    tbtnTrack.setVisibility(View.GONE);
+
+                    Toast.makeText(getActivity(), trackPanicName + " is no longer panicking", Toast.LENGTH_LONG).show();
+
+                    //Remove json data so when naving out of map and back in track panic is not registered again
+                    HomeActivity.jsonPushData = "";
+                    trackPanicId = "";
+                    trackPanicName = "The user";
+                }
+            }
+
+            //Update track panic camera if there is a panic to track
+            if(trackPanicMarker != null)
+                if(trackPanicFollow)
+                    googMap.animateCamera(CameraUpdateFactory.newLatLngZoom(trackPanicMarker.getPosition(), MAP_ZOOM_LEVEL));
+
+            //Unlock for updating again
+            panicUpdateLocked = false;
+            if(srLayMapLoading.isRefreshing() && refreshingForMap)
+            {
+                srLayMapLoading.setRefreshing(false);
+                refreshingForMap = false;
+            }
+
+            Log.i(TAG, "Completed update panics");
+
+        }
+    }
+
 
     @Override
     public void onInfoWindowClick(final Marker marker)

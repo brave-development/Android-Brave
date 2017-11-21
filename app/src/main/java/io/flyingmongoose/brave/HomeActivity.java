@@ -8,6 +8,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -17,9 +18,11 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.PersistableBundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,6 +32,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -56,18 +60,18 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.wooplr.spotlight.SpotlightView;
+import com.wooplr.spotlight.prefs.PreferencesManager;
 import com.wooplr.spotlight.utils.SpotlightListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 
 public class HomeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener
 {
-    public static final String PARSE_APP_ID = "PANICING-TORTOISE";
-    public static final String PARSE_API_KEY = "PANICINGTORTOISE3847TR386TB281XN1NY7YNXM";
     private final int REQ_PERM_LOC = 100;
     private final String LOG_TAG = "HomeActivity";
     private DrawerLayout drawLayNav;
@@ -82,6 +86,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     public  static FragmentMap fragMap = null;
     public FragmentGroups fragGroups = null;
     public  FragmentSettings fragSettings = null;
+    public FragmentSettingsNew fragSettingsNew = null;
     public  FragmentHistory fragHistory = null;
     public  FragmentBottomActionBar fragBottomActionBar = null;
     public  static FragmentManager fragManager;
@@ -117,7 +122,8 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     private long lastBackPressedAt;
 
     public static ParseUser currentUser = ParseUser.getCurrentUser();
-    public boolean userFresh = false;
+    public static SharedPreferences sharedPrefs;
+    public static boolean userFresh = false;
     public static String jsonPushData = "";
     public static double pushLat;
     public static double pushLng;
@@ -131,6 +137,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
     //New Bottom Nav
     private int prevMenuItem = 0;
     private BottomNavigation bottomNavigation;
+    private BottomNavigation.OnMenuItemSelectionListener mnuListener;
     public static FloatingActionButton fabMainAlert;
 
     private float btnMainPos1X, btnMainPos2X, btnMainPos3X, btnMainPos4X, btnMainPos5X;
@@ -141,6 +148,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_home);
 
         currentUser = ParseUser.getCurrentUser();
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         //Hide status notification bar
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -202,7 +210,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 //        getSupportActionBar().setHomeButtonEnabled(true);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        final BottomNavigation.OnMenuItemSelectionListener mnuListener = new BottomNavigation.OnMenuItemSelectionListener()
+        mnuListener = new BottomNavigation.OnMenuItemSelectionListener()
         {
             @Override
             public void onMenuItemSelect(@IdRes int i, int position, boolean b)
@@ -354,8 +362,8 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
                         fabMainAlert.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_fire_color5));
 
                         //Pull in new relevant fragment
-                        if(fragSettings == null)
-                            fragSettings = new FragmentSettings();
+                        if(fragSettingsNew == null)
+                            fragSettingsNew = new FragmentSettingsNew();
 
                         fragTrans = fragManager.beginTransaction();
 
@@ -376,7 +384,7 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
                                         break;
                                 }
 
-                        fragTrans.replace(R.id.HomeContentLayout, fragSettings, TAG_FRAG_SETTINGS);
+                        fragTrans.replace(R.id.HomeContentLayout, fragSettingsNew, TAG_FRAG_SETTINGS);
                         fragTrans.commit();
                         prevMenuItem = 4;
                         break;
@@ -407,6 +415,8 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
             reqRunTimePerms();
 
         bottomNavigation.setSelectedIndex(2, false);
+
+        updateUserCountry();
     }
 
     private void initBtnMainAlertPosition()
@@ -714,7 +724,9 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 //        if(getIntent().hasExtra("jsonPushData"))
 //        {
 //            jsonPushData = getIntent().getStringExtra("jsonPushData");
-//            fragBottomActionBar.btnNavMap.performClick();
+////            fragBottomActionBar.btnNavMap.performClick();
+////            bottomNavigation.setSelectedIndex(1, true);
+////            mnuListener.onMenuItemSelect(0, 1, true);
 //            Log.i("Home", "Data read in home activity: " + jsonPushData);
 //        }
 
@@ -731,14 +743,52 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
 //                            value.toString(), value.getClass().getName()));
 //                }
 //            }
-            if(bundle != null)
+            if(!bundle.isEmpty())
             {
-                pushLat = bundle.getDouble("lat");
-                pushLng = bundle.getDouble("lng");
-                pushPanicObjectId = bundle.getString("objectId");
+                pushPanicObjectId = bundle.getString("objectId", "");
+                if(!pushPanicObjectId.isEmpty())
+                {
+                    pushLat = Double.parseDouble(bundle.getString("lat", "0"));
+                    pushLng = Double.parseDouble(bundle.getString("lng", "0"));
 
-                Log.d("debug", "Managed to set cords from notif");
-                fragBottomActionBar.btnNavMap.performClick();
+
+                    Log.d("debug", "Managed to set cords from notif");
+                    bottomNavigation.setSelectedIndex(1, false);
+
+                    FragmentTransaction fragTrans = fragManager.beginTransaction();
+
+                    translateViewToXPos(fabMainAlert, calcRelatveXPositionChange(fabMainAlert, btnMainPos2X));
+
+                    //Swap fire drawable
+                    fabMainAlert.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_fire_color2));
+
+                    //Pull in new relevant fragment
+                    if (fragMap == null)
+                        fragMap = new FragmentMap();
+
+
+                    //Set animation based on previously selected item, Have to set animation first otherwise it's not shown
+                    switch (prevMenuItem)
+                    {
+                        case 0:
+                            fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_slide_out_to_left);
+                            break;
+
+                        case 2:
+                            fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_push_out_down);
+                            break;
+
+                        case 3:
+                        case 4:
+                            fragTrans.setCustomAnimations(R.anim.anim_slide_in_from_left, R.anim.anim_slide_out_to_right);
+                            break;
+                    }
+
+                    fragTrans.replace(R.id.HomeContentLayout, fragMap, TAG_FRAG_MAP);
+                    fragTrans.commit();
+                    prevMenuItem = 1;
+                }
+
             }
         }
     }
@@ -1140,6 +1190,51 @@ public class HomeActivity extends AppCompatActivity implements AdapterView.OnIte
         else
             Toast.makeText(this, "Nav button clicked: " + view.getTag().toString(), Toast.LENGTH_LONG).show();
 
+    }
+
+    //Updates the user's country if needed
+    private void updateUserCountry()
+    {
+        //Check the users country if it has changed update their settings
+        String currUserCountry = currentUser.getString("country");
+
+        //Get device's country
+        String currPhoneCountryCode = getPhoneCountry(this);
+        String currPhoneCountry = new Locale("", currPhoneCountryCode).getDisplayName();
+        if(currUserCountry == null || !currUserCountry.equalsIgnoreCase(currPhoneCountry))
+        {
+            //Update country
+            currentUser.put("country", currPhoneCountry);
+            currentUser.saveInBackground();
+        }
+    }
+
+    /**
+     * Get ISO 3166-1 alpha-2 country code for this device (or null if not available)
+     * @param context Context reference to get the TelephonyManager instance from
+     * @return country code or null
+     */
+    public static String getPhoneCountry(Context context)
+    {
+        try
+        {
+            final TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            final String simCountry = tm.getSimCountryIso();
+            if (simCountry != null && simCountry.length() == 2)
+            { // SIM country code is available
+                return simCountry.toLowerCase(Locale.US);
+            }
+            else if (tm.getPhoneType() != TelephonyManager.PHONE_TYPE_CDMA)
+            { // device is not 3G (would be unreliable)
+                String networkCountry = tm.getNetworkCountryIso();
+                if (networkCountry != null && networkCountry.length() == 2)
+                { // network country code is available
+                    return networkCountry.toLowerCase(Locale.US);
+                }
+            }
+        }
+        catch (Exception e) { }
+        return null;
     }
 }
 

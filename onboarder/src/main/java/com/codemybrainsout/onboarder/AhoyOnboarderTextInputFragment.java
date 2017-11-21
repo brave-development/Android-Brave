@@ -250,7 +250,6 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         if(fbLogin)
         {
             btnLoginFb.setVisibility(View.VISIBLE);
-            btnLoginFb.setReadPermissions("email");
             btnLoginFb.setOnClickListener(new View.OnClickListener()
             {
                 @Override
@@ -396,7 +395,7 @@ public class AhoyOnboarderTextInputFragment extends AhoyOnboarderFragment
         this.inputVariation = inputVariation;
     }
 
-    public void setInputText(String inputText){etxtOnboarderInput.setText(inputText);}
+    public void setInputText(String inputText){etxtOnboarderInput.setText(inputText); Log.d("debugFB", "Have set the edit text text to: " + inputText);}
 
     public void showAcceptIcon()
     {

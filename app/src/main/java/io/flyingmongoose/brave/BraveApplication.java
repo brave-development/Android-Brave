@@ -1,6 +1,7 @@
 package io.flyingmongoose.brave;
 
 import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -18,8 +19,16 @@ import java.io.IOException;
 /**
  * Created by IC on 5/28/2015.
  */
-public class BraveApplication extends Application
+public class BraveApplication extends MultiDexApplication
 {
+    public static final String PARSE_APP_ID = "PANICING-TURTLE";
+    public static final String PARSE_API_KEY = "PANICINGTURTTLE3847TR386TB281XN1NY7YNXM";
+
+    //End points
+    public static final String API_BASE_URL = "http://panicing-turtle.herokuapp.com/parse/functions/";
+    public static final String API_SEND_PUSH_FROM_ID = "pushFromId";
+    public static final String API_NEW_ALERT_HOOK = "newAlertHook";
+    public static final String API_GET_ACTIVE_ALERTS = "getActiveAlerts";
 
     public FirebaseAnalytics fbAnalytics;
     private final String TAG = "braveApplication";
@@ -50,18 +59,18 @@ public class BraveApplication extends Application
 //        Parse.initialize(this, "cBZmGCzXfaQAyxqnTh6eF2kIqCUnSm1ET8wYL5O7", "rno7DabpDMU293yi2TF4S3jKOlrZX2P27EW70C3G"); //Panic Live db db
 
         //TODO: Live server detail
-//        Parse.initialize(new Parse.Configuration.Builder(this)
-//                .applicationId("PANICING-TURTLE")
-//                .clientKey("PANICINGTURTLE3847TR386TB281XN1NY7YNXM")
-//                .server("http://panicing-turtle.herokuapp.com/parse")
-//                .build());
-
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("PANICING-TURTLE")
                 .clientKey("PANICINGTURTLE3847TR386TB281XN1NY7YNXM")
-                .server("https://panicing-turtle.herokuapp.com/parse")
-                .build()
-        );
+                .server("http://panicing-turtle.herokuapp.com/parse")
+                .build());
+
+//        Parse.initialize(new Parse.Configuration.Builder(this)
+//                .applicationId("PANICING-TORTOISE")
+//                .clientKey("PANICINGTORTOISE3847TR386TB281XN1NY7YNXM")
+//                .server("https://panicing-tortoise.herokuapp.com/parse")
+//                .build()
+//        );
 
         ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback()
         {

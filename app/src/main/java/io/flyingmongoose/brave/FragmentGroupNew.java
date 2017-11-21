@@ -202,9 +202,9 @@ public class FragmentGroupNew extends Fragment
                     final String groupDescription = etxtGroupDescrition.getText().toString().trim();
 
                     //Format group name
-                    final String groupNameFlat = FormatHelper.formatGroupFlatName(groupName);
-                    final String finalFormattedGroupName = FormatHelper.formatGroupName(groupName);
-                    final String channelName = FormatHelper.formatChannelName(groupName);
+                    final String groupNameFlat = FormatUtil.formatGroupFlatName(groupName);
+                    final String finalFormattedGroupName = FormatUtil.formatGroupName(groupName);
+                    final String channelName = FormatUtil.formatChannelName(groupName);
 
                     srLayNewGroup.setRefreshing(true);
 

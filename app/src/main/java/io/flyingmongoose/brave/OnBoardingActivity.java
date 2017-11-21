@@ -1,6 +1,5 @@
 package io.flyingmongoose.brave;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,7 +40,6 @@ import com.parse.SignUpCallback;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -464,6 +462,7 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
                     @Override
                     public void done(ParseUser parseUser, ParseException e)
                     {
+                        Log.d("DebugFb", "Response received from fb login");
                         if(parseUser != null)
                         {
                             //Check if parse user's fb id is set if not this is a new reg
@@ -574,14 +573,14 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
                             {
                                 try
                                 {
-//                                    Log.d(TAG, "DebugFb Graph response: " + object.toString());
+                                    Log.d(TAG, "DebugFb Graph response: " + object.toString());
 
                                     //Pre populate data
-                                    if(object.has("name"))
-                                        setInputText(object.getString("name"), 3);
-
                                     if(object.has("email"))
                                         setInputText(object.getString("email"), 1);
+
+                                    if(object.has("name"))
+                                        setInputText(object.getString("name"), 3);
 
                                     if(object.has("id"))
                                         facebookId = object.getString("id");
@@ -670,7 +669,7 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
         channelNames.add("");   //Add broadcast channel
 
         for(int i = 0; i < groups.size(); i++)
-            channelNames.add(FormatHelper.formatChannelName(groups.get(i).getString("name")));
+            channelNames.add(FormatUtil.formatChannelName(groups.get(i).getString("name")));
 
         ParseInstallation.getCurrentInstallation().addAllUnique("channels", channelNames);
         ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback()
@@ -907,7 +906,7 @@ public class OnBoardingActivity extends AhoyOnboarderActivity
         if(referralCode.length() != 0)
         {
             //format // normalise referal code to a flat group name
-            String formattedReferralCode = FormatHelper.formatGroupFlatName(referralCode);
+            String formattedReferralCode = FormatUtil.formatGroupFlatName(referralCode);
 
             //Check already if exists
             ParseQuery<ParseObject> queryGroupExists = ParseQuery.getQuery("Groups");

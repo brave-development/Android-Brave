@@ -10,6 +10,9 @@
     <string name="facebook_app_id">1613107172034757</string>
     <string name="fb_login_protocol_scheme">fb1613107172034757</string>
 
+    <!--Preferences -->
+    <string name="prefAlertDelay">alertDelay</string>
+
     <!-- Strings for Login Activity -->
     <string name="etxtLoginUsernameHint">Username</string>
     <string name="etxtLoginPasswordHint">Password</string>
@@ -33,6 +36,14 @@
     <string name="txtvAgreeTAndC">I agree to </string>
     <string name="txtvTermsAndConditionsLink"> <u>Terms and Conditions</u></string>
 
+    <!--Strings for Settings Activity-->
+    <string name="etxtSettingsName">Name</string>
+    <string name="etxtSettingsCellNumber">Cell Number</string>
+    <string name="etxtSettingsEmail">Email</string>
+    <string name="swSettingsMuteNotifications">Mute Notifications</string>
+    <string name="swSettingsAlertConfirmation">Activate Alert Confirmation</string>
+    <string name="btnSettingsSignOut">Sign Out</string>
+
     <!--Reset password diaglog-->
     <string name="diagPassResetTitle">Reset Password</string>
     <string name="diagPassResetDesc">Enter the email address associated with the account. You will receive an email with reset instructions.</string>
@@ -40,6 +51,9 @@
     <!-- Strings for Home activity -->
     <string name="title_activity_home_panic">Home</string>
     <string name="txtvProfileNameDefault">User Name Missing</string>
+
+    <!--Strings for Map Activity-->
+    <string name="map_follow">Follow</string>
 
     <!-- Nav Menu Drawer entries -->
     <string-array name="navEntries">
@@ -149,6 +163,13 @@
     <!--Strings for error messages-->
     <string name="error_100_no_internet">Please check your internet connection and try again.</string>
     <string name="error_cannot_be_empty">Cannot be empty</string>
+    <string name="val_name_last_required">Please provide your last name as well</string>
+    <string name="val_cell_number_length">Must be 10 or more digits</string>
+    <string name="val_email_at_sign_required">Must contain @</string>
+    <string name="val_email_only_one_at_sign">Must only have one @</string>
+    <string name="val_email_domain_dot_required">Domain must have .</string>
+    <string name="val_email_domain_cant_end_with_dot">domain cannot end with a .</string>
+    <string name="val_email_domain_required">Must have domain name ie @domainname.com</string>
 
     <!--List of countries supported-->
     <string-array name="arrayCountries">

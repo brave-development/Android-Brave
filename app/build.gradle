@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.jakewharton.butterknife'
 
 android {
     signingConfigs {
@@ -15,8 +16,8 @@ android {
         applicationId "io.flyingmongoose.brave"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 9
-        versionName "1.0.7"
+        versionCode 11
+        versionName "1.0.9"
         multiDexEnabled true
     }
     buildTypes {
@@ -40,8 +41,10 @@ dependencies {
     //compile 'com.parse.bolts:bolts-android:1.+'
     //    compile fileTree(dir: 'libs', include: 'bolts-android-*.jar')
     //    compile fileTree(dir: 'libs', include: 'Parse-*.jar')
+    compile 'com.android.support:multidex:1.0.1'
     compile 'com.parse:parse-android:1.15.1'
     compile 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.parse:parsefacebookutils-v4-android:1.10.4@aar'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'com.twitter.sdk.android:tweet-composer:3.0.0'
@@ -58,6 +61,8 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.2.6'
     compile 'com.google.firebase:firebase-config:10.2.6 '
     compile 'com.google.firebase:firebase-messaging:10.2.6'
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     compile project(':onboarder')
 }
 

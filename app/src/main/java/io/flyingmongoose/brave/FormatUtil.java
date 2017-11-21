@@ -4,7 +4,7 @@ package io.flyingmongoose.brave;
  * Created by wprenison on 2017/07/06.
  */
 
-public class FormatHelper
+public class FormatUtil
 {
 
     //Used to format text values

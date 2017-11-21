@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -23,7 +22,6 @@ import android.widget.TextView;
 
 import com.facebook.CallbackManager;
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.vision.text.Line;
 import com.parse.FindCallback;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -340,7 +338,7 @@ public class LoginActivity extends ActionBarActivity implements SwipeRefreshLayo
         channelNames.add("");   //Add broadcast channel
 
         for(int i = 0; i < groups.size(); i++)
-            channelNames.add(FormatHelper.formatChannelName(groups.get(i).getString("name")));
+            channelNames.add(FormatUtil.formatChannelName(groups.get(i).getString("name")));
 
         ParseInstallation.getCurrentInstallation().addAllUnique("channels", channelNames);
         ParseInstallation.getCurrentInstallation().saveInBackground(new SaveCallback()
