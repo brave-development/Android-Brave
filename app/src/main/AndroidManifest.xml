@@ -61,22 +61,22 @@
         <meta-data android:name="com.facebook.sdk.ApplicationId"
                    android:value="@string/facebook_app_id"/>
 
-        <service android:name=".ServiceGps" />
+        <service android:name=".Service.ServGps" />
 
         <activity
             android:theme="@style/NoActionBar"
-            android:name=".LoginActivity"
+            android:name=".Activity.ActivLogin"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
             android:theme="@style/NoActionBar"
-            android:name=".RegisterActivity"
+            android:name=".Activity.ActivRegister"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:theme="@style/NoActionBar"
-            android:name=".OnBoardingActivity"
+            android:name=".Activity.ActivOnBoarding"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -86,7 +86,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HomeActivity"
+            android:name=".Activity.ActivHome"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -130,7 +130,7 @@
         </receiver>
 
         <activity
-            android:name=".HistoryMapActivity"
+            android:name=".Activity.ActivHistoryMap"
             android:label="@string/title_activity_history_map" >
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
@@ -153,14 +153,14 @@
 
         <!--Firebase push notification setup-->
         <service
-            android:name=".ServiceFirebaseInstanceID">
+            android:name=".Service.ServFirebaseInstanceID">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name=".ServiceFirebaseMessaging">
+            android:name=".Service.ServFirebaseMessaging">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

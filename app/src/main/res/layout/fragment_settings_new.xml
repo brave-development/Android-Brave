@@ -19,7 +19,7 @@
         android:textColorHint="@color/SeaGreen"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Weylin Renison"
-            android:textColor="@color/White"/>
+            android:textColor="@color/White" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -45,7 +45,7 @@
         android:textColorHint="@color/SeaGreen"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.3"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilSettingsEmail">
@@ -55,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/White"/>
+            android:textColor="@color/White" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
@@ -69,6 +69,7 @@
         android:textColorHint="@color/SeaGreen"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
+        app:layout_constraintHorizontal_bias="0.29"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tilSettingsName">
@@ -78,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@color/White"/>
+            android:textColor="@color/White" />
 
     </android.support.design.widget.TextInputLayout>
 
