@@ -155,10 +155,10 @@
     <string name="title_activity_history_map">History</string>
 
     <!--Frag history others-->
-    <string name="fragHistOthersDesc">Last 50 Panics by others</string>
+    <string name="fragHistOthersDesc">Last 50 Alerts by others</string>
 
     <!--Frag history yours-->
-    <string name="fragHistYoursDesc">Last 20 Panics called by you</string>
+    <string name="fragHistYoursDesc">Last 20 Alerts called by you</string>
 
     <!--Strings for error messages-->
     <string name="error_100_no_internet">Please check your internet connection and try again.</string>

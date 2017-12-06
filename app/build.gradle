@@ -9,14 +9,14 @@ android {
             storePassword 'GotHacked@89'
         }
     }
-    compileSdkVersion 26
+    compileSdkVersion 27
     buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "io.flyingmongoose.brave"
         minSdkVersion 16
-        targetSdkVersion 26
-        versionCode 11
-        versionName "1.0.9"
+        targetSdkVersion 27
+        versionCode 12
+        versionName "1.0.10"
         multiDexEnabled true
     }
     buildTypes {
