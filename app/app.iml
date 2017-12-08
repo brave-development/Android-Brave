@@ -162,6 +162,7 @@
     <orderEntry type="library" name="com.google.firebase:firebase-config-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-tagmanager-v4-impl-license-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-analytics-11.6.0" level="project" />
+    <orderEntry type="library" name="de.hdodenhof:circleimageview-2.1.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-nearby-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-tagmanager-license-11.6.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-fragment-26.1.0" level="project" />
@@ -186,6 +187,7 @@
     <orderEntry type="library" name="com.squareup.okhttp3:okhttp:3.6.0@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-auth-base-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-maps-11.6.0" level="project" />
+    <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib:1.1.51@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-gass-license-11.6.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-v4-26.1.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-location-11.6.0" level="project" />
@@ -200,6 +202,7 @@
     <orderEntry type="library" name="com.google.android.gms:play-services-gass-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-auth-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-awareness-11.6.0" level="project" />
+    <orderEntry type="library" name="com.github.bassaer:chatmessageview-1.6.2" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-tagmanager-11.6.0" level="project" />
     <orderEntry type="library" name="com.android.support:multidex-1.0.2" level="project" />
     <orderEntry type="library" name="com.android.support:support-media-compat-26.1.0" level="project" />
@@ -250,6 +253,7 @@
     <orderEntry type="library" name="com.github.wooplr:Spotlight-1.2.3" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-auth-api-phone-11.6.0" level="project" />
     <orderEntry type="library" name="com.infstory:proguard-annotations-1.0.2" level="project" />
+    <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.51@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-tagmanager-api-license-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-wallet-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-storage-11.6.0" level="project" />
@@ -270,6 +274,7 @@
     <orderEntry type="library" name="com.google.android.gms:play-services-instantapps-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-messaging-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-fido-11.6.0" level="project" />
+    <orderEntry type="library" name="org.jetbrains:annotations:13.0@jar" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-fitness-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.firebase:firebase-crash-license-11.6.0" level="project" />
     <orderEntry type="library" name="com.google.android.gms:play-services-gcm-11.6.0" level="project" />

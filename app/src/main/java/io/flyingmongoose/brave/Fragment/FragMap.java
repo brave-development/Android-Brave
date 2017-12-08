@@ -1,5 +1,7 @@
 package io.flyingmongoose.brave.Fragment;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.flyingmongoose.brave.R;
 import android.Manifest;
 import android.app.Activity;
@@ -74,7 +76,7 @@ import io.flyingmongoose.brave.Interface.ParseApiInterface;
 /**
  * Created by !Aries! on 2015-06-27.
  */
-public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, CompoundButton.OnCheckedChangeListener, SwipeRefreshLayout.OnRefreshListener
+public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, CompoundButton.OnCheckedChangeListener
 {
 
     private final String TAG = "FragMap";
@@ -83,8 +85,8 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
     private final FragMap thisFrag = this;
 
     //Map
-    private MapView mvMap;
-    private View vMapPopupAnchor;
+    @BindView(R.id.mvMap) MapView mvMap;
+    @BindView(R.id.vMapPopupAnchor) View vMapPopupAnchor;
     //Map Constants
     private final float MAP_ZOOM_LEVEL = 12.0f;
 
@@ -118,46 +120,34 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
 
     private PopupWindow respondPopupWindow;
     private boolean displayingRespondWindow = false;    //Used to ensure the user can't open 2 respond windows because of laggyness
-    private SwitchCompat tbtnTrack;
+    @BindView(R.id.tbtnTrack) SwitchCompat tbtnTrack;
     private Button btnResponseCall;
 
-    private SwipeRefreshLayout srLayMapLoading;
+    @BindView(R.id.srLayMapLoading) SwipeRefreshLayout srLayMapLoading;
     private boolean refreshingForMap = false;   //Used soo that update of panics don't clear prog cricle when it is being used for other things like dialogs ect
     private boolean reafreshingForRepondDialog = false;
+
+    //Chat
+    @BindView(R.id.btnChat) Button btnChat;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        View view = inflater.inflate(R.layout.fragment_map_layout, container, false);
+        View constructedView = inflater.inflate(R.layout.fragment_map_layout, container, false);
 
-        mvMap = (MapView) view.findViewById(R.id.mvMap);
+        ButterKnife.bind(this, constructedView);
+
         mvMap.onCreate(savedInstanceState);
 
-        vMapPopupAnchor = view.findViewById(R.id.vMapPopupAnchor);
-        tbtnTrack = (SwitchCompat) view.findViewById(R.id.tbtnTrack);
-
-        srLayMapLoading = (SwipeRefreshLayout) view.findViewById(R.id.srLayMapLoading);
-        srLayMapLoading.setOnRefreshListener(this);
-
-        Log.i(TAG, "Fragment Map onCreateView");
-
-        return view;
+        return constructedView;
     }
 
     private void initSwipeRefresh()
     {
         srLayMapLoading.setEnabled(false);
-        srLayMapLoading.setOnRefreshListener(this);
         srLayMapLoading.setColorSchemeColors(getResources().getColor(R.color.FlatLightBlue), getResources().getColor(R.color.Red), getResources().getColor(R.color.SeaGreen));
         srLayMapLoading.setProgressBackgroundColor(R.color.CircleProgLoadingColor);
         srLayMapLoading.setProgressViewOffset(true, 0, 5);
-    }
-
-    @Override
-    public void onRefresh()
-    {
-        srLayMapLoading.setRefreshing(true);
-        srLayMapLoading.setRefreshing(false);
     }
 
     @Override
@@ -166,8 +156,19 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "Fragment Map onActivityCreated");
 
+        final ActivHome activ = (ActivHome) getActivity();
+
         //Initialize and get a handle on map obj
         initMap();
+
+        btnChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                //Load Chat Frag
+                activ.showChat();
+            }
+        });
 
         //Check if push notification data exists
         checkPushNotificationData();

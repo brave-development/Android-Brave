@@ -1,4 +1,5 @@
 package io.flyingmongoose.brave.Activity;
+import io.flyingmongoose.brave.Fragment.FragChat;
 import io.flyingmongoose.brave.R;
 import android.*;
 import android.Manifest;
@@ -93,7 +94,7 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
     public FragHistory fragHistory = null;
     public FragBottomActionBar fragBottomActionBar = null;
     public  static FragmentManager fragManager;
-    public FragmentTransaction fragTransaction;
+    public FragmentTransaction fragTrans;
     public FragManageGroups fragMangGroups;
 
     //Fragment tags
@@ -223,7 +224,7 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
                 if(btnMainPos1X == 0 || btnMainPos2X == 0 || btnMainPos3X == 0 || btnMainPos4X == 0 || btnMainPos5X == 0)
                     calcMainBtnScreenPositions();
 
-                FragmentTransaction fragTrans = fragManager.beginTransaction();
+                fragTrans = fragManager.beginTransaction();
 
                 //Check position clicked
                 switch(position)
@@ -422,6 +423,16 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
         updateUserCountry();
     }
 
+    public void showChat()
+    {
+        fragTrans = fragManager.beginTransaction();
+        FragChat fragChat = new FragChat();
+        fragTrans
+                .add(android.R.id.content ,fragChat, "FragChat")
+                .addToBackStack("FragChat")
+                .commit();
+    }
+
     private void initBtnMainAlertPosition()
     {
         Display display = getWindowManager().getDefaultDisplay();
@@ -507,9 +518,9 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
         //Add fragPanic and all other frags on start up
 
         fragManager = getSupportFragmentManager();
-        fragTransaction = fragManager.beginTransaction();
+        fragTrans = fragManager.beginTransaction();
 //        fragTransaction.add(R.id.fragmentBottomActionBar, fragBottomActionBar, TAG_FRAG_BOTTOM_ACTION_BAR);
-        fragTransaction.add(R.id.HomeContentLayout, fragPanic, TAG_FRAG_PANIC);
+        fragTrans.add(R.id.HomeContentLayout, fragPanic, TAG_FRAG_PANIC);
 
 //        fragTransaction.add(R.id.HomeContentLayout, fragMap, TAG_FRAG_MAP);
 //        fragTransaction.hide(fragMap);
@@ -526,7 +537,7 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
         /*fragTransaction.add(R.id.HomeContentLayout, fragSettings, TAG_FRAG_SETTINGS);
         fragTransaction.hide(fragSettings);*/
 
-        fragTransaction.commitAllowingStateLoss();
+        fragTrans.commitAllowingStateLoss();
 
         //initFbPush();
     }
@@ -977,27 +988,27 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
     {
         if(view.getTag().toString().equalsIgnoreCase("Home"))
         {
-            fragTransaction = fragManager.beginTransaction();
+            fragTrans = fragManager.beginTransaction();
 
             if(fragManager.findFragmentByTag(TAG_FRAG_MANG_GROUPS) != null)
             {
 //                fragManager.popBackStack(); //pop back stack if mang groups was opened otherwise blank frag is shown when returning to groups if naving straight from mang groups else where
-                fragTransaction.remove(fragMangGroups);
+                fragTrans.remove(fragMangGroups);
             }
 
             if(fragManager.findFragmentByTag(TAG_FRAG_GROUPS) != null)
-                fragTransaction.remove(fragGroups);
+                fragTrans.remove(fragGroups);
 
             if(fragManager.findFragmentByTag(TAG_FRAG_HISTORY) != null)
-                fragTransaction.remove(fragHistory);
+                fragTrans.remove(fragHistory);
 
             if(fragManager.findFragmentByTag(TAG_FRAG_SETTINGS) != null)
-                fragTransaction.remove(fragSettings);
+                fragTrans.remove(fragSettings);
 
-            fragTransaction.show(fragPanic);
-            fragTransaction.hide(fragMap);
-            fragTransaction.show(fragBottomActionBar);
-            fragTransaction.commit();
+            fragTrans.show(fragPanic);
+            fragTrans.hide(fragMap);
+            fragTrans.show(fragBottomActionBar);
+            fragTrans.commit();
 
             //Reset bottom action bar button highlights
             fragBottomActionBar.resetButtons();
@@ -1034,7 +1045,7 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
                     fragGroups = new FragGroups();
                 }
 
-                fragTransaction = fragManager.beginTransaction();
+                fragTrans = fragManager.beginTransaction();
 
                /* fragTransaction.show(fragGroups);
                 fragTransaction.hide(fragMangGroups);
@@ -1043,21 +1054,21 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
                 fragTransaction.hide(fragPanic);
                 fragTransaction.hide(fragMap);*/
     //            fragTransaction.hide(fragBottomActionBar);
-                fragTransaction.add(R.id.HomeContentLayout, fragGroups, TAG_FRAG_GROUPS);   //Add frag to display
+                fragTrans.add(R.id.HomeContentLayout, fragGroups, TAG_FRAG_GROUPS);   //Add frag to display
                 //Hide Home frags
-                fragTransaction.hide(fragPanic);
-                fragTransaction.hide(fragMap);
+                fragTrans.hide(fragPanic);
+                fragTrans.hide(fragMap);
                 //Remove other possible frags
                 if(fragManager.findFragmentByTag(TAG_FRAG_MANG_GROUPS) != null)
-                    fragTransaction.remove(fragMangGroups);
+                    fragTrans.remove(fragMangGroups);
 
                 if(fragManager.findFragmentByTag(TAG_FRAG_HISTORY) != null)
-                    fragTransaction.remove(fragHistory);
+                    fragTrans.remove(fragHistory);
 
                 if(fragManager.findFragmentByTag(TAG_FRAG_SETTINGS) != null)
-                    fragTransaction.remove(fragSettings);
+                    fragTrans.remove(fragSettings);
 
-                fragTransaction.commit();
+                fragTrans.commit();
 
                 fLayBottomActionBar.setVisibility(View.GONE);
 
@@ -1086,7 +1097,7 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
     //            if(fragHistory == null)   //Sliding tab does not display correctly if fragment is not recreated for some reason
                     fragHistory = new FragHistory();
 
-                fragTransaction = fragManager.beginTransaction();
+                fragTrans = fragManager.beginTransaction();
                /* fragTransaction.hide(fragGroups);
                 fragTransaction.hide(fragMangGroups);
                 fragTransaction.show(fragHistory);
@@ -1096,25 +1107,25 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
                 fragTransaction.hide(fragBottomActionBar);*/
 
                 //Add frag to view
-                fragTransaction.add(R.id.HomeContentLayout, fragHistory, TAG_FRAG_HISTORY);
+                fragTrans.add(R.id.HomeContentLayout, fragHistory, TAG_FRAG_HISTORY);
                 //Hide home frags
-                fragTransaction.hide(fragPanic);
-                fragTransaction.hide(fragMap);
+                fragTrans.hide(fragPanic);
+                fragTrans.hide(fragMap);
                 //Remove other possible frags
 
                 if(fragManager.findFragmentByTag(TAG_FRAG_MANG_GROUPS) != null)
                 {
 //                    fragManager.popBackStack(); //pop back stack if mang groups was opened otherwise blank frag is shown when returning to groups if naving straight from mang groups else where
-                    fragTransaction.remove(fragMangGroups);
+                    fragTrans.remove(fragMangGroups);
                 }
 
                 if(fragManager.findFragmentByTag(TAG_FRAG_GROUPS) != null)
-                    fragTransaction.remove(fragGroups);
+                    fragTrans.remove(fragGroups);
 
                 if(fragManager.findFragmentByTag(TAG_FRAG_SETTINGS) != null)
-                    fragTransaction.remove(fragSettings);
+                    fragTrans.remove(fragSettings);
 
-                fragTransaction.commit();
+                fragTrans.commit();
 
                 fLayBottomActionBar.setVisibility(View.GONE);
 
@@ -1143,7 +1154,7 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
                 if(fragSettings == null)
                     fragSettings = new FragSettings();
 
-                fragTransaction = fragManager.beginTransaction();
+                fragTrans = fragManager.beginTransaction();
                 /*fragTransaction.hide(fragGroups);
                 fragTransaction.hide(fragMangGroups);
                 fragTransaction.hide(fragHistory);
@@ -1153,24 +1164,24 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
                 fragTransaction.hide(fragBottomActionBar);*/
 
                 //Add frag to view
-                fragTransaction.add(R.id.HomeContentLayout, fragSettings, TAG_FRAG_SETTINGS);
+                fragTrans.add(R.id.HomeContentLayout, fragSettings, TAG_FRAG_SETTINGS);
                 //Hide home frags
-                fragTransaction.hide(fragPanic);
-                fragTransaction.hide(fragMap);
+                fragTrans.hide(fragPanic);
+                fragTrans.hide(fragMap);
                 //Remove possible existing frags
                 if(fragManager.findFragmentByTag(TAG_FRAG_MANG_GROUPS) != null)
                 {
 //                    fragManager.popBackStack(); //pop back stack if mang groups was opened otherwise blank frag is shown when returning to groups if naving straight from mang groups else where
-                    fragTransaction.remove(fragMangGroups);
+                    fragTrans.remove(fragMangGroups);
                 }
 
                 if(fragManager.findFragmentByTag(TAG_FRAG_GROUPS) != null)
-                    fragTransaction.remove(fragGroups);
+                    fragTrans.remove(fragGroups);
 
                 if(fragManager.findFragmentByTag(TAG_FRAG_HISTORY) != null)
-                    fragTransaction.remove(fragHistory);
+                    fragTrans.remove(fragHistory);
 
-                fragTransaction.commit();
+                fragTrans.commit();
 
                 fLayBottomActionBar.setVisibility(View.GONE);
 
