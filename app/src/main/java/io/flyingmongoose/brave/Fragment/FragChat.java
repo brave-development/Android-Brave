@@ -7,12 +7,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.bassaer.chatmessageview.models.Message;
-import com.github.bassaer.chatmessageview.util.ChatBot;
 import com.github.bassaer.chatmessageview.views.ChatView;
-import com.github.bassaer.chatmessageview.model.IChatUser;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.SaveCallback;
 
+import java.util.Calendar;
 import java.util.Random;
 
 import butterknife.BindView;
@@ -59,10 +62,31 @@ public class FragChat extends Fragment
                         .setUser(me)
                         .setRightMessage(true)
                         .setMessageText(chatView.getInputText())
+                        .setCreatedAt(Calendar.getInstance())
+                        .setUsernameVisibility(true)
                         .build();
 
-                //Send to chat view
+                //Send to chat view and pesist to db
                 chatView.send(msg);
+                ParseObject parseMsg = new ParseObject("Messages");
+                parseMsg.put("user", ActivHome.currentUser);
+                parseMsg.put("alert", FragPanic.panicObj); 
+                parseMsg.put("text", chatView.getInputText());
+                parseMsg.saveInBackground(new SaveCallback()
+                {
+                    @Override
+                    public void done(ParseException e)
+                    {
+                        if(e == null)
+                        {
+                            Toast.makeText(getContext(), "Msg sent and saved to db successfully", Toast.LENGTH_LONG).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(getContext(), "Msg sent and saved to db failed", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
                 chatView.setInputText("");
 
                 //Receive message

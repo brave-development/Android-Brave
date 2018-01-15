@@ -293,6 +293,9 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
             if(panicing)
             {
                 Log.d(TAG, "Panic button set to activate");
+
+                activity.showChat();
+
                 //Check Gps is on
                 UtilGps utilGps = new UtilGps(getActivity());
                 if(utilGps.isGpsOn())
