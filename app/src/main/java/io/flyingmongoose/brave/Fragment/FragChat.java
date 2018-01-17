@@ -13,6 +13,7 @@ import com.github.bassaer.chatmessageview.models.Message;
 import com.github.bassaer.chatmessageview.views.ChatView;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.Calendar;
@@ -51,7 +52,12 @@ public class FragChat extends Fragment
 
         //Set local users
         final ChatUser me = new ChatUser(ActivHome.currentUser);
-        final ChatUser responder = new ChatUser(ActivHome.currentUser);
+
+        ParseUser parseUserResponder = new ParseUser();
+        parseUserResponder.setObjectId("DavidMundell");
+        parseUserResponder.put("name", "David Mundell");
+
+        final ChatUser responder = new ChatUser(parseUserResponder);
 
         chatView.setOnClickSendButtonListener(new View.OnClickListener() {
             @Override
