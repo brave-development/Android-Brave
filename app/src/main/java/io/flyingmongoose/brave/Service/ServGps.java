@@ -249,12 +249,15 @@ public class ServGps extends Service implements GoogleApiClient.ConnectionCallba
             @Override
             public void onLocationChanged(Location location)
             {
+                Log.i(TAG, "Slow track location update received");
                 prevLocation = location;
+                Log.i(TAG, "prevLocation updated using slow track update to: " + location.toString());
 
                 if(userLocListner != null)
                 {
                     userLocListner.onLocationUpdate(location);
                     userLocListner = null;
+                    Log.i(TAG, "userLocListener callback served and set to null until new getUserLocation is called again");
                 }
             }
 
@@ -513,17 +516,29 @@ public class ServGps extends Service implements GoogleApiClient.ConnectionCallba
     public void slowTrack(boolean enabled, int minTime, int minDistance)
     {
         if(enabled)
+        {
             locMang.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, slowTrackListner);
+            Log.i(TAG, "slowTrack Started - minTime: " + minTime + " minDist: " + minDistance);
+        }
         else
+        {
             locMang.removeUpdates(slowTrackListner);
+            Log.i(TAG, "slowTrack stopped");
+        }
     }
 
     public void occasionalTrack(boolean enabled, int minTime, int minDistance)
     {
         if(enabled)
+        {
             locMang.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, occasionalTrackListener);
+            Log.i(TAG, "occasionalTrack started - minTime: " + minTime + " minDist: " + minDistance);
+        }
         else
+        {
             locMang.removeUpdates(occasionalTrackListener);
+            Log.i(TAG, "occasionalTrack stopped");
+        }
     }
 
     public void getUserLocation(UserLocationListener callback)
