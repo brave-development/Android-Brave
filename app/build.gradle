@@ -40,12 +40,12 @@ dependencies {
     //compile 'com.parse.bolts:bolts-android:1.+'
     //    compile fileTree(dir: 'libs', include: 'bolts-android-*.jar')
     //    compile fileTree(dir: 'libs', include: 'Parse-*.jar')
-    compile 'com.android.support:multidex:1.0.2'
-    compile 'com.parse:parse-android:1.15.1'
+    api 'com.android.support:multidex:1.0.2'
+    api 'com.parse:parse-android:1.15.1'
     implementation 'com.github.bassaer:chatmessageview:1.6.2'
     implementation 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:2.0.1-rc1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.parse:parsefacebookutils-v4-android:1.10.4@aar'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    api 'com.parse:parsefacebookutils-v4-android:1.10.4@aar'
     implementation 'com.twitter.sdk.android:tweet-composer:3.0.0'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:design:26.1.0'
@@ -54,14 +54,16 @@ dependencies {
     implementation 'com.github.wooplr:Spotlight:1.2.3'
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.yayandroid:ParallaxRecyclerView:1.1'
-    compile 'com.github.clans:fab:1.6.2'
-    compile 'com.google.android.gms:play-services:11.6.0'
-    implementation 'com.google.firebase:firebase-core:11.6.0'
-    implementation 'com.google.firebase:firebase-config:11.6.0 '
-    implementation 'com.google.firebase:firebase-messaging:11.6.0'
-    compile 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.github.clans:fab:1.6.2'
+    implementation 'com.google.android.gms:play-services-maps:11.8.0'
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-config:11.8.0'
+    implementation 'com.google.firebase:firebase-messaging:11.8.0'
+    implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-    compile project(':onboarder')
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    api project(':onboarder')
 }
 
 apply plugin: 'com.google.gms.google-services'
