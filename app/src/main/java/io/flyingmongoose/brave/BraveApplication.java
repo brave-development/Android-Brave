@@ -16,6 +16,9 @@ import com.twitter.sdk.android.core.Twitter;
 
 import java.io.IOException;
 
+import io.flyingmongoose.brave.Util.UtilNetInterceptor;
+import okhttp3.OkHttpClient;
+
 /**
  * Created by IC on 5/28/2015.
  */
@@ -30,7 +33,8 @@ public class BraveApplication extends MultiDexApplication
     public static final String API_NEW_ALERT_HOOK = "newAlertHook";
     public static final String API_GET_ACTIVE_ALERTS = "getActiveAlerts";
 
-    public FirebaseAnalytics fbAnalytics;
+    public static FirebaseAnalytics fbAnalytics;
+    public static boolean analyticsEnabled = true;
     private final String TAG = "braveApplication";
 
     @Override
@@ -39,6 +43,9 @@ public class BraveApplication extends MultiDexApplication
         super.onCreate();
         initParse();
         Twitter.initialize(this);
+
+
+            fbAnalytics = FirebaseAnalytics.getInstance(getApplicationContext());
 
 //        try
 //        {
@@ -53,16 +60,20 @@ public class BraveApplication extends MultiDexApplication
     //Initialise PARSE
     private void initParse()
     {
-        // Enable Local Datastore.
-        Parse.enableLocalDatastore(this);
+//        Parse.setLogLevel(Parse.LOG_LEVEL_VERBOSE);
 //        Parse.initialize(this, "qR8lv9KafH4E9CakPJfKSoDLGlOSPbPMbXVVdbBC", "EYia5DIkfo2OgYOkLJ5NxeUW8lqEUx1nRt2GeyTv"); Panic Dev db
 //        Parse.initialize(this, "cBZmGCzXfaQAyxqnTh6eF2kIqCUnSm1ET8wYL5O7", "rno7DabpDMU293yi2TF4S3jKOlrZX2P27EW70C3G"); //Panic Live db db
+
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
+                .addInterceptor(new UtilNetInterceptor());
 
         //TODO: Live server detail
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("PANICING-TURTLE")
                 .clientKey("PANICINGTURTLE3847TR386TB281XN1NY7YNXM")
                 .server("http://panicing-turtle.herokuapp.com/parse")
+//                .clientBuilder(clientBuilder)
+//                .enableLocalDataStore()
                 .build());
 
 //        Parse.initialize(new Parse.Configuration.Builder(this)
@@ -144,7 +155,5 @@ public class BraveApplication extends MultiDexApplication
         // Send the dimensions to Parse along with the 'read' event
 
         ParseAnalytics.trackEvent("read", dimensions);*/
-
-        fbAnalytics = FirebaseAnalytics.getInstance(getApplicationContext());
     }
 }

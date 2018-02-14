@@ -29,6 +29,7 @@ import java.util.List;
 import io.flyingmongoose.brave.Activity.ActivHome;
 import io.flyingmongoose.brave.Adapter.RVAdaptGroups;
 import io.flyingmongoose.brave.R;
+import io.flyingmongoose.brave.Util.UtilAnalytics;
 import io.flyingmongoose.brave.Util.UtilFormating;
 import io.flyingmongoose.brave.Dialog.DiagGroupsPrivate;
 
@@ -39,6 +40,7 @@ import io.flyingmongoose.brave.Dialog.DiagGroupsPrivate;
 public class FragGroups extends Fragment
 {
     private final String LOG_TAG = "FragGroups";
+    private final String SCREEN_NAME = "Groups";
     private final int groupLimit = 50;
 
     private ActivHome activity;
@@ -75,6 +77,8 @@ public class FragGroups extends Fragment
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
+
+        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
 
         activity = (ActivHome) getActivity();
 

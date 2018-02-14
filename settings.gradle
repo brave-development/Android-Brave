@@ -1,1 +1,1 @@
-include ':app', ':onboarder'
+include ':app', ':onboarder', ':chatmessageview'

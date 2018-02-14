@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 26
@@ -29,4 +30,8 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.twitter.sdk.android:tweet-composer:3.0.0'
     api 'com.facebook.android:facebook-android-sdk:4.28.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

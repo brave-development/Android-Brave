@@ -1,7 +1,6 @@
 package io.flyingmongoose.brave.Activity;
 import io.flyingmongoose.brave.Fragment.FragChat;
 import io.flyingmongoose.brave.R;
-import android.*;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -56,6 +55,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.wooplr.spotlight.SpotlightView;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -146,6 +147,9 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
 
     private float btnMainPos1X, btnMainPos2X, btnMainPos3X, btnMainPos4X, btnMainPos5X;
 
+    //Chat
+    public static LinkedHashMap<String, ParseObject> lhMapActiveAlertChats = new LinkedHashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -179,6 +183,10 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
                 }
             }
         });
+
+        //Set user of this installation
+        ParseInstallation.getCurrentInstallation().put("currentUser", currentUser);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
 
         fLayBottomActionBar = (FrameLayout) findViewById(R.id.fragmentBottomActionBar);
         fabNeedleDrop = (FloatingActionButton) findViewById(R.id.fabNeedleDrop);
@@ -423,10 +431,24 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
         updateUserCountry();
     }
 
-    public void showChat()
+    public void dismissInfoWindow()
     {
+        fragMap.dismissInfoWindow();
+    }
+
+    public void showChat(ParseObject alertChat)
+    {
+        //Add to active chats
+        lhMapActiveAlertChats.put(alertChat.getObjectId(), alertChat);
+
         fragTrans = fragManager.beginTransaction();
         FragChat fragChat = new FragChat();
+
+        //Perp args
+        Bundle args = new Bundle();
+        args.putString("alertId", alertChat.getObjectId());
+        fragChat.setArguments(args);
+
         fragTrans
                 .add(android.R.id.content ,fragChat, "FragChat")
                 .addToBackStack("FragChat")

@@ -2,6 +2,9 @@ package io.flyingmongoose.brave.Fragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.flyingmongoose.brave.BraveApplication;
+import io.flyingmongoose.brave.Dialog.DiagDetailWindow;
+import io.flyingmongoose.brave.Interface.OnRespondStatusChange;
 import io.flyingmongoose.brave.R;
 import android.Manifest;
 import android.app.Activity;
@@ -33,9 +36,11 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -58,6 +63,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -68,7 +74,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Adapter.AdaptInfoWindow;
+import io.flyingmongoose.brave.Util.UtilAnalytics;
 import io.flyingmongoose.brave.Util.UtilGps;
 import io.flyingmongoose.brave.Util.UtilParseAPI;
 import io.flyingmongoose.brave.Interface.ParseApiInterface;
@@ -76,10 +82,11 @@ import io.flyingmongoose.brave.Interface.ParseApiInterface;
 /**
  * Created by !Aries! on 2015-06-27.
  */
-public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, CompoundButton.OnCheckedChangeListener
+public class FragMap extends Fragment implements GoogleMap.OnCameraMoveListener,GoogleMap.OnMarkerClickListener,GoogleMap.OnMapClickListener, CompoundButton.OnCheckedChangeListener
 {
 
     private final String TAG = "FragMap";
+    private final String SCREEN_NAME = "Map";
     private final int REQ_PERM_CALL = 100;
 
     private final FragMap thisFrag = this;
@@ -118,17 +125,22 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
     private long lastUpdatedAt;
     private Timer panicUpdateTimer;
 
+    private View vInfoWindow;
+    private boolean displayingInfoWindow = false;
+    public ParseObject currInfoWindowPanicObj;
     private PopupWindow respondPopupWindow;
     private boolean displayingRespondWindow = false;    //Used to ensure the user can't open 2 respond windows because of laggyness
     @BindView(R.id.tbtnTrack) SwitchCompat tbtnTrack;
-    private Button btnResponseCall;
+    private FloatingActionButton fabResponseCall;
 
     @BindView(R.id.srLayMapLoading) SwipeRefreshLayout srLayMapLoading;
     private boolean refreshingForMap = false;   //Used soo that update of panics don't clear prog cricle when it is being used for other things like dialogs ect
     private boolean reafreshingForRepondDialog = false;
 
     //Chat
-    @BindView(R.id.btnChat) Button btnChat;
+    @BindView(R.id.relLayFragMapRoot) RelativeLayout relLayRoot;
+
+    private GoogleMap googMap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -144,7 +156,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
 
     private void initSwipeRefresh()
     {
-        srLayMapLoading.setEnabled(false);
+        srLayMapLoading.setEnabled(true);
         srLayMapLoading.setColorSchemeColors(getResources().getColor(R.color.FlatLightBlue), getResources().getColor(R.color.Red), getResources().getColor(R.color.SeaGreen));
         srLayMapLoading.setProgressBackgroundColor(R.color.CircleProgLoadingColor);
         srLayMapLoading.setProgressViewOffset(true, 0, 5);
@@ -156,19 +168,12 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "Fragment Map onActivityCreated");
 
+        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
+
         final ActivHome activ = (ActivHome) getActivity();
 
         //Initialize and get a handle on map obj
         initMap();
-
-        btnChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view)
-            {
-                //Load Chat Frag
-                activ.showChat();
-            }
-        });
 
         //Check if push notification data exists
         checkPushNotificationData();
@@ -203,8 +208,10 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
 
             initSwipeRefresh();
 
+            srLayMapLoading.setVisibility(View.VISIBLE);
             srLayMapLoading.setRefreshing(true);
             refreshingForMap = true;
+
             //Initialize and get a handle on map obj
             initMap();
 
@@ -236,6 +243,10 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
 
     private void initMap()
     {
+        //Reset object collection as to re add previous markers
+        panicMarkers.clear();
+        panicObjs.clear();
+
         //Get ref to google map obj
         mvMap.onResume();
 
@@ -246,6 +257,8 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
             @Override
             public void onMapReady(GoogleMap googleMap)
             {
+                googMap = googleMap;
+
                 try
                 {
                     googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getActivity(), R.raw.map_style));
@@ -258,8 +271,9 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
 
                 googleMap.setMyLocationEnabled(true);
                 googleMap.setPadding(0, 0, 0, 0);
-                googleMap.setOnInfoWindowClickListener(thisFrag);
                 googleMap.setOnMapClickListener(thisFrag);
+                googleMap.setOnMarkerClickListener(thisFrag);
+                googleMap.setOnCameraMoveListener(thisFrag);
 
                 //Animate camera to initial location
                 initCamera(googleMap);
@@ -424,7 +438,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                 public void onParseObjectListResponse(List<ParseObject> listGroupObjects)
                 {
                     //Get active alerts for the list of groups
-                    UtilParseAPI.cloudCodeGetActiveAlertsHttp(listGroupObjects, new ParseApiInterface()
+                    UtilParseAPI.getActiveAlerts(listGroupObjects, new ParseApiInterface()
                     {
                         @Override
                         public void onLoadingStatusChanged(boolean loading)
@@ -453,6 +467,36 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                             }
                         }
                     });
+//                    UtilParseAPI.ccGetActiveAlerts(listGroupObjects);
+//                    UtilParseAPI.cloudCodeGetActiveAlertsHttp(listGroupObjects, new ParseApiInterface()
+//                    {
+//                        @Override
+//                        public void onLoadingStatusChanged(boolean loading)
+//                        {
+//                            if(loading)
+//                                Log.i(TAG, "Fetching active alerts for user's groups");
+//                            else
+//                                Log.i(TAG, "Finished fetching active alerts objects");
+//                        }
+//
+//                        @Override
+//                        public void onParseObjectListResponse(final List<ParseObject> listObjects)
+//                        {
+//                            Activity activity = getActivity();
+//
+//                            if(activity != null)
+//                            {
+//                                activity.runOnUiThread(new Runnable()
+//                                {
+//                                    @Override
+//                                    public void run()
+//                                    {
+//                                        updatePanics(googMap, listObjects);
+//                                    }
+//                                });
+//                            }
+//                        }
+//                    });
                 }
             });
         }
@@ -481,14 +525,27 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                     LatLng newCamLocation = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
                     long timeNow = SystemClock.elapsedRealtime();
 
-                    if((!camPrevLocation.equals(newCamLocation)) && (timeNow - lastUpdatedAt) > PANIC_MIN_TIME_INTERVAL_BEFORE_UPDATE)
+                    Log.i(TAG, "Camera moved");
+                    if((!camPrevLocation.equals(newCamLocation)))
                     {
-                        updatePanics(googMap, new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude));
-                        camPrevLocation = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
-                        lastUpdatedAt = SystemClock.elapsedRealtime();
-                        Log.i(TAG, "Panics updated by cam location");
+                        //Close info window if camera moved
+                        if(displayingInfoWindow && vInfoWindow != null)
+                        {
+                            Log.i(TAG, "Removing InfoWindow");
+                            relLayRoot.removeView(vInfoWindow);
+                            displayingInfoWindow = false;
+                        }
+
+                        if((timeNow - lastUpdatedAt) > PANIC_MIN_TIME_INTERVAL_BEFORE_UPDATE)
+                        {
+                            updatePanics(googMap, new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude));
+                            camPrevLocation = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
+                            lastUpdatedAt = SystemClock.elapsedRealtime();
+                            Log.i(TAG, "Panics updated by cam location");
+                        }
                     }
-                } else
+                }
+                else
                 {
                     updatePanics(googMap, new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude));
                     camPrevLocation = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
@@ -677,7 +734,6 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                         }*/
 
                         //set info window adapter
-                        googMap.setInfoWindowAdapter(new AdaptInfoWindow(getActivity(), panicObjs));
 
                         //Only check if panic was found if a track panic id was set
                         if(!trackPanicId.isEmpty())
@@ -706,6 +762,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                         if(srLayMapLoading.isRefreshing() && refreshingForMap)
                         {
                             srLayMapLoading.setRefreshing(false);
+                            srLayMapLoading.setVisibility(View.GONE);
                             refreshingForMap = false;
                         }
 
@@ -716,6 +773,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                         if(srLayMapLoading.isRefreshing() && refreshingForMap)
                         {
                             srLayMapLoading.setRefreshing(false);
+                            srLayMapLoading.setVisibility(View.GONE);
                             refreshingForMap = false;
                         }
 
@@ -779,7 +837,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                     {
                         //add normal pin
                         ParseGeoPoint panicLoc = lstActiveAlerts.get(i).getParseGeoPoint("location");
-                        Marker panicMarker = googMap.addMarker(new MarkerOptions().position(new LatLng(panicLoc.getLatitude(), panicLoc.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.panic_pin)));
+                        Marker panicMarker = googMap.addMarker(new MarkerOptions().position(new LatLng(panicLoc.getLatitude(), panicLoc.getLongitude())).icon(BitmapDescriptorFactory.fromResource(R.drawable.panic_pin_2)));
 
                         //House keeping
                         panicMarkers.put(freshPanicObjectId, panicMarker);
@@ -842,9 +900,6 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                             panicUsers.put(entry.getKey(), entry.getValue().getParseUser("user"));
                         }*/
 
-                        //set info window adapter
-            googMap.setInfoWindowAdapter(new AdaptInfoWindow(getActivity(), panicObjs));
-
             //Only check if panic was found if a track panic id was set
             if(!trackPanicId.isEmpty())
             {
@@ -872,6 +927,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
             if(srLayMapLoading.isRefreshing() && refreshingForMap)
             {
                 srLayMapLoading.setRefreshing(false);
+                srLayMapLoading.setVisibility(View.GONE);
                 refreshingForMap = false;
             }
 
@@ -880,16 +936,152 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
         }
     }
 
-
     @Override
-    public void onInfoWindowClick(final Marker marker)
+    public boolean onMarkerClick(Marker marker)
     {
-        srLayMapLoading.setRefreshing(true);
-        reafreshingForRepondDialog = true;
-        if(!displayingRespondWindow)    //Used to make sure user can't create 2 of these windows
-            displayRespondWindow(marker);//Display dialogue window with reverse geo address
+        Log.i(TAG, "Marker clicked!");
+        if(displayingInfoWindow && vInfoWindow != null)
+        {
+            Log.i(TAG, "Removing InfoWindow");
+            relLayRoot.removeView(vInfoWindow);
+            displayingInfoWindow = false;
+        }
+        else
+        {
+            Log.i(TAG, "Displaying InfoWindow");
+            //Search for matching marker
+            currInfoWindowPanicObj = panicObjs.get(marker.getId());
 
-        Log.i(TAG, "Info Window click completed");
+            //Generate view above clicked marker (clicked marker has been centered)
+            vInfoWindow = getLayoutInflater().inflate(R.layout.map_info_window, null);
+
+            //Calculate position & create layout params
+            RelativeLayout.LayoutParams layParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            layParams.addRule(RelativeLayout.ABOVE, vMapPopupAnchor.getId());
+            layParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            layParams.setMargins(0, 0, 0, 45);
+            vInfoWindow.setLayoutParams(layParams);
+
+            //Setup view
+            TextView txtvName = vInfoWindow.findViewById(R.id.txtvInfoWindowName);
+            txtvName.setText(currInfoWindowPanicObj.getParseUser("user").getString("name"));
+
+            //Set click listeners
+            final FloatingActionButton fabCall = vInfoWindow.findViewById(R.id.btnInfoWindowCall);
+            FloatingActionButton fabInfo = vInfoWindow.findViewById(R.id.btnInfoWindowInfo);
+
+            fabCall.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    //Check for run time permission
+                    if(ContextCompat.checkSelfPermission(thisFrag.getContext(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED)
+                    {
+                        //Call
+                        String uri = "tel:" + currInfoWindowPanicObj.getParseUser("user").getString("cellNumber").trim();
+                        Intent intent = new Intent(Intent.ACTION_CALL);
+                        intent.setData(Uri.parse(uri));
+                        startActivity(intent);
+                    }
+                    else
+                    {
+                        fabResponseCall = fabCall;
+                        requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQ_PERM_CALL);
+                    }
+                }
+            });
+
+            fabInfo.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    //Show detail info window
+                    displayDetailWindow();
+                }
+            });
+
+            relLayRoot.addView(vInfoWindow, relLayRoot.getChildCount() - 1);
+            displayingInfoWindow = true;
+        }
+
+        return false;
+    }
+
+    public void respondToAlert(final boolean respond, final OnRespondStatusChange callbackRespond)
+    {
+        Log.d("DebugResponder", "User object id: " + ActivHome.currentUser.getObjectId());
+        if(respond)
+        {
+            currInfoWindowPanicObj.addUnique("responders", ActivHome.currentUser.getObjectId());
+        }
+        else
+        {
+            List<String> lstResponderToRemove = new ArrayList<>();
+            lstResponderToRemove.add(ActivHome.currentUser.getObjectId());
+            currInfoWindowPanicObj.removeAll("responders", lstResponderToRemove);
+        }
+
+        currInfoWindowPanicObj.saveInBackground(new SaveCallback()
+        {
+            @Override
+            public void done(ParseException e)
+            {
+                if(e == null)
+                {
+                    if(respond)
+                    {
+                        callbackRespond.onRespondStatusUpdate(true);
+                    }
+                    else
+                    {
+                        callbackRespond.onRespondStatusUpdate(false);
+                    }
+                }
+                else
+                    Log.d("DebugResponder", "Adding responder failed because: " + e.getCode() + " " + e.getMessage());
+            }
+        });
+    }
+
+    private void displayDetailWindow()
+    {
+        DiagDetailWindow diagDetail = new DiagDetailWindow();
+
+        //Prep Args
+        Bundle args = new Bundle();
+
+        //Format date
+        SimpleDateFormat sdFormater = new SimpleDateFormat("HH:MM    dd MMM yyyy");
+        String createdAt = sdFormater.format(currInfoWindowPanicObj.getCreatedAt());
+
+        args.putString("date", createdAt);
+        args.putString("name", currInfoWindowPanicObj.getParseUser("user").getString("name"));
+
+        List<String> lstResp = currInfoWindowPanicObj.getList("responders");
+
+        if(lstResp != null)
+            args.putInt("noOfResponders", lstResp.size());
+        else
+            args.putInt("noOfResponders", 0);
+
+        args.putString("details", currInfoWindowPanicObj.getString("details"));
+        args.putString("cellNumber", currInfoWindowPanicObj.getParseUser("user").getString("cellNumber"));
+
+        //Check if user is responding to alert already
+        boolean isResponding = false;
+        List<String> lstResponders = currInfoWindowPanicObj.getList("responders");
+        if(lstResp != null)
+            for(int i = 0; i < lstResponders.size(); i++)
+                if(lstResponders.get(i).equals(ActivHome.currentUser.getObjectId()))
+                    isResponding = true;
+
+        args.putBoolean("isResponding", isResponding);
+
+        diagDetail.setArguments(args);
+
+        diagDetail.show(getFragmentManager(), "diagDetailWindow");
     }
 
     private void displayRespondWindow(final Marker marker)
@@ -962,7 +1154,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
                 }
                 else
                 {
-                    btnResponseCall = btnCall;
+//                    btnResponseCall = btnCall; uncomment when reverting to this diag box
                     requestPermissions(new String[]{Manifest.permission.CALL_PHONE}, REQ_PERM_CALL);
                 }
             }
@@ -974,7 +1166,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
             @Override
             public void onClick(View v)
             {
-                //Respond
+                //EvtRespond
                 ParseObject panicObj = panicObjs.get(marker.getId());
                 panicObj.addUnique("responders", ActivHome.currentUser.getObjectId());
                 panicObj.saveInBackground(new SaveCallback()
@@ -1018,6 +1210,7 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
         if(srLayMapLoading.isRefreshing() && reafreshingForRepondDialog)
         {
             srLayMapLoading.setRefreshing(false);
+            srLayMapLoading.setVisibility(View.GONE);
             reafreshingForRepondDialog = false;
         }
         Log.i(TAG, "Popup Window completed");
@@ -1048,11 +1241,54 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
         return formattedAddress;
     }
 
+    public void dismissInfoWindow()
+    {
+        if(displayingInfoWindow && vInfoWindow != null)
+        {
+            Log.i(TAG, "Removing InfoWindow");
+            relLayRoot.removeView(vInfoWindow);
+            displayingInfoWindow = false;
+        }
+    }
+
     @Override
     public void onMapClick(LatLng latLng)
     {
         if(respondPopupWindow != null)
             respondPopupWindow.dismiss();
+
+        if(displayingInfoWindow && vInfoWindow != null)
+        {
+            Log.i(TAG, "Removing InfoWindow");
+            relLayRoot.removeView(vInfoWindow);
+            displayingInfoWindow = false;
+        }
+    }
+
+    @Override
+    public void onCameraMove()
+    {
+        CameraPosition cameraPosition = googMap.getCameraPosition();
+
+        if(camPrevLocation != null && currInfoWindowPanicObj != null)
+        {
+            LatLng newCamLocation = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
+            float[] results = new float[1];
+            Location.distanceBetween(currInfoWindowPanicObj.getParseGeoPoint("location").getLatitude(), currInfoWindowPanicObj.getParseGeoPoint("location").getLongitude(), newCamLocation.latitude, newCamLocation.longitude, results);
+            Log.d(TAG, "Info window move destroy, dist result: " + results[0]);
+            if( results[0] > 30)
+            {
+                //Close info window if camera moved
+                if(displayingInfoWindow && vInfoWindow != null)
+                {
+                    Log.i(TAG, "Removing InfoWindow");
+                    relLayRoot.removeView(vInfoWindow);
+                    displayingInfoWindow = false;
+                }
+            }
+        }
+        else
+            camPrevLocation = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
     }
 
     @Override
@@ -1061,8 +1297,8 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
         if(requestCode == REQ_PERM_CALL)
         {
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                if(btnResponseCall != null)
-                    btnResponseCall.performClick();
+                if(fabResponseCall != null)
+                    fabResponseCall.performClick();
         }
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -1089,6 +1325,10 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
     {
         super.onDestroy();
         mvMap.onDestroy();
+
+        if(panicUpdateTimer != null)
+            panicUpdateTimer.cancel();
+
         Log.i(TAG, "Fragment Map onDestroy");
     }
 
@@ -1099,4 +1339,5 @@ public class FragMap extends Fragment implements GoogleMap.OnInfoWindowClickList
         mvMap.onLowMemory();
         Log.i(TAG, "Fragment Map onLowMemory");
     }
+
 }

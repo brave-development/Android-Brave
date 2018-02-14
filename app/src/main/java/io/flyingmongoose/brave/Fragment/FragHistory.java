@@ -12,11 +12,15 @@ import android.view.ViewGroup;
 
 import io.flyingmongoose.brave.Adapter.VPAdaptHistory;
 import io.flyingmongoose.brave.R;
+import io.flyingmongoose.brave.Util.UtilAnalytics;
 import io.flyingmongoose.brave.View.ViewSlidingTabLayout;
+import okhttp3.internal.Util;
 
 
 public class FragHistory extends Fragment
 {
+    private final String TAG = "FragHistory";
+    private final String SCREEN_NAME = "History";
 
     private FragmentActivity activContext;
     private ViewPager vpHistoryContent;
@@ -24,8 +28,6 @@ public class FragHistory extends Fragment
     public VPAdaptHistory pageAdapter;
     private CharSequence titles[] = {"Yours" , "Others"};
     private int noOfTabs = 2;
-    private final String TAG = "FragHistory";
-
 
     @Override
     public void onAttach(Activity activity)
@@ -46,6 +48,14 @@ public class FragHistory extends Fragment
         initFragSlidingTab();
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState)
+    {
+        super.onActivityCreated(savedInstanceState);
+
+        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
     }
 
     private void initFragSlidingTab()

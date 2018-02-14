@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:chat="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_85">
 
-    <com.github.bassaer.chatmessageview.views.ChatView
+    <com.github.bassaer.chatmessageview.view.ChatView
         android:id="@+id/chat_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        chat:message_font_size="16sp"
+        chat:date_separator_font_size="14sp"
+        chat:time_label_font_size="10sp"
+        chat:username_font_size="14sp"
+        chat:message_max_width="200dp"
+        chat:option_button_enable="false"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.flyingmongoose.brave.Adapter.AdaptInfoWindow;
 import io.flyingmongoose.brave.Activity.ActivHome;
 import io.flyingmongoose.brave.R;
 
@@ -53,7 +52,6 @@ public class FragMapOld extends Fragment
     private Map<String, Marker> regionMarkers;  //Key is panic obj id
     private Map<String, ParseObject> regionPanics;  //Key is panic obj id
     private Map<Marker, ParseObject> markerPanicData; //Key is marker
-    private AdaptInfoWindow infoWindowAdapter;
     private boolean regionCanBeupdated = true;
 
     private Timer trackTimer;

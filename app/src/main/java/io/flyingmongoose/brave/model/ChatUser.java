@@ -1,6 +1,11 @@
 package io.flyingmongoose.brave.model;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.support.v4.content.ContextCompat;
 
 import com.github.bassaer.chatmessageview.model.IChatUser;
 import com.parse.ParseUser;
@@ -8,14 +13,41 @@ import com.parse.ParseUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
+import io.flyingmongoose.brave.R;
+import io.flyingmongoose.brave.Util.UtilAutoProfileBitmap;
+
 /**
  * Created by Acinite on 2017/12/07.
  */
 
 public class ChatUser implements IChatUser {
+
+    int [] profileCirclesColors;
+
+    int thisProfileCircleColor;
+
+    Bitmap autoProfilePic = null;
+
+    Context context;
     ParseUser user;
 
-    public ChatUser(ParseUser user){this.user = user;}
+    public ChatUser(Context context, ParseUser user, int color)
+    {
+        this.context = context;
+        this.user = user;
+        this.thisProfileCircleColor = color;
+    }
+
+    public ChatUser(Context context, String objectId, String name, int color)
+    {
+        this.context = context;
+        user = new ParseUser();
+        user.setObjectId(objectId);
+        user.put("name", name);
+        this.thisProfileCircleColor = color;
+    }
 
     @NotNull
     @Override
@@ -31,8 +63,14 @@ public class ChatUser implements IChatUser {
 
     @Nullable
     @Override
-    public Bitmap getIcon() {
-        return null;
+    public Bitmap getIcon()
+    {
+        //Get string to be used
+        String[] splitName = getName().split(" ");
+        String firstLet = splitName[0].substring(0, 1);
+        String secondLet = splitName[1].substring(0, 1);
+
+        return UtilAutoProfileBitmap.textAsBitmap(firstLet + secondLet, 40f, Color.WHITE, thisProfileCircleColor);
     }
 
     @Override
@@ -40,4 +78,6 @@ public class ChatUser implements IChatUser {
     {
 
     }
+
+    public int getUserColor(){return thisProfileCircleColor;}
 }

@@ -9,6 +9,8 @@ import android.view.View;
 import com.facebook.login.LoginManager;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
+import com.parse.ParseACL;
+import com.parse.ParseAnonymousUtils;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -21,11 +23,18 @@ import com.parse.ParseUser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import io.flyingmongoose.brave.Activity.ActivOnBoarding;
 import io.flyingmongoose.brave.BraveApplication;
@@ -71,11 +80,12 @@ public class UtilParseAPI
     {
         //unsub installation from push channels
         List<String> subbedChannels = ParseInstallation.getCurrentInstallation().getList("channels");
-        if(subbedChannels != null)  //User might not have joined a group yet
-        {
+        //if(subbedChannels != null)  //User might not have joined a group yet
+        //{
             ParseInstallation.getCurrentInstallation().removeAll("channels", subbedChannels);
+            ParseInstallation.getCurrentInstallation().remove("currentUser");
             ParseInstallation.getCurrentInstallation().saveInBackground();
-        }
+        //}
 
         //check if it's a facebook login then logout of facebook as well
         if(ParseUser.getCurrentUser().getString("facebookId") != null)
@@ -177,6 +187,129 @@ public class UtilParseAPI
         catch(JSONException je)
         {
             je.printStackTrace();
+        }
+    }
+
+    public static void getChatMsgs(ParseObject alert, final ParseApiInterface callback)
+    {
+        ParseQuery<ParseObject> queryChatMsgs = new ParseQuery<ParseObject>("Messages");
+        queryChatMsgs.whereEqualTo("alert", alert);
+        queryChatMsgs.setLimit(10);
+        queryChatMsgs.addDescendingOrder("createdAt");
+        queryChatMsgs.findInBackground(new FindCallback<ParseObject>()
+        {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e)
+            {
+                if(e == null)
+                {
+                    callback.onParseObjectListResponse(objects);
+                    callback.onLoadingStatusChanged(false);
+                }
+                else
+                {
+                    e.printStackTrace();
+                    Log.e(TAG, "Error while fetching chat messages for alert: " + e.getCode() + " " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    public static void getActiveAlerts(List<ParseObject> lstGroups, final ParseApiInterface callback)
+    {
+        Log.i(TAG, "getActiveAlerts called");
+        ParseQuery<ParseObject> queryActiveAlerts = new ParseQuery<ParseObject>("PanicGroup");
+        queryActiveAlerts.whereContainedIn("group", lstGroups);
+        queryActiveAlerts.whereEqualTo("active", true);
+        queryActiveAlerts.include("panic");
+        queryActiveAlerts.include("user");
+        queryActiveAlerts.findInBackground(new FindCallback<ParseObject>()
+        {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e)
+            {
+                if(e == null)
+                {
+                    //Remove duplicates
+                    HashMap<String, ParseObject> hmapDistinct = new HashMap<>();
+                    for(int i = 0; i < objects.size(); i++)
+                    {
+                        ParseObject currAlert = objects.get(i).getParseObject("panic");
+
+                        //Set included user of panic groups table to panic object to avoid an extra fetch
+                        currAlert.put("user", objects.get(i).getParseObject("user"));
+
+                        hmapDistinct.put(currAlert.getObjectId(), currAlert);
+                    }
+
+                    List<ParseObject> lstDistinctAlerts = new ArrayList<>(hmapDistinct.values());
+
+//                    String log = "getActiveAlerts response: ";
+//                    for(int j = 0; j < hmapDistinct.size(); j++)
+//                        log += lstDistinctAlerts.get(j).getObjectId() + "\n";
+//
+//                    Log.d(TAG,  log);
+
+                    callback.onParseObjectListResponse(lstDistinctAlerts);
+                    callback.onLoadingStatusChanged(false);
+                }
+                else
+                {
+                    e.printStackTrace();
+                    Log.e("DebugMap", "Error while fetching active alerts: " + e.getCode() + " " + e.getMessage());
+                }
+            }
+        });
+    }
+
+    public static void ccGetActiveAlerts(List<ParseObject> lstGroups)
+    {
+        try
+        {
+            //Create list of group pointers
+            JSONArray pointerListGroups = createGroupPointerList(lstGroups);
+
+            List<String> lstStringParamGroups = new ArrayList<>();
+            for(int i = 0; i < pointerListGroups.length(); i++)
+            {
+                JSONObject currJsonObj = pointerListGroups.getJSONObject(i);
+                String stringParam = currJsonObj.toString();
+
+                //Remove first and last "
+                stringParam = stringParam.substring(0,1) + stringParam.substring(2,stringParam.lastIndexOf('"')) + stringParam.substring(stringParam.length()-1);
+
+                lstStringParamGroups.add(stringParam);
+                Log.d(TAG, "Adding String param item: " + stringParam);
+            }
+
+            //Create Params
+            Map<String, List<String>> mapParams = new HashMap<>();
+            mapParams.put("groups", lstStringParamGroups);
+
+            ParseCloud.callFunctionInBackground(BraveApplication.API_BASE_URL + BraveApplication.API_GET_ACTIVE_ALERTS,
+                            mapParams, new FunctionCallback<Map<String, Object>>()
+                            {
+                                @Override
+                                public void done(Map<String, Object> object, ParseException e)
+                                {
+                                    if (e == null)
+                                    {
+                                        Log.d(TAG, "GetActiveAlerts result object: " + object
+                                                .toString());
+                                    }
+                                    else
+                                    {
+                                        e.printStackTrace();
+                                        Log.e(TAG, "Error while getting active alerts: " + e
+                                                .getCode() + " " + e.getMessage());
+                                    }
+                                }
+                            });
+        }
+        catch (JSONException je)
+        {
+            je.printStackTrace();
+            Log.e(TAG, "JSON Exception when creating payload for getActiveAlerts");
         }
     }
 
@@ -366,6 +499,7 @@ public class UtilParseAPI
     {
         try
         {
+            Log.d("DebugPin", jsonListString);
             JSONObject jsonWrapper = new JSONObject(jsonListString);
             JSONArray lstJsonAlerts = jsonWrapper.getJSONArray("result");
             List<ParseObject> lstAlerts = new ArrayList<ParseObject>();
@@ -374,7 +508,8 @@ public class UtilParseAPI
             {
                 //Coonvert json to parse object
                 JSONObject currJsonAlert = lstJsonAlerts.getJSONObject(i).getJSONObject("panic");
-                ParseObject objALert = jsonAlertToParseObject(currJsonAlert);
+                JSONObject currJsonUser = lstJsonAlerts.getJSONObject(i).getJSONObject("user");
+                ParseObject objALert = jsonAlertToParseObject(currJsonAlert, currJsonUser);
 
                 //Add object to list to return
                 lstAlerts.add(objALert);
@@ -390,24 +525,52 @@ public class UtilParseAPI
         }
     }
 
-    private static ParseObject jsonAlertToParseObject(JSONObject jsonAlert)
+    private static ParseObject jsonAlertToParseObject(JSONObject jsonAlert, JSONObject jsonUser)
     {
         try
         {
             ParseObject objAlert = new ParseObject("Panics");
 
+            //Set Object id
+            objAlert.setObjectId(jsonAlert.getString("objectId"));
+
+            //Set ACL
+            JSONObject jsonACL = jsonAlert.getJSONObject("ACL");
+            JSONObject jsonPublicACL = jsonACL.getJSONObject("*");
+            ParseACL acl = new ParseACL();
+            acl.setPublicReadAccess(jsonPublicACL.getBoolean("read"));
+            acl.setPublicWriteAccess(jsonPublicACL.getBoolean("write"));
+            objAlert.setACL(acl);
+
+            //Set created at
+            //Parse to date obj
+            SimpleDateFormat sdformater = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            sdformater.setTimeZone(TimeZone.getTimeZone("UCT"));
+
+            objAlert.put("createdAt", sdformater.parse(jsonAlert.getString("createdAt")));
+            //Set updated at
+            objAlert.put("updatedAT", jsonAlert.getString("updatedAt"));
+
             //Set location
             JSONObject jsonLoc = jsonAlert.getJSONObject("location");
             objAlert.put("location", new ParseGeoPoint(jsonLoc.getDouble("latitude"), jsonLoc.getDouble("longitude")));
 
-            //TODO: Set responders list
+            //Set responders list
+            JSONArray jsonResponderIDs = jsonAlert.getJSONArray("responders");
+
+            for(int i = 0; i < jsonResponderIDs.length(); i++)
+                objAlert.addUnique("responders", jsonResponderIDs.get(i));
 
             //Set active
             objAlert.put("active", jsonAlert.getBoolean("active"));
 
             //Get user object
             ParseUser objUser = new ParseUser();
-            objUser.setObjectId(jsonAlert.getJSONObject("user").getString("objectId"));
+            objUser.setObjectId(jsonUser.getString("objectId"));
+            objUser.setEmail(jsonUser.getString("email"));
+            objUser.setUsername(jsonUser.getString("username"));
+            objUser.put("name", jsonUser.getString("name"));
+            objUser.put("cellNumber", jsonUser.getString("cellNumber"));
             objAlert.put("user", objUser);
 
             objAlert.setObjectId(jsonAlert.getString("objectId"));
@@ -418,6 +581,12 @@ public class UtilParseAPI
         {
             je.printStackTrace();
             Log.e(TAG, "JSONException when converting json alert pointer to parse object");
+            return null;
+        }
+        catch (java.text.ParseException pe)
+        {
+            pe.printStackTrace();
+            Log.e(TAG, "Parse Exception when converting json alert time to date: " + pe.getMessage());
             return null;
         }
     }

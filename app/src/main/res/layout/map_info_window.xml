@@ -1,112 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <!--<LinearLayout
-        android:id="@+id/linLayMapInfoWindowBtnRespond"
+    <!-- A CardView that contains a TextView -->
+    <android.support.v7.widget.CardView
+        android:id="@+id/cvInfoWindow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerVertical="true">
+        card_view:cardCornerRadius="6dp"
+        card_view:cardBackgroundColor="@color/androidGrey800">
 
-        <ImageView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginLeft="9dp"
-            android:id="@+id/ivMapInfoWindowBtnRespond"
-            android:src="@drawable/ic_respond2"/>
+            android:padding="5dp"
+            android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:text="Respond"
-            android:id="@+id/txtvMapInfoWindowRespondDesc"/>
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/btnInfoWindowCall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_call_2"
+                fab:fab_size="mini"
+                fab:fab_colorNormal="@color/SeaGreen"
+                fab:fab_colorPressed="@color/Jade"
+                fab:fab_colorRipple="@color/Jade"/>
 
-    </LinearLayout>-->
+            <TextView
+                android:id="@+id/txtvInfoWindowName"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:gravity="center"
+                android:text="Jhon Doe"
+                android:textSize="18sp"
+                android:textColor="@color/white"/>
 
-    <!--<View
-        android:id="@+id/vMapInfoWindowDivider"
-        android:layout_width="0.5dp"
-        android:layout_height="70dp"
-        android:layout_marginLeft="5dp"
-        android:layout_toRightOf="@id/linLayMapInfoWindowBtnRespond"
-        android:background="@color/HintGrey"/>-->
-    <!--android:layout_toRightOf="@id/vMapInfoWindowDivider"-->
-    <LinearLayout
-        android:id="@+id/linLayMapInfoWindowSnippet"
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/btnInfoWindowInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:src="@drawable/ic_info"
+                fab:fab_size="mini"
+                fab:fab_colorNormal="@color/SeaGreen"
+                fab:fab_colorPressed="@color/Jade"
+                fab:fab_colorRipple="@color/Jade"/>
+
+        </LinearLayout>
+
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center|bottom"-->
+            <!--android:src="@drawable/ic_call"-->
+            <!--android:layout_marginBottom="-10dp"/>-->
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Weylin Renison"
-            android:id="@+id/txtvMapInfoWindowName"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"
-            android:maxWidth="150dp"
-            android:layout_marginTop="5dp"
-            android:paddingLeft="5dp"/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="0810213160"
-            android:id="@+id/txtvMapInfoWindowCellNumber"
-            android:visibility="gone"/>
-
-        <View
-            android:id="@+id/vMapInfoWindowDivider"
-            android:layout_width="match_parent"
-            android:layout_height="0.5dp"
-            android:background="@color/HintGrey"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:paddingLeft="5dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:maxWidth="130dp"
-            android:text="No details provided"
-            android:id="@+id/txtvMapInfoWindowDesc"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="12sp"
-            android:text="Click to respond"
-            android:textColor="@color/Blue"
-            android:id="@+id/txtvClickToRespond"/>
-
-    </LinearLayout>
-
-    <View
-        android:id="@+id/vMapInfoWindowDivider2"
-        android:layout_width="0.5dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="5dp"
-        android:layout_toRightOf="@id/linLayMapInfoWindowSnippet"
-        android:background="@color/HintGrey"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/vMapInfoWindowDivider2"
-        android:layout_centerVertical="true"
-        android:src="@drawable/ic_right_arrow"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="2dp"/>
+        android:layout_marginTop="-25dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/cvInfoWindow"
+        android:textSize="50sp"
+        android:textColor="@color/androidGrey800"
+        android:text="▼"/>
 
 </RelativeLayout>

@@ -96,8 +96,12 @@ public class FragBottomActionBar extends Fragment implements View.OnClickListene
                     {
                         ActivHome.fragMap = new FragMap();
                         fragTransaction.add(ActivHome.fragMap, ActivHome.TAG_FRAG_MAP);
+                        Log.d("DebugMap", "New map frag was created, old one not found :(");
                     } else
+                    {
                         fragTransaction.show(fragManager.findFragmentByTag(ActivHome.TAG_FRAG_MAP));
+                        Log.d("DebugMap", "Old map fragment found :)");
+                    }
 
                     fragTransaction.hide(fragManager.findFragmentByTag(ActivHome.TAG_FRAG_PANIC));
                     fragTransaction.commit();

@@ -1,5 +1,6 @@
 package io.flyingmongoose.brave.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -14,16 +15,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import com.facebook.login.LoginManager;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.Activity.ActivOnBoarding;
 import io.flyingmongoose.brave.R;
+import io.flyingmongoose.brave.Util.UtilAnalytics;
 import io.flyingmongoose.brave.Util.UtilParseAPI;
 import io.flyingmongoose.brave.Util.UtilValidate;
 
@@ -35,6 +42,7 @@ public class FragSettingsNew extends Fragment implements View.OnClickListener
 {
     private ActivHome activity;
     private final String TAG = "FragSettingsNew";
+    private final String SCREEN_NAME = "Settings";
 
     @BindView(R.id.tilSettingsName) TextInputLayout tilName;
     @BindView(R.id.etxtSettingsName) EditText etxtName;
@@ -67,6 +75,8 @@ public class FragSettingsNew extends Fragment implements View.OnClickListener
     public void onActivityCreated(@Nullable Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
+
+        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
 
         activity = (ActivHome) getActivity();
 

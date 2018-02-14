@@ -51,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.flyingmongoose.brave.Activity.ActivHome;
 import io.flyingmongoose.brave.Dialog.DiagPanicDescription;
+import io.flyingmongoose.brave.Util.UtilAnalytics;
 import io.flyingmongoose.brave.Util.UtilGps;
 import io.flyingmongoose.brave.Activity.ActivOnBoarding;
 import io.flyingmongoose.brave.Interface.OnPanicCreatedListener;
@@ -64,6 +65,9 @@ import io.flyingmongoose.brave.Interface.UserLocationListener;
  */
 public class FragPanic extends Fragment implements View.OnClickListener, View.OnFocusChangeListener, TextView.OnEditorActionListener
 {
+    private final String TAG = "FragPanic";
+    private final String SCREEN_NAME = "Alert";
+
     private Context context;
 
     //Views
@@ -92,7 +96,6 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
     private final int REQ_PERM_LOC = 100;
     private boolean awaitingNeedleDropCallback = false;
 
-    private final String TAG = "FragPanic";
     private ActivHome activity;
 
     public static ParseObject panicObj;
@@ -176,6 +179,8 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
+        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
+
         context = getActivity();
         super.onActivityCreated(savedInstanceState);
 
@@ -266,6 +271,12 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
     }
 
     @Override
+    public void onResume()
+    {
+        super.onResume();
+    }
+
+    @Override
     public void onDetach()
     {
         //Disconnect service
@@ -283,6 +294,15 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
     }
 
     @Override
+    public void onPause()
+    {
+        super.onPause();
+//
+//        if(isServiceConnected && myServiceConnection != null)
+//            context.unbindService(myServiceConnection);
+    }
+
+    @Override
     public void onClick(View v)
     {
         if(v == ibtnPanic)
@@ -294,7 +314,7 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
             {
                 Log.d(TAG, "Panic button set to activate");
 
-                activity.showChat();
+//                activity.showChat();
 
                 //Check Gps is on
                 UtilGps utilGps = new UtilGps(getActivity());
