@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Dialog;
+package io.flyingmongoose.brave.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,8 +22,8 @@ import com.parse.SaveCallback;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Fragment.FragGroups;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.fragment.FragGroups;
 import io.flyingmongoose.brave.R;
 
 /**

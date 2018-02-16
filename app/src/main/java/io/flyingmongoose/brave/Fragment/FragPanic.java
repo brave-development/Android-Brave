@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -18,6 +18,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -42,23 +43,27 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 import com.wooplr.spotlight.SpotlightView;
-import com.wooplr.spotlight.utils.SpotlightListener;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Dialog.DiagPanicDescription;
-import io.flyingmongoose.brave.Util.UtilAnalytics;
-import io.flyingmongoose.brave.Util.UtilGps;
-import io.flyingmongoose.brave.Activity.ActivOnBoarding;
-import io.flyingmongoose.brave.Interface.OnPanicCreatedListener;
-import io.flyingmongoose.brave.Interface.OnResponderListener;
-import io.flyingmongoose.brave.Interface.OtePanicListener;
-import io.flyingmongoose.brave.Service.ServGps;
-import io.flyingmongoose.brave.Interface.UserLocationListener;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.dialog.DiagPanicDescription;
+import io.flyingmongoose.brave.event.EvtAlertResult;
+import io.flyingmongoose.brave.event.EvtRetryCreateAlertGroup;
+import io.flyingmongoose.brave.util.UtilAnalytics;
+import io.flyingmongoose.brave.util.UtilGps;
+import io.flyingmongoose.brave.activity.ActivOnBoarding;
+import io.flyingmongoose.brave.interfaces.OnPanicCreatedListener;
+import io.flyingmongoose.brave.interfaces.OnResponderListener;
+import io.flyingmongoose.brave.interfaces.OtePanicListener;
+import io.flyingmongoose.brave.service.ServGps;
+import io.flyingmongoose.brave.interfaces.UserLocationListener;
 
 /**
  * Created by IC on 1/27/2015.
@@ -129,6 +134,20 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
     {
     }
 
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop()
+    {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -179,12 +198,11 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
     @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
-        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
-
         context = getActivity();
         super.onActivityCreated(savedInstanceState);
 
         activity = (ActivHome) getActivity();
+        UtilAnalytics.logEventScreenView(activity, SCREEN_NAME, TAG);
 
         //Start gps service
         Intent startGpsService = new Intent(context, ServGps.class);
@@ -535,6 +553,46 @@ public class FragPanic extends Fragment implements View.OnClickListener, View.On
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    /***
+     * This event is received when creating an alert and receiving a response
+     * @param evtAlertResult contains info if the create alert procedure was fully successful
+     */
+    @Subscribe
+    public void onEvtAlertResult(final EvtAlertResult evtAlertResult)
+    {
+        if(evtAlertResult.success)
+        {
+            Snackbar.make(ibtnPanic, "Alert Created looking for responders", Snackbar.LENGTH_LONG).show();
+        }
+        else
+        {
+            Snackbar.make(ibtnPanic, evtAlertResult.errorMsg, BaseTransientBottomBar.LENGTH_INDEFINITE)
+                    .setAction("Retry", new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            if(evtAlertResult.evtRetryCreateAlertGroup != null)
+                            {
+                                if(evtAlertResult.evtRetryCreateAlertGroup.retryCount < 3)
+                                {
+                                    //Increment retry count
+                                    evtAlertResult.evtRetryCreateAlertGroup.retryCount++;
+                                    EventBus.getDefault()
+                                            .post(evtAlertResult.evtRetryCreateAlertGroup);
+                                }
+                                else
+                                    Snackbar.make(ibtnPanic, "After 3 attempts, AlertGroups still fail to be created, please retry creating an alert", Snackbar.LENGTH_LONG).show();
+                            }
+                            else
+                            {
+                                EventBus.getDefault().post(new EvtRetryCreateAlertGroup(evtAlertResult.lstGroups));
+                            }
+                        }
+                    });
+        }
     }
 
     private void buildNeedleDropConfirmation()

@@ -13,6 +13,7 @@ public class AhoyOnboarderCard {
 
     public OnboardType onboardType;
     public boolean fbLogin = false;
+    public String pageName = "";
     public String title;
     public String linkTitle;
     public String shareTitle;
@@ -114,6 +115,11 @@ public class AhoyOnboarderCard {
     {
         this.inputClass = inputClass;
         this.inputVariation = inputVariation;
+    }
+
+    public void setPageName(String pageName)
+    {
+        this.pageName = pageName;
     }
 
     public void setFbLogin(boolean fbLogin){this.fbLogin = fbLogin;}

@@ -2,10 +2,7 @@ package io.flyingmongoose.brave.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Point;
-import android.support.v4.content.ContextCompat;
 
 import com.github.bassaer.chatmessageview.model.IChatUser;
 import com.parse.ParseUser;
@@ -13,10 +10,7 @@ import com.parse.ParseUser;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Random;
-
-import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilAutoProfileBitmap;
+import io.flyingmongoose.brave.util.UtilAutoProfileBitmap;
 
 /**
  * Created by Acinite on 2017/12/07.

@@ -1,13 +1,16 @@
-package io.flyingmongoose.brave.Event;
+package io.flyingmongoose.brave.event;
 
 /**
- * Created by Acinite on 2018/01/31.
+ * Created by Acinite on 2018/02/15.
  */
 
 public class EvtRespond
 {
-    public EvtRespond()
-    {
 
+    public boolean isResponding;
+
+    public EvtRespond(boolean isResponding)
+    {
+        this.isResponding = isResponding;
     }
 }

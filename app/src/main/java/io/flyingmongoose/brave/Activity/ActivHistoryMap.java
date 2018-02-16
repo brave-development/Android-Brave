@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Activity;
+package io.flyingmongoose.brave.activity;
 
 import android.content.Intent;
 import android.net.Uri;

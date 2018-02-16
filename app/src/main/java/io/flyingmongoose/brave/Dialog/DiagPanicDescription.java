@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Dialog;
+package io.flyingmongoose.brave.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,8 +14,8 @@ import android.widget.EditText;
 import com.parse.ParseException;
 import com.parse.SaveCallback;
 
-import io.flyingmongoose.brave.Fragment.FragPanic;
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.fragment.FragPanic;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
 
 /**

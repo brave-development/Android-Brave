@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
 
 /**

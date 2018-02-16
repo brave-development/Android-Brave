@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.flyingmongoose.brave.View;
+package io.flyingmongoose.brave.view;
 
 import android.R;
 import android.content.Context;

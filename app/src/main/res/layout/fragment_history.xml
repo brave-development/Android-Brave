@@ -3,10 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragment.FragHistory"
+    tools:context=".fragment.FragHistory"
     android:orientation="vertical">
 
-    <io.flyingmongoose.brave.View.ViewSlidingTabLayout
+    <io.flyingmongoose.brave.view.ViewSlidingTabLayout
         android:id="@+id/stLayHistory"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

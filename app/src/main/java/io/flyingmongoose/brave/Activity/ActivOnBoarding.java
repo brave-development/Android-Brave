@@ -1,10 +1,11 @@
-package io.flyingmongoose.brave.Activity;
+package io.flyingmongoose.brave.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
@@ -44,7 +45,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilFormating;
+import io.flyingmongoose.brave.util.UtilAnalytics;
+import io.flyingmongoose.brave.util.UtilFormating;
 
 /**
  * Created by wprenison on 2017/08/02.
@@ -84,6 +86,7 @@ public class ActivOnBoarding extends AhoyOnboarderActivity
         final AhoyOnboarderCard cardShare = new AhoyOnboarderCard("Got a referral code?", "Referral Code", R.drawable.ic_network, R.drawable.ic_accept_network, R.drawable.ic_reject_network, AhoyOnboarderCard.OnboardType.TEXT_INPUT_SHARE_OPTION);
 
         // You can define title and description colors (by default white)
+        cardIntro.setPageName("Intro");
         cardIntro.setTitleColor(R.color.common_google_signin_btn_text_dark);
         cardIntro.setTitleTextSize(dpToPixels(10, this));
         cardIntro.setBackgroundColor(android.R.color.transparent);
@@ -96,6 +99,7 @@ public class ActivOnBoarding extends AhoyOnboarderActivity
             }
         };
 
+        cardFullName.setPageName("FullName");
         cardFullName.setTitleColor(R.color.common_google_signin_btn_text_dark);
         cardFullName.setDescriptionColor(R.color.common_google_signin_btn_text_dark);
         cardFullName.setBackgroundColor(R.color.black_transparent);
@@ -153,6 +157,7 @@ public class ActivOnBoarding extends AhoyOnboarderActivity
         };
 
 
+        cardPassword.setPageName("Password");
         cardPassword.setTitleColor(R.color.common_google_signin_btn_text_dark);
         cardPassword.setDescriptionColor(R.color.common_google_signin_btn_text_dark);
         cardPassword.setBackgroundColor(R.color.black_transparent);
@@ -245,6 +250,7 @@ public class ActivOnBoarding extends AhoyOnboarderActivity
             }
         };
 
+        cardPhone.setPageName("Phone");
         cardPhone.setTitleColor(R.color.common_google_signin_btn_text_dark);
         cardPhone.setDescriptionColor(R.color.common_google_signin_btn_text_dark);
         cardPhone.setBackgroundColor(R.color.black_transparent);
@@ -301,6 +307,7 @@ public class ActivOnBoarding extends AhoyOnboarderActivity
             }
         };
 
+        cardShare.setPageName("Share");
         cardShare.setTitleColor(R.color.common_google_signin_btn_text_dark);
         cardShare.setDescriptionColor(R.color.common_google_signin_btn_text_dark);
         cardShare.setBackgroundColor(R.color.black_transparent);
@@ -353,6 +360,7 @@ public class ActivOnBoarding extends AhoyOnboarderActivity
             }
         };
 
+        cardEmail.setPageName("Email");
         cardEmail.setTitleColor(R.color.common_google_signin_btn_text_dark);
         cardEmail.setDescriptionColor(R.color.common_google_signin_btn_text_dark);
         cardEmail.setBackgroundColor(R.color.black_transparent);
@@ -1108,5 +1116,25 @@ public class ActivOnBoarding extends AhoyOnboarderActivity
                     }).show();
             }
         });
+    }
+
+    int backPressedCount = 0;
+    long lastBackPressedAt = 0;
+
+    @Override
+    public void onBackPressed()
+    {
+        if(backPressedCount > 0 && ((SystemClock.elapsedRealtime() - lastBackPressedAt) < 3000))
+        {
+            UtilAnalytics.logEventRegDropOff(getCurrentPageIndex() ,getCurrentPageName());
+            finish();
+        }
+        else
+        {
+            backPressedCount++;
+            lastBackPressedAt = SystemClock.elapsedRealtime();
+            Toast.makeText(this, "Press back again to exit", Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

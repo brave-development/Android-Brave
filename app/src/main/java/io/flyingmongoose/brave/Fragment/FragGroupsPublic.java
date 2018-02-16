@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -24,8 +24,8 @@ import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
 
 import java.util.List;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Adapter.RVAdaptGroups;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.adapter.RVAdaptGroups;
 import io.flyingmongoose.brave.R;
 
 /**

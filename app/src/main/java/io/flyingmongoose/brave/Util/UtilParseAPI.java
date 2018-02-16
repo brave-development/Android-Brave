@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Util;
+package io.flyingmongoose.brave.util;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -10,7 +10,6 @@ import com.facebook.login.LoginManager;
 import com.parse.FindCallback;
 import com.parse.FunctionCallback;
 import com.parse.ParseACL;
-import com.parse.ParseAnonymousUtils;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -23,29 +22,23 @@ import com.parse.ParseUser;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import io.flyingmongoose.brave.Activity.ActivOnBoarding;
+import io.flyingmongoose.brave.activity.ActivOnBoarding;
 import io.flyingmongoose.brave.BraveApplication;
-import io.flyingmongoose.brave.Interface.ParseApiInterface;
+import io.flyingmongoose.brave.interfaces.ParseApiInterface;
 import io.flyingmongoose.brave.R;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;

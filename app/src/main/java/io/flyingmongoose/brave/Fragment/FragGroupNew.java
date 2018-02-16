@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -37,10 +37,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Dialog.DiagShareGroup;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.dialog.DiagShareGroup;
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilFormating;
+import io.flyingmongoose.brave.util.UtilFormating;
 
 import static android.app.Activity.RESULT_OK;
 

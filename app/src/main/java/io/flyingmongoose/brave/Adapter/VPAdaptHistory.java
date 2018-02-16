@@ -1,11 +1,11 @@
-package io.flyingmongoose.brave.Adapter;
+package io.flyingmongoose.brave.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import io.flyingmongoose.brave.Fragment.FragHistoryOthers;
-import io.flyingmongoose.brave.Fragment.FragHistoryYours;
+import io.flyingmongoose.brave.fragment.FragHistoryOthers;
+import io.flyingmongoose.brave.fragment.FragHistoryYours;
 
 /**
  * Created by IC on 6/16/2015.

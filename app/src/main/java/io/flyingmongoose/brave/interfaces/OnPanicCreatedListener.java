@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Interface;
+package io.flyingmongoose.brave.interfaces;
 
 import com.parse.ParseObject;
 

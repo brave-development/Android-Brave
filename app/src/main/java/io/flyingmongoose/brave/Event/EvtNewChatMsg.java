@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Event;
+package io.flyingmongoose.brave.event;
 
 /**
  * Created by Acinite on 2018/02/06.

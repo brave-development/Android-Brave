@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Util;
+package io.flyingmongoose.brave.util;
 
 /**
  * Created by wprenison on 2017/07/06.

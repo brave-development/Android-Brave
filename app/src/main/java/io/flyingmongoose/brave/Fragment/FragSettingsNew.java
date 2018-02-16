@@ -1,6 +1,5 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -15,24 +14,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 
-import com.facebook.login.LoginManager;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
-import com.parse.ParsePush;
 import com.parse.ParseUser;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Activity.ActivOnBoarding;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilAnalytics;
-import io.flyingmongoose.brave.Util.UtilParseAPI;
-import io.flyingmongoose.brave.Util.UtilValidate;
+import io.flyingmongoose.brave.util.UtilAnalytics;
+import io.flyingmongoose.brave.util.UtilParseAPI;
+import io.flyingmongoose.brave.util.UtilValidate;
 
 /**
  * Created by wprenison on 2017/11/08.
@@ -76,9 +70,8 @@ public class FragSettingsNew extends Fragment implements View.OnClickListener
     {
         super.onActivityCreated(savedInstanceState);
 
-        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
-
         activity = (ActivHome) getActivity();
+        UtilAnalytics.logEventScreenView(activity, SCREEN_NAME, TAG);
 
         //Init fields
         if(ActivHome.userFresh)
@@ -121,9 +114,8 @@ public class FragSettingsNew extends Fragment implements View.OnClickListener
             @Override
             public void afterTextChanged(Editable editable)
             {
-                //Validate
-                UtilValidate.validateFullName(activity, editable.toString().trim(), tilName, true);
-
+                if(editable.length() > 0)
+                    UtilValidate.validateFullName(activity, editable.toString().trim(), tilName, true); //Validate
             }
         });
 

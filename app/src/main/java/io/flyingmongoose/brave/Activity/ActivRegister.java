@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Activity;
+package io.flyingmongoose.brave.activity;
 
 import android.app.Activity;
 import android.content.Intent;

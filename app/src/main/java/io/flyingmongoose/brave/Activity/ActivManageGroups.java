@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Activity;
+package io.flyingmongoose.brave.activity;
 
 import android.app.SearchManager;
 import android.content.Intent;
@@ -6,9 +6,9 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import io.flyingmongoose.brave.Adapter.VPAdaptGroups;
+import io.flyingmongoose.brave.adapter.VPAdaptGroups;
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.View.ViewSlidingTabLayout;
+import io.flyingmongoose.brave.view.ViewSlidingTabLayout;
 
 
 public class ActivManageGroups extends AppCompatActivity

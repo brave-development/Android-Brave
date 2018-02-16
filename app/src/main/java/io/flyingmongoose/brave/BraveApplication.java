@@ -1,11 +1,9 @@
 package io.flyingmongoose.brave;
 
-import android.app.Application;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.parse.Parse;
 import com.parse.ParseACL;
 import com.parse.ParseException;
@@ -14,9 +12,7 @@ import com.parse.ParseInstallation;
 import com.parse.SaveCallback;
 import com.twitter.sdk.android.core.Twitter;
 
-import java.io.IOException;
-
-import io.flyingmongoose.brave.Util.UtilNetInterceptor;
+import io.flyingmongoose.brave.util.UtilNetInterceptor;
 import okhttp3.OkHttpClient;
 
 /**

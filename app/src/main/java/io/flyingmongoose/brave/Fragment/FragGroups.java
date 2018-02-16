@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,12 +26,12 @@ import com.yayandroid.parallaxrecyclerview.ParallaxRecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Adapter.RVAdaptGroups;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.adapter.RVAdaptGroups;
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilAnalytics;
-import io.flyingmongoose.brave.Util.UtilFormating;
-import io.flyingmongoose.brave.Dialog.DiagGroupsPrivate;
+import io.flyingmongoose.brave.util.UtilAnalytics;
+import io.flyingmongoose.brave.util.UtilFormating;
+import io.flyingmongoose.brave.dialog.DiagGroupsPrivate;
 
 /**
  * Created by wprenison on 2017/05/17.
@@ -39,7 +39,7 @@ import io.flyingmongoose.brave.Dialog.DiagGroupsPrivate;
 
 public class FragGroups extends Fragment
 {
-    private final String LOG_TAG = "FragGroups";
+    private final String TAG = "FragGroups";
     private final String SCREEN_NAME = "Groups";
     private final int groupLimit = 50;
 
@@ -78,9 +78,8 @@ public class FragGroups extends Fragment
     {
         super.onActivityCreated(savedInstanceState);
 
-        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
-
         activity = (ActivHome) getActivity();
+        UtilAnalytics.logEventScreenView(activity, SCREEN_NAME, TAG);
 
         pararvGroups.setLayoutManager(new LinearLayoutManager(activity));
         pararvGroups.setHasFixedSize(true);

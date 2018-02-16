@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Service;
+package io.flyingmongoose.brave.service;
 
 import android.app.Service;
 import android.content.Context;
@@ -27,6 +27,9 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SendCallback;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -35,15 +38,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.BraveApplication;
-import io.flyingmongoose.brave.Interface.OnPanicCreatedListener;
-import io.flyingmongoose.brave.Interface.OnResponderListener;
-import io.flyingmongoose.brave.Interface.OtePanicListener;
-import io.flyingmongoose.brave.Interface.ParseApiInterface;
-import io.flyingmongoose.brave.Interface.UserLocationListener;
+import io.flyingmongoose.brave.event.EvtAlertResult;
+import io.flyingmongoose.brave.event.EvtRetryCreateAlertGroup;
+import io.flyingmongoose.brave.interfaces.OnPanicCreatedListener;
+import io.flyingmongoose.brave.interfaces.OnResponderListener;
+import io.flyingmongoose.brave.interfaces.OtePanicListener;
+import io.flyingmongoose.brave.interfaces.ParseApiInterface;
+import io.flyingmongoose.brave.interfaces.UserLocationListener;
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilParseAPI;
+import io.flyingmongoose.brave.util.UtilParseAPI;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -344,6 +349,7 @@ public class ServGps extends Service implements GoogleApiClient.ConnectionCallba
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         Log.i("Service GPS", "on start command");
+        EventBus.getDefault().register(this);
         return START_STICKY;
     }
 
@@ -351,6 +357,7 @@ public class ServGps extends Service implements GoogleApiClient.ConnectionCallba
     public boolean onUnbind(Intent intent)
     {
         googApiClient.disconnect();
+        EventBus.getDefault().unregister(this);
         return super.onUnbind(intent);
     }
 
@@ -724,7 +731,10 @@ public class ServGps extends Service implements GoogleApiClient.ConnectionCallba
                             public void onParseObjectListResponse(List<ParseObject> listGroupObjects)
                             {
                                 //Create PanicGroup records for each group through server api
-                                UtilParseAPI.cloudCodeNewAlertHookHttp(panicUpdate, listGroupObjects, ActivHome.currentUser);
+//                                UtilParseAPI.cloudCodeNewAlertHookHttp(panicUpdate, listGroupObjects, ActivHome.currentUser);
+
+                                //Create PanicGroup record my self for each group
+                                createPanicGroups(listGroupObjects, null);
                             }
                         });
                     }
@@ -737,6 +747,60 @@ public class ServGps extends Service implements GoogleApiClient.ConnectionCallba
                         Snackbar.make(ActivHome.txtvProfileName, R.string.error_100_no_internet, Snackbar.LENGTH_LONG).show();
 
                     Log.i("Error:", "Unsuccessful panic update: " + e.getMessage() + " Code: " + e.getCode());
+                }
+            }
+        });
+    }
+
+    /***
+     * Servers as a retry function when creating panic group records fail
+     * @param evtRetryCreateAlertGroup
+     */
+    @Subscribe
+    public void onEvtRetryPanicGroups(EvtRetryCreateAlertGroup evtRetryCreateAlertGroup)
+    {
+        createPanicGroups(evtRetryCreateAlertGroup.lstGroups, evtRetryCreateAlertGroup);
+    }
+
+    private void createPanicGroups(final List<ParseObject> listGroupObjects, @Nullable final EvtRetryCreateAlertGroup evtRetryCreateAlertGroup)
+    {
+        List<ParseObject> lstPanicGroups = new ArrayList<>();
+        for(int i = 0; i < listGroupObjects.size(); i++)
+        {
+            ParseObject currPanicGroup = new ParseObject("PanicGroup");
+            currPanicGroup.put("panic", panicUpdate);
+            currPanicGroup.put("user", ActivHome.currentUser);
+            currPanicGroup.put("group", listGroupObjects.get(i));
+            currPanicGroup.put("active", true);
+            lstPanicGroups.add(currPanicGroup);
+        }
+
+        ParseInstallation.saveAllInBackground(lstPanicGroups, new SaveCallback()
+        {
+            @Override
+            public void done(ParseException e)
+            {
+                if(e == null)
+                {
+                    //Success give feedback or say nothing
+                    EventBus.getDefault().post(new EvtAlertResult(true));
+                }
+                else
+                {
+                    //Retry
+                    String errorMsg;
+                    switch (e.getCode())
+                    {
+                        case 100:
+                            errorMsg = "AlertGroup records failed to be created, check internet connection and retry";
+                            break;
+
+                        default:
+                            errorMsg = "AlertGroup records failed to be created, please retry";
+                            break;
+                    }
+
+                    EventBus.getDefault().post(new EvtAlertResult(false, errorMsg, listGroupObjects, evtRetryCreateAlertGroup));
                 }
             }
         });

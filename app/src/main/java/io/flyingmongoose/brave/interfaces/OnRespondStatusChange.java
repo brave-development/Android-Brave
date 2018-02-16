@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Interface;
+package io.flyingmongoose.brave.interfaces;
 
 /**
  * Created by Acinite on 2018/02/05.

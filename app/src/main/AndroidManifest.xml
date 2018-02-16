@@ -61,22 +61,22 @@
         <meta-data android:name="com.facebook.sdk.ApplicationId"
                    android:value="@string/facebook_app_id"/>
 
-        <service android:name=".Service.ServGps" />
+        <service android:name=".service.ServGps" />
 
         <activity
             android:theme="@style/NoActionBar"
-            android:name=".Activity.ActivLogin"
+            android:name=".activity.ActivLogin"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
             android:theme="@style/NoActionBar"
-            android:name=".Activity.ActivRegister"
+            android:name=".activity.ActivRegister"
             android:label="@string/title_activity_register"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:theme="@style/NoActionBar"
-            android:name=".Activity.ActivOnBoarding"
+            android:name=".activity.ActivOnBoarding"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -86,7 +86,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.ActivHome"
+            android:name=".activity.ActivHome"
             android:label="@string/app_name"
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -100,37 +100,37 @@
         </activity>
 
         <!-- Parse push notification setup -->
-        <service android:name="com.parse.PushService" />
+        <!--<service android:name="com.parse.PushService" />-->
 
-        <receiver android:name="com.parse.ParseBroadcastReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.parse.GcmBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+        <!--<receiver android:name="com.parse.ParseBroadcastReceiver" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+                <!--<action android:name="android.intent.action.USER_PRESENT" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+        <!--<receiver-->
+            <!--android:name="com.parse.GcmBroadcastReceiver"-->
+            <!--android:permission="com.google.android.c2dm.permission.SEND" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.google.android.c2dm.intent.RECEIVE" />-->
+                <!--<action android:name="com.google.android.c2dm.intent.REGISTRATION" />-->
 
-                <!-- IMPORTANT: Change "com.parse.tutorials.pushnotifications" to match your app's package name. -->
-                <category android:name="za.co.oneohtwofour.brave." />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.parse.ParsePushBroadcastReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.parse.push.intent.RECEIVE" />
-                <action android:name="com.parse.push.intent.DELETE" />
-                <action android:name="com.parse.push.intent.OPEN" />
-            </intent-filter>
-        </receiver>
+                <!--&lt;!&ndash; IMPORTANT: Change "com.parse.tutorials.pushnotifications" to match your app's package name. &ndash;&gt;-->
+                <!--<category android:name="za.co.oneohtwofour.brave." />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
+        <!--<receiver-->
+            <!--android:name="com.parse.ParsePushBroadcastReceiver"-->
+            <!--android:exported="false" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.parse.push.intent.RECEIVE" />-->
+                <!--<action android:name="com.parse.push.intent.DELETE" />-->
+                <!--<action android:name="com.parse.push.intent.OPEN" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <activity
-            android:name=".Activity.ActivHistoryMap"
+            android:name=".activity.ActivHistoryMap"
             android:label="@string/title_activity_history_map" >
         </activity>
         <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
@@ -153,14 +153,14 @@
 
         <!--Firebase push notification setup-->
         <service
-            android:name=".Service.ServFirebaseInstanceID">
+            android:name="service.ServFirebaseInstanceID">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
 
         <service
-            android:name=".Service.ServFirebaseMessaging">
+            android:name=".service.ServFirebaseMessaging">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>

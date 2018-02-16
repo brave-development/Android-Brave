@@ -1,10 +1,11 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.flyingmongoose.brave.BraveApplication;
-import io.flyingmongoose.brave.Dialog.DiagDetailWindow;
-import io.flyingmongoose.brave.Interface.OnRespondStatusChange;
+import io.flyingmongoose.brave.dialog.DiagDetailWindow;
+import io.flyingmongoose.brave.event.EvtRespond;
+import io.flyingmongoose.brave.event.EvtRespondResult;
+import io.flyingmongoose.brave.interfaces.OnRespondStatusChange;
 import io.flyingmongoose.brave.R;
 import android.Manifest;
 import android.app.Activity;
@@ -59,6 +60,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,11 +76,11 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Util.UtilAnalytics;
-import io.flyingmongoose.brave.Util.UtilGps;
-import io.flyingmongoose.brave.Util.UtilParseAPI;
-import io.flyingmongoose.brave.Interface.ParseApiInterface;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.util.UtilAnalytics;
+import io.flyingmongoose.brave.util.UtilGps;
+import io.flyingmongoose.brave.util.UtilParseAPI;
+import io.flyingmongoose.brave.interfaces.ParseApiInterface;
 
 /**
  * Created by !Aries! on 2015-06-27.
@@ -163,14 +166,27 @@ public class FragMap extends Fragment implements GoogleMap.OnCameraMoveListener,
     }
 
     @Override
+    public void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
         Log.i(TAG, "Fragment Map onActivityCreated");
 
-        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
-
         final ActivHome activ = (ActivHome) getActivity();
+        UtilAnalytics.logEventScreenView(activ, SCREEN_NAME, TAG);
 
         //Initialize and get a handle on map obj
         initMap();
@@ -324,7 +340,7 @@ public class FragMap extends Fragment implements GoogleMap.OnCameraMoveListener,
         {
             trackPanicId = ActivHome.pushPanicObjectId;
             //Make follow button visible and as active, TODO: can animate here as well
-            tbtnTrack.setVisibility(View.VISIBLE);
+            tbtnTrack.setVisibility(View.GONE);
             tbtnTrack.setChecked(true);
             tbtnTrack.setOnCheckedChangeListener(this);
 
@@ -1009,6 +1025,70 @@ public class FragMap extends Fragment implements GoogleMap.OnCameraMoveListener,
         return false;
     }
 
+    /**
+     * This event is received when a user's responding status needs to be adjusted
+     * @param evtRespond contains info to either set the user's status as responding or not responding
+     */
+    @Subscribe
+    public void onEvtRespond(final EvtRespond evtRespond)
+    {
+        Log.d("DebugRespond", "Respond event received in frag map");
+
+        if(evtRespond.isResponding)
+        {
+            currInfoWindowPanicObj.addUnique("responders", ActivHome.currentUser.getObjectId());
+        }
+        else
+        {
+            List<String> lstResponderToRemove = new ArrayList<>();
+            lstResponderToRemove.add(ActivHome.currentUser.getObjectId());
+            currInfoWindowPanicObj.removeAll("responders", lstResponderToRemove);
+        }
+
+        currInfoWindowPanicObj.saveInBackground(new SaveCallback()
+        {
+            @Override
+            public void done(ParseException e)
+            {
+                if(e == null)
+                {
+                    if(evtRespond.isResponding)
+                    {
+                        EventBus.getDefault().post(new EvtRespondResult(true));
+                        Log.d("DebugRespond", "RespondResult sent as true");
+                    }
+                    else
+                    {
+                        EventBus.getDefault().post(new EvtRespondResult(false));
+                        Log.d("DebugRespond", "RespondResult sent as false");
+                    }
+                }
+                else
+                {
+                    String errorMsg;
+
+                    switch (e.getCode())
+                    {
+                        case 100:
+                            errorMsg = "You could NOT be marked as responding, please check your internet and retry";
+                            break;
+
+                        default:
+                            errorMsg = "You could NOT be marked as responding, error: " + e.getCode() + " please contacts us";
+
+                    }
+
+                    EventBus.getDefault().post(new EvtRespondResult(!evtRespond.isResponding, errorMsg));
+
+                    Log.d("DebugRespond", "RespondResult sent as error");
+
+                    Log.e(TAG, "Adding responder failed because: " + e
+                            .getCode() + " " + e.getMessage());
+                }
+            }
+        });
+    }
+
     public void respondToAlert(final boolean respond, final OnRespondStatusChange callbackRespond)
     {
         Log.d("DebugResponder", "User object id: " + ActivHome.currentUser.getObjectId());
@@ -1166,7 +1246,7 @@ public class FragMap extends Fragment implements GoogleMap.OnCameraMoveListener,
             @Override
             public void onClick(View v)
             {
-                //EvtRespond
+                //EvtRespondResult
                 ParseObject panicObj = panicObjs.get(marker.getId());
                 panicObj.addUnique("responders", ActivHome.currentUser.getObjectId());
                 panicObj.saveInBackground(new SaveCallback()

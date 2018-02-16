@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Adapter;
+package io.flyingmongoose.brave.adapter;
 
 /**
  * Created by wprenison on 2017/05/17.
@@ -33,9 +33,9 @@ import com.yayandroid.parallaxrecyclerview.ParallaxViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Fragment.FragGroups;
-import io.flyingmongoose.brave.Fragment.FragGroupsPublic;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.fragment.FragGroups;
+import io.flyingmongoose.brave.fragment.FragGroupsPublic;
 import io.flyingmongoose.brave.R;
 
 /**

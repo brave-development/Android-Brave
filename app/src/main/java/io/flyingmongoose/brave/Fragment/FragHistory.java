@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.app.Activity;
 import android.support.annotation.Nullable;
@@ -10,11 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.flyingmongoose.brave.Adapter.VPAdaptHistory;
+import io.flyingmongoose.brave.adapter.VPAdaptHistory;
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilAnalytics;
-import io.flyingmongoose.brave.View.ViewSlidingTabLayout;
-import okhttp3.internal.Util;
+import io.flyingmongoose.brave.util.UtilAnalytics;
+import io.flyingmongoose.brave.view.ViewSlidingTabLayout;
 
 
 public class FragHistory extends Fragment
@@ -55,7 +54,7 @@ public class FragHistory extends Fragment
     {
         super.onActivityCreated(savedInstanceState);
 
-        UtilAnalytics.logEventScreenViewed(SCREEN_NAME);
+        UtilAnalytics.logEventScreenView(getActivity(), SCREEN_NAME, TAG);
     }
 
     private void initFragSlidingTab()

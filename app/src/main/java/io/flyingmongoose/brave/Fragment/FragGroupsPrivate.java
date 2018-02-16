@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -18,7 +18,7 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
 
 /**

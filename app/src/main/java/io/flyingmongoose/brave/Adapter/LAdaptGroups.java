@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Adapter;
+package io.flyingmongoose.brave.adapter;
 
 import android.content.Context;
 import android.util.Log;

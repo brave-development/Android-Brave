@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.content.Intent;
 import android.support.v4.app.Fragment;
@@ -25,9 +25,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import io.flyingmongoose.brave.Adapter.LAdaptHistory;
-import io.flyingmongoose.brave.Activity.ActivHistoryMap;
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.adapter.LAdaptHistory;
+import io.flyingmongoose.brave.activity.ActivHistoryMap;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
 
 /**

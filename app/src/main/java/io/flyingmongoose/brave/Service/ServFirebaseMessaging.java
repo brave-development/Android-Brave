@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Service;
+package io.flyingmongoose.brave.service;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -19,8 +19,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.Map;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Event.EvtNewChatMsg;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.event.EvtNewChatMsg;
 import io.flyingmongoose.brave.R;
 
 /**

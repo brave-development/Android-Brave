@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Dialog;
+package io.flyingmongoose.brave.dialog;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -21,7 +21,7 @@ import com.facebook.share.model.ShareLinkContent;
 import com.facebook.share.widget.ShareDialog;
 import com.twitter.sdk.android.tweetcomposer.TweetComposer;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
 
 /**

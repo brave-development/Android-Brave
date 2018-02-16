@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Service;
+package io.flyingmongoose.brave.service;
 
 import android.util.Log;
 

@@ -1,7 +1,8 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,12 +26,14 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Event.EvtNewChatMsg;
-import io.flyingmongoose.brave.Interface.ParseApiInterface;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.event.EvtNewChatMsg;
+import io.flyingmongoose.brave.event.EvtRespond;
+import io.flyingmongoose.brave.event.EvtRespondResult;
+import io.flyingmongoose.brave.interfaces.ParseApiInterface;
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilMsgStatus;
-import io.flyingmongoose.brave.Util.UtilParseAPI;
+import io.flyingmongoose.brave.util.UtilMsgStatus;
+import io.flyingmongoose.brave.util.UtilParseAPI;
 import io.flyingmongoose.brave.model.ChatUser;
 
 /**
@@ -231,7 +234,7 @@ public class FragChat extends Fragment
 
     private void sendParseMsgs(final ParseObject parseMsg, final Message msg)
     {
-        chatView.getMessageView().updateMessageStatus(msg, UtilMsgStatus.STATUS_SENT);
+        chatView.updateMessageStatus(msg, UtilMsgStatus.STATUS_SENT);
 
         parseMsg.saveInBackground(new SaveCallback()
         {
@@ -240,11 +243,11 @@ public class FragChat extends Fragment
             {
                 if (e == null)
                 {
-                    chatView.getMessageView().updateMessageStatus(msg, UtilMsgStatus.STATUS_DELIVERED);
+                    chatView.updateMessageStatus(msg, UtilMsgStatus.STATUS_DELIVERED);
                 }
                 else
                 {
-                    chatView.getMessageView().updateMessageStatus(msg, UtilMsgStatus.STATUS_FAILED);
+                    chatView.updateMessageStatus(msg, UtilMsgStatus.STATUS_FAILED);
 
                     //Explain Error and offer a retry
                     Snackbar.make(chatView, "Message failed: " + e.getMessage(), Snackbar.LENGTH_LONG).setAction("Retry",
@@ -314,6 +317,58 @@ public class FragChat extends Fragment
         }
     }
 
+
+
+    @Subscribe
+    public void onEvtRespondingResult(EvtRespondResult evtRespondResult)
+    {
+        Log.d("DebugRespond", "RespondResult received in frag chat");
+        if(!evtRespondResult.errorMsg.isEmpty())
+        {
+            //Error handle here
+            Snackbar.make(chatView, evtRespondResult.errorMsg, BaseTransientBottomBar.LENGTH_INDEFINITE).setAction(
+                    "Retry", new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            EventBus.getDefault().post(new EvtRespond(true));
+                        }
+                    }
+            ).show();
+        }
+        else if(evtRespondResult.isResponding)
+        {
+            Snackbar.make(chatView, "You are now responding to this alert", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Got It", new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+
+                        }
+                    })
+                    .show();
+        }
+        else
+        {
+            Snackbar.make(chatView, "You where set to not responding for some reason, please retry responding", BaseTransientBottomBar.LENGTH_INDEFINITE)
+                    .setAction("Retry", new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            EventBus.getDefault().post(new EvtRespond(true));
+                        }
+                    })
+                    .show();
+        }
+    }
+
+    /***
+     * This event is received when a new message arrives through a push notification
+     * @param evtChatMsg event object containing the msgs parameters
+     */
     @Subscribe
     public void onEvtNewChatMsg(EvtNewChatMsg evtChatMsg)
     {

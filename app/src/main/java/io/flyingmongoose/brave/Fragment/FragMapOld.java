@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.app.Fragment;
 import android.location.Criteria;
@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
 
 /**

@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Activity;
+package io.flyingmongoose.brave.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.Util.UtilFormating;
+import io.flyingmongoose.brave.util.UtilFormating;
 
 
 public class ActivLogin extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, TextView.OnEditorActionListener

@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Dialog;
+package io.flyingmongoose.brave.dialog;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -20,7 +20,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.SaveCallback;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
 
 /**

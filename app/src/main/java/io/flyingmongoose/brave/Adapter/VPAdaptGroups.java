@@ -1,13 +1,13 @@
-package io.flyingmongoose.brave.Adapter;
+package io.flyingmongoose.brave.adapter;
 
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentManager;
 
-import io.flyingmongoose.brave.Fragment.FragGroupsNewOld;
-import io.flyingmongoose.brave.Fragment.FragGroupsPrivate;
-import io.flyingmongoose.brave.Fragment.FragGroupsPublicOld;
+import io.flyingmongoose.brave.fragment.FragGroupsNewOld;
+import io.flyingmongoose.brave.fragment.FragGroupsPrivate;
+import io.flyingmongoose.brave.fragment.FragGroupsPublicOld;
 
 /**
  * Created by IC on 5/24/2015.

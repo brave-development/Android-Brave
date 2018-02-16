@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Interface;
+package io.flyingmongoose.brave.interfaces;
 
 /**
  * Created by wprenison on 2017/06/16.

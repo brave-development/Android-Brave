@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -22,8 +22,8 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Adapter.LAdaptGroups;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.adapter.LAdaptGroups;
 import io.flyingmongoose.brave.R;
 
 /**

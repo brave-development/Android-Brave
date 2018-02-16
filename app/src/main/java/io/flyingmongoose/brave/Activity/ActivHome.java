@@ -1,5 +1,5 @@
-package io.flyingmongoose.brave.Activity;
-import io.flyingmongoose.brave.Fragment.FragChat;
+package io.flyingmongoose.brave.activity;
+import io.flyingmongoose.brave.fragment.FragChat;
 import io.flyingmongoose.brave.R;
 import android.Manifest;
 import android.app.Activity;
@@ -55,23 +55,24 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.wooplr.spotlight.SpotlightView;
 
-import java.util.ArrayList;
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 
-import io.flyingmongoose.brave.Adapter.VPAdaptGroups;
-import io.flyingmongoose.brave.Dialog.DiagFeedback;
-import io.flyingmongoose.brave.Dialog.DiagShareApp;
-import io.flyingmongoose.brave.Fragment.FragBottomActionBar;
-import io.flyingmongoose.brave.Fragment.FragGroups;
-import io.flyingmongoose.brave.Fragment.FragHistory;
-import io.flyingmongoose.brave.Fragment.FragManageGroups;
-import io.flyingmongoose.brave.Fragment.FragMap;
-import io.flyingmongoose.brave.Fragment.FragPanic;
-import io.flyingmongoose.brave.Fragment.FragSettings;
-import io.flyingmongoose.brave.Fragment.FragSettingsNew;
-import io.flyingmongoose.brave.View.ViewSlidingTabLayout;
+import io.flyingmongoose.brave.adapter.VPAdaptGroups;
+import io.flyingmongoose.brave.dialog.DiagFeedback;
+import io.flyingmongoose.brave.dialog.DiagShareApp;
+import io.flyingmongoose.brave.fragment.FragBottomActionBar;
+import io.flyingmongoose.brave.fragment.FragGroups;
+import io.flyingmongoose.brave.fragment.FragHistory;
+import io.flyingmongoose.brave.fragment.FragManageGroups;
+import io.flyingmongoose.brave.fragment.FragMap;
+import io.flyingmongoose.brave.fragment.FragPanic;
+import io.flyingmongoose.brave.fragment.FragSettings;
+import io.flyingmongoose.brave.fragment.FragSettingsNew;
+import io.flyingmongoose.brave.view.ViewSlidingTabLayout;
 import it.sephiroth.android.library.bottomnavigation.BottomNavigation;
 
 
@@ -149,6 +150,20 @@ public class ActivHome extends AppCompatActivity implements AdapterView.OnItemCl
 
     //Chat
     public static LinkedHashMap<String, ParseObject> lhMapActiveAlertChats = new LinkedHashMap<>();
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+//        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop()
+    {
+//        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

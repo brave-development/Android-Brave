@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Util;
+package io.flyingmongoose.brave.util;
 
 import android.app.AlertDialog;
 import android.content.Context;

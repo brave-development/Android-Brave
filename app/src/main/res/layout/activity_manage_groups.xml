@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/main_bg7"
-    tools:context=".Activity.ActivManageGroups">
+    tools:context=".activity.ActivManageGroups">
 
     <io.co.toasteacomputing.brave.SlidingTabLayout
         android:id="@+id/stLayManageGroups"

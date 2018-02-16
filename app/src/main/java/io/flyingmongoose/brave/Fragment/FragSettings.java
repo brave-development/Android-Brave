@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -29,10 +29,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.parse.ParseException;
-import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParsePush;
 import com.parse.ParseUser;
@@ -40,8 +38,8 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Activity.ActivOnBoarding;
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.activity.ActivOnBoarding;
 import io.flyingmongoose.brave.R;
 
 

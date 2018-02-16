@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Util;
+package io.flyingmongoose.brave.util;
 
 import android.app.Activity;
 import android.support.design.widget.TextInputLayout;
@@ -25,7 +25,7 @@ public class UtilValidate
                 tillPhone.setError(activity.getString(R.string.val_cell_number_length));
         }
 
-        if(!tillPhone.getError().toString().isEmpty() && valid)
+        if(tillPhone.getError() != null && tillPhone.getError().length() > 0 && valid)
             tillPhone.setError("");
 
         return valid;
@@ -55,8 +55,9 @@ public class UtilValidate
             }
         }
 
-        if(!tillFullName.getError().toString().isEmpty() && valid)
-            tillFullName.setError("");
+        if(tillFullName.getError() != null)
+            if(!tillFullName.getError().toString().isEmpty() && valid)
+                tillFullName.setError("");
 
         return valid;
     }

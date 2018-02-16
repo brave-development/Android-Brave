@@ -532,4 +532,14 @@ public abstract class AhoyOnboarderActivity extends AppCompatActivity implements
         ahoyOnboarderAdapter.getTextInputFragPage(position).loading(active);
     }
 
+    public String getCurrentPageName()
+    {
+        return ahoyOnboarderAdapter.pages.get(vpOnboarderPager.getCurrentItem()).pageName;
+    }
+
+    public int getCurrentPageIndex()
+    {
+        return vpOnboarderPager.getCurrentItem();
+    }
+
 }

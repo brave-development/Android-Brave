@@ -1,4 +1,4 @@
-package io.flyingmongoose.brave.Fragment;
+package io.flyingmongoose.brave.fragment;
 
 
 import android.app.Activity;
@@ -21,10 +21,10 @@ import com.parse.ParseQuery;
 
 import java.util.List;
 
-import io.flyingmongoose.brave.Adapter.VPAdaptGroups;
-import io.flyingmongoose.brave.Activity.ActivHome;
+import io.flyingmongoose.brave.adapter.VPAdaptGroups;
+import io.flyingmongoose.brave.activity.ActivHome;
 import io.flyingmongoose.brave.R;
-import io.flyingmongoose.brave.View.ViewSlidingTabLayout;
+import io.flyingmongoose.brave.view.ViewSlidingTabLayout;
 
 public class FragManageGroups extends Fragment implements ViewPager.OnPageChangeListener, SearchView.OnQueryTextListener
 {

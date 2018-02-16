@@ -1,7 +1,6 @@
-package io.flyingmongoose.brave.Dialog;
+package io.flyingmongoose.brave.dialog;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -10,9 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
+import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +21,13 @@ import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 
-import io.flyingmongoose.brave.Activity.ActivHome;
-import io.flyingmongoose.brave.Interface.OnRespondStatusChange;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
+import io.flyingmongoose.brave.activity.ActivHome;
+import io.flyingmongoose.brave.event.EvtRespond;
+import io.flyingmongoose.brave.event.EvtRespondResult;
+import io.flyingmongoose.brave.interfaces.OnRespondStatusChange;
 import io.flyingmongoose.brave.R;
 
 /**
@@ -69,6 +75,20 @@ public class DiagDetailWindow extends DialogFragment
     }
 
     @Override
+    public void onStart()
+    {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState)
     {
         super.onActivityCreated(savedInstanceState);
@@ -87,6 +107,16 @@ public class DiagDetailWindow extends DialogFragment
         txtvDetails.setText(args.getString("detail", "No Details"));
         isResponding = args.getBoolean("isResponding", false);
 
+        //Set button colors programmatically since
+
+        if(isResponding)
+            fabRespond.setColorNormal(getResources().getColor(R.color.Red));
+        else
+            fabRespond.setColorNormal(getResources().getColor(R.color.SeaGreen));
+
+        fabCall.setColorNormal(getResources().getColor(R.color.SeaGreen));
+        fabChat.setColorNormal(getResources().getColor(R.color.SeaGreen));
+
         //Set text description for respond button
         if(isResponding)
             txtvIsResponding.setText("Stop Responding");
@@ -100,31 +130,37 @@ public class DiagDetailWindow extends DialogFragment
             public void onClick(View v)
             {
                 //Add or remove person to respond list
-                ActivHome.fragMap.respondToAlert(!isResponding, new OnRespondStatusChange()
-                {
-                    @Override
-                    public void onRespondStatusUpdate(boolean responding)
-                    {
-                        if(responding)
-                        {
-                            isResponding = true;
-                            txtvIsResponding.setText("Stop Responding");
-                            fabRespond.setColorNormal(R.color.red500);
+                EventBus.getDefault().post(new EvtRespond(!isResponding));
 
-                            noOfResponders++;
-                            txtvNoOfResponders.setText("Responders: " + noOfResponders);
-                        }
-                        else
-                        {
-                            isResponding = false;
-                            txtvIsResponding.setText("Respond");
-                            fabRespond.setColorNormal(R.color.SeaGreen);
-
-                            noOfResponders--;
-                            txtvNoOfResponders.setText("Responders: " + noOfResponders);
-                        }
-                    }
-                });
+//                ActivHome.fragMap.respondToAlert(!isResponding, new OnRespondStatusChange()
+//                {
+//                    @Override
+//                    public void onRespondStatusUpdate(boolean responding)
+//                    {
+//                        if(responding)
+//                        {
+//                            isResponding = true;
+//                            txtvIsResponding.setText("Stop Responding");
+//                            fabRespond.setColorNormal(getResources().getColor(R.color.red500));
+//
+//                            noOfResponders++;
+//                            txtvNoOfResponders.setText("Responders: " + noOfResponders);
+//
+//                            EventBus.getDefault().post(new EvtRespondResult(isResponding));
+//                        }
+//                        else
+//                        {
+//                            isResponding = false;
+//                            txtvIsResponding.setText("Respond");
+//                            fabRespond.setColorNormal(getResources().getColor(R.color.SeaGreen));
+//
+//                            noOfResponders--;
+//                            txtvNoOfResponders.setText("Responders: " + noOfResponders);
+//
+//                            EventBus.getDefault().post(new EvtRespondResult(isResponding));
+//                        }
+//                    }
+//                });
             }
         });
 
@@ -159,9 +195,55 @@ public class DiagDetailWindow extends DialogFragment
                 //Open chat window
                 activHome.dismissInfoWindow();
                 activHome.showChat(ActivHome.fragMap.currInfoWindowPanicObj);
+
+                if(!isResponding)
+                    fabRespond.performClick();
+
                 dismiss();
             }
         });
+    }
+
+    /***
+     * This event is resceived when a result has been obtained for modifying a user's responding status
+     * @param evtRespondResult
+     */
+    @Subscribe
+    public void onEvtRespondResult(final EvtRespondResult evtRespondResult)
+    {
+        Log.d("DebugRespond", "RespondResult received in DiagDetailWindow");
+        if(!evtRespondResult.errorMsg.isEmpty())
+        {
+            //Error handle here
+            Snackbar.make(fabRespond, evtRespondResult.errorMsg, BaseTransientBottomBar.LENGTH_INDEFINITE).setAction(
+                    "Retry", new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            fabRespond.performClick();  //Can just click again seeing as no vars have been changed because no successful change has been made
+                        }
+                    }
+            );
+        }
+        else if(evtRespondResult.isResponding)
+        {
+            isResponding = true;
+            txtvIsResponding.setText("Stop Responding");
+            fabRespond.setColorNormal(getResources().getColor(R.color.red500));
+
+            noOfResponders++;
+            txtvNoOfResponders.setText("Responders: " + noOfResponders);
+        }
+        else
+        {
+            isResponding = false;
+            txtvIsResponding.setText("Respond");
+            fabRespond.setColorNormal(getResources().getColor(R.color.SeaGreen));
+
+            noOfResponders--;
+            txtvNoOfResponders.setText("Responders: " + noOfResponders);
+        }
     }
 
     @Override
